@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.AddStudentActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thêm Học Sinh Mới"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/purple_500"
+            android:gravity="center"
+            android:layout_marginBottom="24dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <EditText
+                android:id="@+id/et_full_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Họ và tên"
+                android:inputType="textPersonName" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <EditText
+                android:id="@+id/et_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Tên đăng nhập"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:passwordToggleEnabled="true"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <EditText
+                android:id="@+id/et_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Mật khẩu"
+                android:inputType="textPassword" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <EditText
+                android:id="@+id/et_student_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Mã số học sinh"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <EditText
+                android:id="@+id/et_class_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Lớp"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="24dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <EditText
+                    android:id="@+id/et_birth_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Ngày sinh"
+                    android:inputType="date"
+                    android:focusable="false" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btn_select_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chọn"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Hủy"
+                android:layout_marginEnd="8dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+            <Button
+                android:id="@+id/btn_add_student"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Thêm"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

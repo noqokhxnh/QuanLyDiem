@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".activities.LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="32dp"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="24dp"
+                    android:src="@mipmap/ic_launcher"
+                    android:contentDescription="App Icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hệ thống quản lý điểm học sinh"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/purple_500"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đăng nhập để tiếp tục"
+                    android:textSize="16sp"
+                    android:textColor="@color/purple_700"
+                    android:layout_marginBottom="32dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:startIconDrawable="@android:drawable/ic_menu_my_calendar">
+
+                    <EditText
+                        android:id="@+id/et_username"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Tên đăng nhập"
+                        android:inputType="text"
+                        android:textSize="16sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
+                    app:passwordToggleEnabled="true">
+
+                    <EditText
+                        android:id="@+id/et_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Mật khẩu"
+                        android:inputType="textPassword"
+                        android:textSize="16sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="ĐĂNG NHẬP"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="12dp"
+                    android:layout_marginBottom="16dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_register_teacher"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="ĐĂNG KÝ GIÁO VIÊN"
+                    android:textSize="16sp"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    app:cornerRadius="12dp" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="© 2025 Hệ thống Quản lý Điểm Học sinh"
+            android:textSize="14sp"
+            android:textColor="@color/purple_200" />
+
+    </LinearLayout>
+
+</ScrollView>

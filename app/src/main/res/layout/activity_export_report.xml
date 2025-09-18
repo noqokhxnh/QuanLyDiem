@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".activities.ExportReportActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/purple_500"
+            app:title="Xuất Báo Cáo"
+            app:titleTextColor="@color/white"
+            app:navigationIcon="?attr/homeAsUpIndicator" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="XUẤT BÁO CÁO ĐIỂM"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/purple_500"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Hệ thống sẽ xuất tất cả dữ liệu điểm học sinh"
+                        android:textSize="16sp"
+                        android:textColor="@color/purple_700"
+                        android:gravity="center" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="NỘI DUNG BÁO CÁO"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/purple_500"
+                        android:layout_marginBottom="16dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Báo cáo sẽ bao gồm:"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="• Danh sách học sinh\n• Danh sách môn học\n• Danh sách điểm chi tiết\n• Thời gian xuất báo cáo"
+                        android:textSize="16sp"
+                        android:lineSpacingExtra="8dp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="THÔNG TIN LƯU TRỮ"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/purple_500"
+                        android:layout_marginBottom="16dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="• File sẽ được lưu trong thư mục Downloads\n• Định dạng file: TXT\n• Tên file: report_NGAYTHANG.txt"
+                        android:textSize="16sp"
+                        android:lineSpacingExtra="8dp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_export_report"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="XUẤT BÁO CÁO"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:cornerRadius="12dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

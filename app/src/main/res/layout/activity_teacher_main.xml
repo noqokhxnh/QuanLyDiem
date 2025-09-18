@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".activities.TeacherMainActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/purple_500"
+            app:title="Trang Chủ Giáo Viên"
+            app:titleTextColor="@color/white" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Chào mừng giáo viên!"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/purple_500"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Hệ thống quản lý điểm học sinh"
+                        android:textSize="16sp"
+                        android:textColor="@color/purple_700"
+                        android:gravity="center" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_manage_students"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:text="Quản lý học sinh"
+                        android:textSize="18sp"
+                        android:textAllCaps="false"
+                        app:cornerRadius="0dp"
+                        app:icon="@android:drawable/ic_menu_my_calendar"
+                        style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/purple_200" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_manage_scores"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:text="Quản lý điểm"
+                        android:textSize="18sp"
+                        android:textAllCaps="false"
+                        app:cornerRadius="0dp"
+                        app:icon="@android:drawable/ic_menu_edit"
+                        style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/purple_200" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_statistics"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:text="Thống kê điểm"
+                        android:textSize="18sp"
+                        android:textAllCaps="false"
+                        app:cornerRadius="0dp"
+                        app:icon="@android:drawable/ic_menu_sort_by_size"
+                        style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/purple_200" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_export_report"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:text="Xuất báo cáo"
+                        android:textSize="18sp"
+                        android:textAllCaps="false"
+                        app:cornerRadius="0dp"
+                        app:icon="@android:drawable/ic_menu_save"
+                        style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_change_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:text="Đổi mật khẩu"
+                        android:textSize="18sp"
+                        android:textAllCaps="false"
+                        app:cornerRadius="0dp"
+                        app:icon="@android:drawable/ic_menu_manage"
+                        style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/purple_200" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_logout"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:text="Đăng xuất"
+                        android:textSize="18sp"
+                        android:textAllCaps="false"
+                        app:cornerRadius="0dp"
+                        app:icon="@android:drawable/ic_lock_power_off"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        app:iconTint="@color/red" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
