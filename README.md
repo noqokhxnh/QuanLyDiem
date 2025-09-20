@@ -1,55 +1,55 @@
-# Student Manager App
+# Ứng dụng Quản lý Học sinh
 
-## Overview
-This is an Android application for managing student grades, with separate roles for teachers and students. The app allows teachers to manage students and enter grades, while students can view their own grades and averages.
+## Tổng quan
+Đây là một ứng dụng Android để quản lý điểm số của học sinh, với các vai trò riêng biệt cho giáo viên và học sinh. Ứng dụng cho phép giáo viên quản lý học sinh và nhập điểm, trong khi học sinh có thể xem điểm và điểm trung bình của mình.
 
-## Features
-- User authentication with role-based access (teacher/student)
-- Teacher features:
-  - Manage students (add, edit, delete)
-  - Manage scores (add, edit, delete)
-- Student features:
-  - View personal scores
-  - View average scores
-- SQLite database for local data storage
-- Clean, intuitive user interface
+## Tính năng
+- Xác thực người dùng với quyền truy cập dựa trên vai trò (giáo viên/học sinh)
+- Tính năng dành cho giáo viên:
+  - Quản lý học sinh (thêm, sửa, xóa)
+  - Quản lý điểm (thêm, sửa, xóa)
+- Tính năng dành cho học sinh:
+  - Xem điểm cá nhân
+  - Xem điểm trung bình
+- Cơ sở dữ liệu SQLite để lưu trữ dữ liệu cục bộ
+- Giao diện người dùng sạch sẽ, trực quan
 
-## Technologies Used
+## Công nghệ sử dụng
 - Java
-- SQLite database
+- Cơ sở dữ liệu SQLite
 - Android SDK
-- Material Design Components
+- Thành phần Thiết kế Material
 
-## Prerequisites
-Before you begin, ensure you have the following installed:
-- Android Studio (latest version recommended)
+## Điều kiện tiên quyết
+Trước khi bắt đầu, hãy đảm bảo bạn đã cài đặt:
+- Android Studio (khuyến nghị phiên bản mới nhất)
 - Git
-- Android SDK (API level 21 or higher)
+- Android SDK (API level 21 trở lên)
 
-## How to Clone the Project
+## Cách sao chép dự án
 
-### Method 1: Using Android Studio (Recommended)
-1. Open Android Studio
-2. Select "Get from VCS" or "Get from Version Control"
-3. Enter the repository URL: `https://github.com/your-username/QLD.git` (replace with actual repository URL)
-4. Choose the directory where you want to clone the project
-5. Click "Clone"
+### Phương pháp 1: Sử dụng Android Studio (Khuyến nghị)
+1. Mở Android Studio
+2. Chọn "Get from VCS" hoặc "Get from Version Control"
+3. Nhập URL repository: `https://github.com/your-username/QLD.git` (thay thế bằng URL thực tế)
+4. Chọn thư mục nơi bạn muốn sao chép dự án
+5. Nhấp "Clone"
 
-### Method 2: Using Command Line
-1. Open your terminal/command prompt
-2. Navigate to the directory where you want to clone the project:
+### Phương pháp 2: Sử dụng dòng lệnh
+1. Mở terminal/dòng lệnh
+2. Điều hướng đến thư mục nơi bạn muốn sao chép dự án:
    ```bash
-   cd /path/to/your/desired/directory
+   cd /đường/dẫn/đến/thư/mục/mong/muốn
    ```
-3. Clone the repository:
+3. Sao chép repository:
    ```bash
    git clone https://github.com/your-username/QLD.git
    ```
-4. Open Android Studio
-5. Select "Open an existing Android Studio project"
-6. Navigate to the cloned project directory and select it
+4. Mở Android Studio
+5. Chọn "Open an existing Android Studio project"
+6. Điều hướng đến thư mục dự án đã sao chép và chọn nó
 
-## Project Structure
+## Cấu trúc dự án
 ```
 app/src/main/java/com/example/qld/
 ├── activities/
@@ -75,137 +75,137 @@ app/src/main/java/com/example/qld/
     └── Constants.java
 ```
 
-## Database Schema
-The app uses SQLite with the following tables:
-1. `users` - Stores user information (teachers and students)
-2. `students` - Stores student-specific information
-3. `subjects` - Stores subject information
-4. `scores` - Stores score records
+## Lược đồ cơ sở dữ liệu
+Ứng dụng sử dụng SQLite với các bảng sau:
+1. `users` - Lưu trữ thông tin người dùng (giáo viên và học sinh)
+2. `students` - Lưu trữ thông tin cụ thể của học sinh
+3. `subjects` - Lưu trữ thông tin môn học
+4. `scores` - Lưu trữ bản ghi điểm
 
-## Sample Data
-The app comes with sample data for testing:
-- Teacher account: username `teacher1`, password `123456`
-- Student accounts: 
-  - username `student1`, password `123456`
-  - username `student2`, password `123456`
+## Dữ liệu mẫu
+Ứng dụng đi kèm với dữ liệu mẫu để kiểm thử:
+- Tài khoản giáo viên: tên đăng nhập `teacher1`, mật khẩu `123456`
+- Tài khoản học sinh: 
+  - tên đăng nhập `student1`, mật khẩu `123456`
+  - tên đăng nhập `student2`, mật khẩu `123456`
 
-## How to Build and Run
+## Cách xây dựng và chạy
 
-### Using Android Studio (Recommended)
-1. Open the project in Android Studio
-2. Wait for Gradle to sync (this may take a few minutes)
-3. Connect an Android device or start an emulator
-4. Click the "Run" button (green triangle) or press `Shift + F10`
+### Sử dụng Android Studio (Khuyến nghị)
+1. Mở dự án trong Android Studio
+2. Chờ Gradle đồng bộ (có thể mất vài phút)
+3. Kết nối thiết bị Android hoặc khởi động trình giả lập
+4. Nhấp nút "Run" (tam giác xanh) hoặc nhấn `Shift + F10`
 
-### Using Command Line
-1. Open your terminal/command prompt
-2. Navigate to the project directory:
+### Sử dụng dòng lệnh
+1. Mở terminal/dòng lệnh
+2. Điều hướng đến thư mục dự án:
    ```bash
-   cd /path/to/QLD
+   cd /đường/dẫn/đến/QLD
    ```
-3. Build the project:
+3. Xây dựng dự án:
    ```bash
    ./gradlew assembleDebug
    ```
-4. Install the APK on an Android device or emulator
+4. Cài đặt APK trên thiết bị Android hoặc trình giả lập
 
-## Making Changes to the Project
+## Thực hiện thay đổi trong dự án
 
-### 1. Create a New Branch (Recommended)
-Before making any changes, create a new branch:
+### 1. Tạo nhánh mới (Khuyến nghị)
+Trước khi thực hiện bất kỳ thay đổi nào, hãy tạo nhánh mới:
 ```bash
-git checkout -b feature/your-feature-name
+git checkout -b feature/tên-tính-năng-của-bạn
 ```
 
-### 2. Modify the Code
-- Open the project in Android Studio
-- Make your desired changes to the code
-- Test your changes thoroughly
+### 2. Sửa đổi mã
+- Mở dự án trong Android Studio
+- Thực hiện các thay đổi mong muốn trong mã
+- Kiểm tra kỹ các thay đổi của bạn
 
-### 3. Commit Your Changes
-After making changes:
+### 3. Cam kết thay đổi của bạn
+Sau khi thực hiện thay đổi:
 
-1. Stage your changes:
+1. Chuẩn bị các thay đổi:
    ```bash
    git add .
    ```
-   Or to add specific files:
+   Hoặc để thêm các tệp cụ thể:
    ```bash
-   git add path/to/your/file.java
+   git add đường/dẫn/đến/tệp.java
    ```
 
-2. Commit your changes with a descriptive message:
+2. Cam kết các thay đổi với thông báo mô tả:
    ```bash
-   git commit -m "Add feature: brief description of what you did"
+   git commit -m "Thêm tính năng: mô tả ngắn gọn những gì bạn đã làm"
    ```
 
-### 4. Push Changes to GitHub
-Push your changes to GitHub:
+### 4. Đẩy thay đổi lên GitHub
+Đẩy các thay đổi của bạn lên GitHub:
 ```bash
-git push origin feature/your-feature-name
+git push origin feature/tên-tính-năng-của-bạn
 ```
 
-### 5. Create a Pull Request (if working with others)
-1. Go to your repository on GitHub
-2. Click "Compare & pull request"
-3. Add a title and description for your changes
-4. Click "Create pull request"
+### 5. Tạo Pull Request (nếu làm việc với người khác)
+1. Truy cập repository của bạn trên GitHub
+2. Nhấp "Compare & pull request"
+3. Thêm tiêu đề và mô tả cho các thay đổi của bạn
+4. Nhấp "Create pull request"
 
-## Common Development Tasks
+## Các tác vụ phát triển phổ biến
 
-### Adding a New Feature
-1. Create a new branch for your feature
-2. Implement your feature
-3. Test thoroughly
-4. Commit and push your changes
-5. Create a pull request if needed
+### Thêm tính năng mới
+1. Tạo nhánh mới cho tính năng của bạn
+2. Triển khai tính năng
+3. Kiểm tra kỹ lưỡng
+4. Cam kết và đẩy các thay đổi
+5. Tạo pull request nếu cần
 
-### Fixing a Bug
-1. Create a new branch for your bug fix
-2. Implement the fix
-3. Test to ensure the bug is resolved
-4. Commit and push your changes
-5. Create a pull request if needed
+### Sửa lỗi
+1. Tạo nhánh mới cho bản sửa lỗi
+2. Triển khai bản sửa
+3. Kiểm tra để đảm bảo lỗi đã được giải quyết
+4. Cam kết và đẩy các thay đổi
+5. Tạo pull request nếu cần
 
-### Updating Dependencies
-1. Open the `build.gradle` file (Module: app)
-2. Modify the dependencies section as needed
-3. Sync the project with Gradle files
+### Cập nhật phụ thuộc
+1. Mở tệp `build.gradle` (Module: app)
+2. Sửa đổi phần phụ thuộc nếu cần
+3. Đồng bộ dự án với tệp Gradle
 
-## Troubleshooting
+## Khắc phục sự cố
 
-### Gradle Sync Issues
-If you encounter Gradle sync issues:
-1. Try "File" → "Sync Project with Gradle Files"
-2. If that doesn't work, try "File" → "Invalidate Caches and Restart"
+### Vấn đề đồng bộ Gradle
+Nếu bạn gặp vấn đề đồng bộ Gradle:
+1. Thử "File" → "Sync Project with Gradle Files"
+2. Nếu không hiệu quả, thử "File" → "Invalidate Caches and Restart"
 
-### Database Issues
-If you encounter database issues:
-1. Uninstall the app from your device/emulator
-2. Clean the project: "Build" → "Clean Project"
-3. Rebuild the project: "Build" → "Rebuild Project"
+### Vấn đề cơ sở dữ liệu
+Nếu bạn gặp vấn đề cơ sở dữ liệu:
+1. Gỡ cài đặt ứng dụng khỏi thiết bị/trình giả lập của bạn
+2. Dọn dẹp dự án: "Build" → "Clean Project"
+3. Xây dựng lại dự án: "Build" → "Rebuild Project"
 
-### Emulator Issues
-If the emulator is not working:
-1. Try creating a new AVD (Android Virtual Device)
-2. Ensure you have enough system resources allocated
-3. Try using a physical device instead
+### Vấn đề trình giả lập
+Nếu trình giả lập không hoạt động:
+1. Thử tạo AVD mới (Android Virtual Device)
+2. Đảm bảo bạn có đủ tài nguyên hệ thống được phân bổ
+3. Thử sử dụng thiết bị thực tế thay thế
 
-## Contributing
-1. Fork the repository
-2. Create a new branch for your feature or bug fix
-3. Make your changes
-4. Test thoroughly
-5. Commit your changes with a descriptive message
-6. Push to your fork
-7. Create a pull request
+## Đóng góp
+1. Fork repository
+2. Tạo nhánh mới cho tính năng hoặc bản sửa lỗi của bạn
+3. Thực hiện các thay đổi
+4. Kiểm tra kỹ lưỡng
+5. Cam kết các thay đổi với thông báo mô tả
+6. Đẩy lên fork của bạn
+7. Tạo pull request
 
-## Future Improvements
-- Add data validation and error handling
-- Implement password encryption
-- Add search and filtering capabilities
-- Implement statistics and reporting features
-- Add offline capabilities
+## Cải tiến trong tương lai
+- Thêm xác thực dữ liệu và xử lý lỗi
+- Triển khai mã hóa mật khẩu
+- Thêm khả năng tìm kiếm và lọc
+- Triển khai thống kê và báo cáo
+- Thêm khả năng ngoại tuyến
 
-## License
-This project is for educational purposes and does not have a specific license. Please check with your institution for usage guidelines.
+## Giấy phép
+Dự án này dành cho mục đích giáo dục và không có giấy phép cụ thể. Vui lòng kiểm tra với tổ chức của bạn để biết hướng dẫn sử dụng.
