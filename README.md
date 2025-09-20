@@ -31,7 +31,7 @@ Trước khi bắt đầu, hãy đảm bảo bạn đã cài đặt:
 ### Phương pháp 1: Sử dụng Android Studio (Khuyến nghị)
 1. Mở Android Studio
 2. Chọn "Get from VCS" hoặc "Get from Version Control"
-3. Nhập URL repository: `https://github.com/your-username/QLD.git` (thay thế bằng URL thực tế)
+3. Nhập URL repository: `https://github.com/noqokhxnh/QuanLyDiem.git` 
 4. Chọn thư mục nơi bạn muốn sao chép dự án
 5. Nhấp "Clone"
 
@@ -43,7 +43,7 @@ Trước khi bắt đầu, hãy đảm bảo bạn đã cài đặt:
    ```
 3. Sao chép repository:
    ```bash
-   git clone https://github.com/your-username/QLD.git
+   git clone https://github.com/noqokhxnh/QuanLyDiem.git
    ```
 4. Mở Android Studio
 5. Chọn "Open an existing Android Studio project"
