@@ -10,7 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.qld.R;
-import com.example.qld.database.DatabaseManager;
+import com.example.qld.database.mysql.MySQLManager;
 import com.example.qld.models.User;
 import com.example.qld.utils.SessionManager;
 
@@ -21,7 +21,7 @@ import com.example.qld.utils.SessionManager;
 public class TeacherRegistrationActivity extends AppCompatActivity {
     private EditText etFullName, etUsername, etPassword, etConfirmPassword;
     private Button btnRegisterTeacher, btnCancel;
-    private DatabaseManager dbManager;
+    private MySQLManager mysqlManager;
     private SessionManager sessionManager;
     
     @Override
@@ -38,7 +38,7 @@ public class TeacherRegistrationActivity extends AppCompatActivity {
         btnCancel = findViewById(R.id.btn_cancel);
         
         // Initialize managers
-        dbManager = new DatabaseManager(this);
+        mysqlManager = new MySQLManager(this);
         sessionManager = new SessionManager(this);
         
         // Set click listeners
@@ -84,31 +84,43 @@ public class TeacherRegistrationActivity extends AppCompatActivity {
             return;
         }
         
-        try {
-            dbManager.open();
-            
-            // Check if username already exists
-            User existingUser = dbManager.getUserByUsername(username);
-            if (existingUser != null) {
-                Toast.makeText(this, "Tên đăng nhập đã tồn tại", Toast.LENGTH_SHORT).show();
-                return;
+        // Check if username already exists
+        mysqlManager.getUserByUsername(username, new MySQLManager.UserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                runOnUiThread(() -> {
+                    if (user != null) {
+                        Toast.makeText(TeacherRegistrationActivity.this, "Tên đăng nhập đã tồn tại", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Create new teacher user (role = 1)
+                        User newUser = new User(username, password, 1, fullName); // role 1 = teacher
+                        mysqlManager.addUser(newUser, new MySQLManager.UserCallback() {
+                            @Override
+                            public void onSuccess(User user) {
+                                runOnUiThread(() -> {
+                                    Toast.makeText(TeacherRegistrationActivity.this, "Đăng ký giáo viên thành công", Toast.LENGTH_SHORT).show();
+                                    setResult(RESULT_OK);
+                                    finish();
+                                });
+                            }
+                            
+                            @Override
+                            public void onError(String error) {
+                                runOnUiThread(() -> {
+                                    Toast.makeText(TeacherRegistrationActivity.this, "Lỗi khi đăng ký tài khoản: " + error, Toast.LENGTH_SHORT).show();
+                                });
+                            }
+                        });
+                    }
+                });
             }
             
-            // Create new teacher user (role = 1)
-            User user = new User(username, password, 1, fullName); // role 1 = teacher
-            long userId = dbManager.addUser(user);
-            
-            if (userId != -1) {
-                Toast.makeText(this, "Đăng ký giáo viên thành công", Toast.LENGTH_SHORT).show();
-                setResult(RESULT_OK);
-                finish();
-            } else {
-                Toast.makeText(this, "Lỗi khi đăng ký tài khoản", Toast.LENGTH_SHORT).show();
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(TeacherRegistrationActivity.this, "Lỗi kiểm tra tên đăng nhập: " + error, Toast.LENGTH_SHORT).show();
+                });
             }
-        } catch (Exception e) {
-            Toast.makeText(this, "Lỗi đăng ký giáo viên: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            dbManager.close();
-        }
+        });
     }
 }

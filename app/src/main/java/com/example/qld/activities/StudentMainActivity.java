@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.qld.R;
-import com.example.qld.database.DatabaseManager;
+import com.example.qld.database.mysql.MySQLManager;
 import com.example.qld.models.Student;
 import com.example.qld.utils.SessionManager;
 
@@ -17,7 +17,7 @@ public class StudentMainActivity extends AppCompatActivity {
     private Button btnViewScores, btnChangePassword, btnLogout;
     private TextView tvWelcome;
     private SessionManager sessionManager;
-    private DatabaseManager dbManager;
+    private MySQLManager mysqlManager;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class StudentMainActivity extends AppCompatActivity {
         
         // Initialize managers
         sessionManager = new SessionManager(this);
-        dbManager = new DatabaseManager(this);
+        mysqlManager = new MySQLManager(this);
         
         // Check if user is logged in
         if (!sessionManager.isLoggedIn() || sessionManager.getUserRole() != 0) {

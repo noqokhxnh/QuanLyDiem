@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.qld.R;
-import com.example.qld.database.DatabaseManager;
+import com.example.qld.database.mysql.MySQLManager;
 import com.example.qld.models.Score;
 import com.example.qld.models.Student;
 import com.example.qld.utils.SessionManager;
@@ -32,7 +32,7 @@ public class ViewScoresActivity extends AppCompatActivity {
     private TextView tvAverageScore;
     private MaterialCardView cardAverage;
     private EditText etSearch;
-    private DatabaseManager dbManager;
+    private MySQLManager mysqlManager;
     private SessionManager sessionManager;
     private ScoreAdapter scoreAdapter;
     private List<Score> scoreList;
@@ -50,7 +50,7 @@ public class ViewScoresActivity extends AppCompatActivity {
         etSearch = findViewById(R.id.et_search);
         
         // Initialize managers
-        dbManager = new DatabaseManager(this);
+        mysqlManager = new MySQLManager(this);
         sessionManager = new SessionManager(this);
         
         // Check if user is logged in as student
@@ -102,32 +102,69 @@ public class ViewScoresActivity extends AppCompatActivity {
      * Đồng thời tính toán và hiển thị điểm trung bình
      */
     private void loadScores() {
-        try {
-            dbManager.open();
-            
-            // Get student by user ID
-            Student student = dbManager.getStudentByUserId(sessionManager.getUserId());
-            
-            if (student != null) {
-                // Get scores for this student
-                scoreList = dbManager.getScoresByStudentId(student.getId());
-                filteredScoreList = new ArrayList<>(scoreList);
-                
-                scoreAdapter = new ScoreAdapter(this, filteredScoreList, dbManager);
-                rvScoreList.setAdapter(scoreAdapter);
-                
-                // Calculate and display average score
-                double average = dbManager.calculateAverageScore(student.getId());
-                DecimalFormat df = new DecimalFormat("#.##");
-                tvAverageScore.setText(df.format(average));
-            } else {
-                Toast.makeText(this, "Không tìm thấy thông tin học sinh", Toast.LENGTH_SHORT).show();
+        mysqlManager.getStudentByUserId(sessionManager.getUserId(), new MySQLManager.StudentCallback() {
+            @Override
+            public void onSuccess(Student student) {
+                if (student != null) {
+                    mysqlManager.getScoresByStudentId(student.getId(), new MySQLManager.ScoresCallback() {
+                        @Override
+                        public void onSuccess(List<Score> scores) {
+                            runOnUiThread(() -> {
+                                scoreList = scores;
+                                filteredScoreList = new ArrayList<>(scoreList);
+                                
+                                scoreAdapter = new ScoreAdapter(ViewScoresActivity.this, filteredScoreList, mysqlManager);
+                                rvScoreList.setAdapter(scoreAdapter);
+                                
+                                // Calculate and display average score
+                                calculateAndDisplayAverage(student.getId());
+                            });
+                        }
+                        
+                        @Override
+                        public void onError(String error) {
+                            runOnUiThread(() -> {
+                                Toast.makeText(ViewScoresActivity.this, "Lỗi tải danh sách điểm: " + error, Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    });
+                } else {
+                    runOnUiThread(() -> {
+                        Toast.makeText(ViewScoresActivity.this, "Không tìm thấy thông tin học sinh", Toast.LENGTH_SHORT).show();
+                    });
+                }
             }
-        } catch (Exception e) {
-            Toast.makeText(this, "Lỗi tải danh sách điểm: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            dbManager.close();
-        }
+            
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(ViewScoresActivity.this, "Lỗi tải thông tin học sinh: " + error, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+    
+    /**
+     * Tính toán và hiển thị điểm trung bình
+     * @param studentId ID của học sinh
+     */
+    private void calculateAndDisplayAverage(int studentId) {
+        mysqlManager.calculateAverageScore(studentId, new MySQLManager.AverageScoreCallback() {
+            @Override
+            public void onSuccess(double average) {
+                runOnUiThread(() -> {
+                    DecimalFormat df = new DecimalFormat("#.##");
+                    tvAverageScore.setText(df.format(average));
+                });
+            }
+            
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(ViewScoresActivity.this, "Lỗi tính điểm trung bình: " + error, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
     
     /**

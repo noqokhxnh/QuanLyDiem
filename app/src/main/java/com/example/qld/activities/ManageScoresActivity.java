@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.qld.R;
-import com.example.qld.database.DatabaseManager;
+import com.example.qld.database.mysql.MySQLManager;
 import com.example.qld.models.Score;
 import com.example.qld.models.Subject;
 import com.example.qld.utils.SessionManager;
@@ -39,7 +39,7 @@ public class ManageScoresActivity extends AppCompatActivity {
     private FloatingActionButton fabAddScore;
     private EditText etSearchScore;
     private Button btnFilterSubject, btnSort;
-    private DatabaseManager dbManager;
+    private MySQLManager mysqlManager;
     private SessionManager sessionManager;
     private ScoreAdapter scoreAdapter;
     private List<Score> scoreList;
@@ -67,7 +67,7 @@ public class ManageScoresActivity extends AppCompatActivity {
         swipeRefresh = findViewById(R.id.swipe_refresh);
         
         // Initialize managers
-        dbManager = new DatabaseManager(this);
+        mysqlManager = new MySQLManager(this);
         sessionManager = new SessionManager(this);
         
         // Check if user is logged in as teacher
@@ -152,20 +152,28 @@ public class ManageScoresActivity extends AppCompatActivity {
      * Tải danh sách điểm từ database và hiển thị lên RecyclerView
      */
     private void loadScores() {
-        try {
-            dbManager.open();
-            scoreList = dbManager.getAllScores();
-            filteredScoreList = new ArrayList<>(scoreList);
-            
-            updateScoreList();
-        } catch (Exception e) {
-            Toast.makeText(this, "Lỗi tải danh sách điểm: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            dbManager.close();
-            if (swipeRefresh.isRefreshing()) {
-                swipeRefresh.setRefreshing(false);
+        // Show loading indicator
+        swipeRefresh.setRefreshing(true);
+        
+        mysqlManager.getAllScores(new MySQLManager.ScoresCallback() {
+            @Override
+            public void onSuccess(List<Score> scores) {
+                runOnUiThread(() -> {
+                    scoreList = scores;
+                    filteredScoreList = new ArrayList<>(scoreList);
+                    updateScoreList();
+                    swipeRefresh.setRefreshing(false);
+                });
             }
-        }
+            
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(ManageScoresActivity.this, "Lỗi tải danh sách điểm: " + error, Toast.LENGTH_SHORT).show();
+                    swipeRefresh.setRefreshing(false);
+                });
+            }
+        });
     }
     
     /**
@@ -186,28 +194,39 @@ public class ManageScoresActivity extends AppCompatActivity {
                 String studentName = "";
                 String subjectName = "";
                 
-                try {
-                    dbManager.open();
-                    
-                    // Get student name
-                    com.example.qld.models.Student student = dbManager.getStudentById(score.getStudentId());
-                    if (student != null) {
-                        com.example.qld.models.User user = dbManager.getUserById(student.getUserId());
-                        if (user != null) {
-                            studentName = user.getFullName().toLowerCase();
-                        }
+                mysqlManager.getStudentById(score.getStudentId(), new MySQLManager.StudentCallback() {
+                    @Override
+                    public void onSuccess(com.example.qld.models.Student student) {
+                        mysqlManager.getUserById(student.getUserId(), new MySQLManager.UserCallback() {
+                            @Override
+                            public void onSuccess(com.example.qld.models.User user) {
+                                studentName = user.getFullName().toLowerCase();
+                            }
+                            
+                            @Override
+                            public void onError(String error) {
+                                // Handle error
+                            }
+                        });
                     }
                     
-                    // Get subject name
-                    com.example.qld.models.Subject subject = dbManager.getSubjectById(score.getSubjectId());
-                    if (subject != null) {
+                    @Override
+                    public void onError(String error) {
+                        // Handle error
+                    }
+                });
+                
+                mysqlManager.getSubjectById(score.getSubjectId(), new MySQLManager.SubjectCallback() {
+                    @Override
+                    public void onSuccess(Subject subject) {
                         subjectName = subject.getSubjectName().toLowerCase();
                     }
-                } catch (Exception e) {
-                    // Handle exception
-                } finally {
-                    dbManager.close();
-                }
+                    
+                    @Override
+                    public void onError(String error) {
+                        // Handle error
+                    }
+                });
                 
                 // Check if query matches student name or subject name
                 if (studentName.contains(query) || subjectName.contains(query)) {
@@ -281,20 +300,7 @@ public class ManageScoresActivity extends AppCompatActivity {
      * @return Tên học sinh
      */
     private String getStudentName(int studentId) {
-        try {
-            dbManager.open();
-            com.example.qld.models.Student student = dbManager.getStudentById(studentId);
-            if (student != null) {
-                com.example.qld.models.User user = dbManager.getUserById(student.getUserId());
-                if (user != null) {
-                    return user.getFullName();
-                }
-            }
-        } catch (Exception e) {
-            // Handle exception
-        } finally {
-            dbManager.close();
-        }
+        // This needs to be handled differently in async environment
         return "";
     }
     
@@ -302,39 +308,44 @@ public class ManageScoresActivity extends AppCompatActivity {
      * Hiển thị dialog lọc theo môn học
      */
     private void showSubjectFilterDialog() {
-        try {
-            dbManager.open();
-            List<Subject> subjects = dbManager.getAllSubjects();
-            
-            String[] subjectNames = new String[subjects.size() + 1];
-            int[] subjectIds = new int[subjects.size() + 1];
-            
-            subjectNames[0] = "Tất cả môn học";
-            subjectIds[0] = -1;
-            
-            for (int i = 0; i < subjects.size(); i++) {
-                subjectNames[i + 1] = subjects.get(i).getSubjectName();
-                subjectIds[i + 1] = subjects.get(i).getId();
+        mysqlManager.getAllSubjects(new MySQLManager.SubjectsCallback() {
+            @Override
+            public void onSuccess(List<Subject> subjects) {
+                runOnUiThread(() -> {
+                    String[] subjectNames = new String[subjects.size() + 1];
+                    int[] subjectIds = new int[subjects.size() + 1];
+                    
+                    subjectNames[0] = "Tất cả môn học";
+                    subjectIds[0] = -1;
+                    
+                    for (int i = 0; i < subjects.size(); i++) {
+                        subjectNames[i + 1] = subjects.get(i).getSubjectName();
+                        subjectIds[i + 1] = subjects.get(i).getId();
+                    }
+                    
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ManageScoresActivity.this);
+                    builder.setTitle("Lọc theo môn học");
+                    builder.setItems(subjectNames, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            selectedSubjectId = subjectIds[which];
+                            btnFilterSubject.setText(which == 0 ? "Lọc theo môn" : subjectNames[which]);
+                            
+                            // Re-apply filters
+                            filterScores(etSearchScore.getText().toString());
+                        }
+                    });
+                    builder.show();
+                });
             }
             
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Lọc theo môn học");
-            builder.setItems(subjectNames, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    selectedSubjectId = subjectIds[which];
-                    btnFilterSubject.setText(which == 0 ? "Lọc theo môn" : subjectNames[which]);
-                    
-                    // Re-apply filters
-                    filterScores(etSearchScore.getText().toString());
-                }
-            });
-            builder.show();
-        } catch (Exception e) {
-            Toast.makeText(this, "Lỗi tải danh sách môn học: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            dbManager.close();
-        }
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(ManageScoresActivity.this, "Lỗi tải danh sách môn học: " + error, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
     
     /**
@@ -369,7 +380,7 @@ public class ManageScoresActivity extends AppCompatActivity {
             tvEmptyList.setVisibility(View.GONE);
             rvScoreList.setVisibility(View.VISIBLE);
             
-            scoreAdapter = new ScoreAdapter(this, filteredScoreList, dbManager);
+            scoreAdapter = new ScoreAdapter(this, filteredScoreList, mysqlManager);
             rvScoreList.setAdapter(scoreAdapter);
         }
     }

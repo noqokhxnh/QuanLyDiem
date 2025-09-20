@@ -13,7 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.qld.R;
-import com.example.qld.database.DatabaseManager;
+import com.example.qld.database.mysql.MySQLManager;
 import com.example.qld.models.Score;
 import com.example.qld.models.Student;
 import com.example.qld.models.Subject;
@@ -32,7 +32,7 @@ public class AddScoreActivity extends AppCompatActivity {
     private Spinner spStudents, spSubjects, spScoreTypes;
     private EditText etScoreValue;
     private Button btnAddScore, btnCancel;
-    private DatabaseManager dbManager;
+    private MySQLManager mysqlManager;
     private SessionManager sessionManager;
     private ProgressDialogUtil progressDialogUtil;
     private List<Student> studentList;
@@ -58,7 +58,7 @@ public class AddScoreActivity extends AppCompatActivity {
         btnCancel = findViewById(R.id.btn_cancel);
         
         // Initialize managers
-        dbManager = new DatabaseManager(this);
+        mysqlManager = new MySQLManager(this);
         sessionManager = new SessionManager(this);
         progressDialogUtil = new ProgressDialogUtil();
         
@@ -96,57 +96,76 @@ public class AddScoreActivity extends AppCompatActivity {
      * Tải danh sách học sinh từ database
      */
     private void loadStudents() {
-        try {
-            dbManager.open();
-            studentList = dbManager.getAllStudents();
-            
-            // Create adapter for students spinner
-            String[] studentNames = new String[studentList.size()];
-            for (int i = 0; i < studentList.size(); i++) {
-                // Get student's full name from user table
-                Student student = studentList.get(i);
-                com.example.qld.models.User user = dbManager.getUserById(student.getUserId());
-                if (user != null) {
-                    studentNames[i] = user.getFullName();
-                } else {
-                    studentNames[i] = "Unknown Student";
-                }
+        mysqlManager.getAllStudents(new MySQLManager.StudentsCallback() {
+            @Override
+            public void onSuccess(List<Student> students) {
+                runOnUiThread(() -> {
+                    studentList = students;
+                    
+                    // Create adapter for students spinner
+                    String[] studentNames = new String[studentList.size()];
+                    for (int i = 0; i < studentList.size(); i++) {
+                        // Get student's full name from user table
+                        Student student = studentList.get(i);
+                        mysqlManager.getUserById(student.getUserId(), new MySQLManager.UserCallback() {
+                            @Override
+                            public void onSuccess(com.example.qld.models.User user) {
+                                studentNames[i] = user.getFullName();
+                            }
+                            
+                            @Override
+                            public void onError(String error) {
+                                studentNames[i] = "Unknown Student";
+                            }
+                        });
+                    }
+                    
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(AddScoreActivity.this, 
+                        android.R.layout.simple_spinner_item, studentNames);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spStudents.setAdapter(adapter);
+                });
             }
             
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, 
-                android.R.layout.simple_spinner_item, studentNames);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spStudents.setAdapter(adapter);
-        } catch (Exception e) {
-            Toast.makeText(this, "Lỗi tải danh sách học sinh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            dbManager.close();
-        }
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(AddScoreActivity.this, "Lỗi tải danh sách học sinh: " + error, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
     
     /**
      * Tải danh sách môn học từ database
      */
     private void loadSubjects() {
-        try {
-            dbManager.open();
-            subjectList = dbManager.getAllSubjects();
-            
-            // Create adapter for subjects spinner
-            String[] subjectNames = new String[subjectList.size()];
-            for (int i = 0; i < subjectList.size(); i++) {
-                subjectNames[i] = subjectList.get(i).getSubjectName();
+        mysqlManager.getAllSubjects(new MySQLManager.SubjectsCallback() {
+            @Override
+            public void onSuccess(List<Subject> subjects) {
+                runOnUiThread(() -> {
+                    subjectList = subjects;
+                    
+                    // Create adapter for subjects spinner
+                    String[] subjectNames = new String[subjectList.size()];
+                    for (int i = 0; i < subjectList.size(); i++) {
+                        subjectNames[i] = subjectList.get(i).getSubjectName();
+                    }
+                    
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(AddScoreActivity.this, 
+                        android.R.layout.simple_spinner_item, subjectNames);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spSubjects.setAdapter(adapter);
+                });
             }
             
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, 
-                android.R.layout.simple_spinner_item, subjectNames);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spSubjects.setAdapter(adapter);
-        } catch (Exception e) {
-            Toast.makeText(this, "Lỗi tải danh sách môn học: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            dbManager.close();
-        }
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(AddScoreActivity.this, "Lỗi tải danh sách môn học: " + error, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
     
     /**
@@ -210,42 +229,28 @@ public class AddScoreActivity extends AppCompatActivity {
             // Show progress dialog
             progressDialogUtil.showProgressDialog(this, "Đang thêm điểm...");
             
-            new Thread(new Runnable() {
+            mysqlManager.addScore(score, new MySQLManager.ScoreCallback() {
                 @Override
-                public void run() {
-                    try {
-                        dbManager.open();
-                        long result = dbManager.addScore(score);
+                public void onSuccess(Score score) {
+                    runOnUiThread(() -> {
+                        progressDialogUtil.hideProgressDialog();
+                        // Send notification to student
+                        sendScoreNotification(selectedStudent.getUserId(), selectedSubject.getSubjectName(), scoreValue);
                         
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressDialogUtil.hideProgressDialog();
-                                if (result != -1) {
-                                    // Send notification to student
-                                    sendScoreNotification(selectedStudent.getUserId(), selectedSubject.getSubjectName(), scoreValue);
-                                    
-                                    Toast.makeText(AddScoreActivity.this, "Thêm điểm thành công", Toast.LENGTH_SHORT).show();
-                                    setResult(RESULT_OK);
-                                    finish();
-                                } else {
-                                    Toast.makeText(AddScoreActivity.this, "Lỗi khi thêm điểm", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                    } catch (Exception e) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressDialogUtil.hideProgressDialog();
-                                Toast.makeText(AddScoreActivity.this, "Lỗi thêm điểm: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    } finally {
-                        dbManager.close();
-                    }
+                        Toast.makeText(AddScoreActivity.this, "Thêm điểm thành công", Toast.LENGTH_SHORT).show();
+                        setResult(RESULT_OK);
+                        finish();
+                    });
                 }
-            }).start();
+                
+                @Override
+                public void onError(String error) {
+                    runOnUiThread(() -> {
+                        progressDialogUtil.hideProgressDialog();
+                        Toast.makeText(AddScoreActivity.this, "Lỗi khi thêm điểm: " + error, Toast.LENGTH_SHORT).show();
+                    });
+                }
+            });
         } catch (NumberFormatException e) {
             Toast.makeText(this, "Điểm không hợp lệ", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
@@ -257,19 +262,20 @@ public class AddScoreActivity extends AppCompatActivity {
      * Gửi thông báo điểm mới cho học sinh
      */
     private void sendScoreNotification(int studentUserId, String subjectName, double scoreValue) {
-        try {
-            dbManager.open();
-            com.example.qld.models.User studentUser = dbManager.getUserById(studentUserId);
-            
-            if (studentUser != null) {
-                String title = "Điểm mới đã được nhập";
-                String message = "Bạn có điểm mới môn " + subjectName + ": " + scoreValue;
-                NotificationUtil.showScoreNotification(this, title, message);
+        mysqlManager.getUserById(studentUserId, new MySQLManager.UserCallback() {
+            @Override
+            public void onSuccess(com.example.qld.models.User studentUser) {
+                runOnUiThread(() -> {
+                    String title = "Điểm mới đã được nhập";
+                    String message = "Bạn có điểm mới môn " + subjectName + ": " + scoreValue;
+                    NotificationUtil.showScoreNotification(AddScoreActivity.this, title, message);
+                });
             }
-        } catch (Exception e) {
-            // Handle exception silently
-        } finally {
-            dbManager.close();
-        }
+            
+            @Override
+            public void onError(String error) {
+                // Handle error silently
+            }
+        });
     }
 }

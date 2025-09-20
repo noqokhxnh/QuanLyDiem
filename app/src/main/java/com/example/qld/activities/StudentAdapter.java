@@ -2,7 +2,6 @@ package com.example.qld.activities;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.qld.R;
-import com.example.qld.database.DatabaseManager;
+import com.example.qld.database.mysql.MySQLManager;
 import com.example.qld.models.Student;
 import com.example.qld.models.User;
 
@@ -28,18 +27,18 @@ import java.util.List;
 public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.ViewHolder> {
     private Context context;
     private List<Student> studentList;
-    private DatabaseManager dbManager;
+    private MySQLManager mysqlManager;
     
     /**
      * Constructor cho StudentAdapter
      * @param context context của activity
      * @param studentList danh sách học sinh cần hiển thị
-     * @param dbManager database manager để truy xuất thông tin
+     * @param mysqlManager mysql manager để truy xuất thông tin
      */
-    public StudentAdapter(Context context, List<Student> studentList, DatabaseManager dbManager) {
+    public StudentAdapter(Context context, List<Student> studentList, MySQLManager mysqlManager) {
         this.context = context;
         this.studentList = studentList;
-        this.dbManager = dbManager;
+        this.mysqlManager = mysqlManager;
     }
     
     @NonNull
@@ -56,20 +55,31 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.ViewHold
         Student student = studentList.get(position);
         
         // Hiển thị thông tin học sinh
-        try {
-            dbManager.open();
-            User user = dbManager.getUserById(student.getUserId());
-            
-            if (user != null) {
-                holder.tvStudentName.setText(user.getFullName());
-                holder.tvStudentCode.setText("Mã số: " + student.getStudentCode());
-                holder.tvClassName.setText("Lớp: " + student.getClassName());
+        mysqlManager.getStudentById(student.getId(), new MySQLManager.StudentCallback() {
+            @Override
+            public void onSuccess(Student student) {
+                mysqlManager.getUserById(student.getUserId(), new MySQLManager.UserCallback() {
+                    @Override
+                    public void onSuccess(User user) {
+                        if (user != null) {
+                            holder.tvStudentName.setText(user.getFullName());
+                            holder.tvStudentCode.setText("Mã số: " + student.getStudentCode());
+                            holder.tvClassName.setText("Lớp: " + student.getClassName());
+                        }
+                    }
+                    
+                    @Override
+                    public void onError(String error) {
+                        Toast.makeText(context, "Lỗi tải thông tin học sinh: " + error, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
-        } catch (Exception e) {
-            Toast.makeText(context, "Lỗi tải thông tin học sinh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            dbManager.close();
-        }
+            
+            @Override
+            public void onError(String error) {
+                Toast.makeText(context, "Lỗi tải thông tin học sinh: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
         
         // Set click listener cho nút chỉnh sửa
         holder.btnEdit.setOnClickListener(new View.OnClickListener() {
@@ -121,29 +131,31 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.ViewHold
      * @param student học sinh cần xóa
      */
     private void deleteStudent(Student student) {
-        try {
-            dbManager.open();
-            
-            // Delete student record
-            int result = dbManager.deleteStudent(student.getId());
-            
-            if (result > 0) {
+        mysqlManager.deleteStudent(student.getId(), new MySQLManager.StudentCallback() {
+            @Override
+            public void onSuccess(Student student) {
                 // Also delete the user account
-                dbManager.deleteUser(student.getUserId());
-                
-                // Remove from list and notify adapter
-                studentList.remove(student);
-                notifyDataSetChanged();
-                
-                Toast.makeText(context, "Xóa học sinh thành công", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, "Lỗi khi xóa học sinh", Toast.LENGTH_SHORT).show();
+                mysqlManager.deleteUser(student.getUserId(), new MySQLManager.UserCallback() {
+                    @Override
+                    public void onSuccess(User user) {
+                        // Remove from list and notify adapter
+                        studentList.remove(student);
+                        notifyDataSetChanged();
+                        Toast.makeText(context, "Xóa học sinh thành công", Toast.LENGTH_SHORT).show();
+                    }
+                    
+                    @Override
+                    public void onError(String error) {
+                        Toast.makeText(context, "Lỗi khi xóa tài khoản người dùng: " + error, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
-        } catch (Exception e) {
-            Toast.makeText(context, "Lỗi xóa học sinh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            dbManager.close();
-        }
+            
+            @Override
+            public void onError(String error) {
+                Toast.makeText(context, "Lỗi xóa học sinh: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
     
     @Override

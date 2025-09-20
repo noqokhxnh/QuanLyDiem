@@ -14,7 +14,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.qld.R;
-import com.example.qld.database.DatabaseManager;
+import com.example.qld.database.mysql.MySQLManager;
 import com.example.qld.models.Score;
 import com.example.qld.models.Student;
 import com.example.qld.models.Subject;
@@ -29,18 +29,18 @@ import java.util.List;
 public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> {
     private Context context;
     private List<Score> scoreList;
-    private DatabaseManager dbManager;
+    private MySQLManager mysqlManager;
     
     /**
      * Constructor cho ScoreAdapter
      * @param context context của activity
      * @param scoreList danh sách điểm cần hiển thị
-     * @param dbManager database manager để truy xuất thông tin
+     * @param mysqlManager mysql manager để truy xuất thông tin
      */
-    public ScoreAdapter(Context context, List<Score> scoreList, DatabaseManager dbManager) {
+    public ScoreAdapter(Context context, List<Score> scoreList, MySQLManager mysqlManager) {
         this.context = context;
         this.scoreList = scoreList;
-        this.dbManager = dbManager;
+        this.mysqlManager = mysqlManager;
     }
     
     @NonNull
@@ -57,53 +57,73 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
         Score score = scoreList.get(position);
         
         // Hiển thị thông tin điểm
-        try {
-            dbManager.open();
-            Student student = dbManager.getStudentById(score.getStudentId());
-            Subject subject = dbManager.getSubjectById(score.getSubjectId());
-            User user = dbManager.getUserById(score.getTeacherId());
-            
-            if (student != null) {
-                User studentUser = dbManager.getUserById(student.getUserId());
-                if (studentUser != null) {
-                    holder.tvStudentName.setText(studentUser.getFullName());
-                }
+        mysqlManager.getStudentById(score.getStudentId(), new MySQLManager.StudentCallback() {
+            @Override
+            public void onSuccess(Student student) {
+                mysqlManager.getUserById(student.getUserId(), new MySQLManager.UserCallback() {
+                    @Override
+                    public void onSuccess(User studentUser) {
+                        holder.tvStudentName.setText(studentUser.getFullName());
+                    }
+                    
+                    @Override
+                    public void onError(String error) {
+                        Toast.makeText(context, "Lỗi tải thông tin học sinh: " + error, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
             
-            if (subject != null) {
+            @Override
+            public void onError(String error) {
+                Toast.makeText(context, "Lỗi tải thông tin học sinh: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+        
+        mysqlManager.getSubjectById(score.getSubjectId(), new MySQLManager.SubjectCallback() {
+            @Override
+            public void onSuccess(Subject subject) {
                 holder.tvSubjectName.setText(subject.getSubjectName());
             }
             
-            // Hiển thị loại điểm bằng tiếng Việt
-            String scoreTypeDisplay = "";
-            switch (score.getScoreType()) {
-                case "mieng":
-                    scoreTypeDisplay = "Điểm miệng";
-                    break;
-                case "15phut":
-                    scoreTypeDisplay = "Điểm 15 phút";
-                    break;
-                case "1tiet":
-                    scoreTypeDisplay = "Điểm 1 tiết";
-                    break;
-                case "hocky":
-                    scoreTypeDisplay = "Điểm học kỳ";
-                    break;
-                default:
-                    scoreTypeDisplay = score.getScoreType();
+            @Override
+            public void onError(String error) {
+                Toast.makeText(context, "Lỗi tải thông tin môn học: " + error, Toast.LENGTH_SHORT).show();
             }
-            
-            holder.tvScoreType.setText("Loại: " + scoreTypeDisplay);
-            holder.tvScoreValue.setText("Điểm: " + String.valueOf(score.getScore()));
-            
-            if (user != null) {
+        });
+        
+        mysqlManager.getUserById(score.getTeacherId(), new MySQLManager.UserCallback() {
+            @Override
+            public void onSuccess(User user) {
                 holder.tvTeacherName.setText("GV: " + user.getFullName());
             }
-        } catch (Exception e) {
-            Toast.makeText(context, "Lỗi tải thông tin điểm: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            dbManager.close();
+            
+            @Override
+            public void onError(String error) {
+                Toast.makeText(context, "Lỗi tải thông tin giáo viên: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+        
+        // Hiển thị loại điểm bằng tiếng Việt
+        String scoreTypeDisplay = "";
+        switch (score.getScoreType()) {
+            case "mieng":
+                scoreTypeDisplay = "Điểm miệng";
+                break;
+            case "15phut":
+                scoreTypeDisplay = "Điểm 15 phút";
+                break;
+            case "1tiet":
+                scoreTypeDisplay = "Điểm 1 tiết";
+                break;
+            case "hocky":
+                scoreTypeDisplay = "Điểm học kỳ";
+                break;
+            default:
+                scoreTypeDisplay = score.getScoreType();
         }
+        
+        holder.tvScoreType.setText("Loại: " + scoreTypeDisplay);
+        holder.tvScoreValue.setText("Điểm: " + String.valueOf(score.getScore()));
         
         // Thiết lập sự kiện click cho nút chỉnh sửa
         holder.btnEdit.setOnClickListener(new View.OnClickListener() {
@@ -155,26 +175,20 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
      * @param score điểm cần xóa
      */
     private void deleteScore(Score score) {
-        try {
-            dbManager.open();
-            
-            // Xóa bản ghi điểm
-            int result = dbManager.deleteScore(score.getId());
-            
-            if (result > 0) {
+        mysqlManager.deleteScore(score.getId(), new MySQLManager.ScoreCallback() {
+            @Override
+            public void onSuccess(Score score) {
                 // Xóa khỏi danh sách và thông báo cho adapter
                 scoreList.remove(score);
                 notifyDataSetChanged();
-                
                 Toast.makeText(context, "Xóa điểm thành công", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, "Lỗi khi xóa điểm", Toast.LENGTH_SHORT).show();
             }
-        } catch (Exception e) {
-            Toast.makeText(context, "Lỗi xóa điểm: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            dbManager.close();
-        }
+            
+            @Override
+            public void onError(String error) {
+                Toast.makeText(context, "Lỗi xóa điểm: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
     
     @Override

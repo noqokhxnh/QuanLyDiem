@@ -11,7 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.qld.R;
-import com.example.qld.database.DatabaseManager;
+import com.example.qld.database.mysql.MySQLManager;
 import com.example.qld.models.Student;
 import com.example.qld.models.User;
 import com.example.qld.utils.SessionManager;
@@ -25,7 +25,7 @@ import java.util.Calendar;
 public class RegisterStudentActivity extends AppCompatActivity {
     private EditText etFullName, etUsername, etPassword, etStudentCode, etClassName, etBirthDate;
     private Button btnSelectDate, btnRegisterStudent, btnCancel;
-    private DatabaseManager dbManager;
+    private MySQLManager mysqlManager;
     private SessionManager sessionManager;
     private int selectedYear, selectedMonth, selectedDay;
     
@@ -46,7 +46,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
         btnCancel = findViewById(R.id.btn_cancel);
         
         // Initialize managers
-        dbManager = new DatabaseManager(this);
+        mysqlManager = new MySQLManager(this);
         sessionManager = new SessionManager(this);
         
         // Check if user is logged in as teacher
@@ -139,41 +139,70 @@ public class RegisterStudentActivity extends AppCompatActivity {
             return;
         }
         
-        try {
-            dbManager.open();
-            
-            // Check if username already exists
-            User existingUser = dbManager.getUserByUsername(username);
-            if (existingUser != null) {
-                Toast.makeText(this, "Tên đăng nhập đã tồn tại", Toast.LENGTH_SHORT).show();
-                return;
+        // Check if username already exists
+        mysqlManager.getUserByUsername(username, new MySQLManager.UserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                runOnUiThread(() -> {
+                    if (user != null) {
+                        Toast.makeText(RegisterStudentActivity.this, "Tên đăng nhập đã tồn tại", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Add user first (student role = 0)
+                        User newUser = new User(username, password, 0, fullName); // role 0 = student
+                        mysqlManager.addUser(newUser, new MySQLManager.UserCallback() {
+                            @Override
+                            public void onSuccess(User user) {
+                                // Add student record
+                                Student student = new Student(user.getId(), studentCode, className, birthDate);
+                                mysqlManager.addStudent(student, new MySQLManager.StudentCallback() {
+                                    @Override
+                                    public void onSuccess(Student student) {
+                                        runOnUiThread(() -> {
+                                            Toast.makeText(RegisterStudentActivity.this, "Đăng ký học sinh thành công", Toast.LENGTH_SHORT).show();
+                                            setResult(RESULT_OK);
+                                            finish();
+                                        });
+                                    }
+                                    
+                                    @Override
+                                    public void onError(String error) {
+                                        // Rollback user creation if student creation fails
+                                        mysqlManager.deleteUser(user.getId(), new MySQLManager.UserCallback() {
+                                            @Override
+                                            public void onSuccess(User user) {
+                                                // User deleted
+                                            }
+                                            
+                                            @Override
+                                            public void onError(String error) {
+                                                // Error deleting user
+                                            }
+                                        });
+                                        
+                                        runOnUiThread(() -> {
+                                            Toast.makeText(RegisterStudentActivity.this, "Lỗi khi tạo thông tin học sinh: " + error, Toast.LENGTH_SHORT).show();
+                                        });
+                                    }
+                                });
+                            }
+                            
+                            @Override
+                            public void onError(String error) {
+                                runOnUiThread(() -> {
+                                    Toast.makeText(RegisterStudentActivity.this, "Lỗi khi tạo tài khoản người dùng: " + error, Toast.LENGTH_SHORT).show();
+                                });
+                            }
+                        });
+                    }
+                });
             }
             
-            // Add user first (student role = 0)
-            User user = new User(username, password, 0, fullName); // role 0 = student
-            long userId = dbManager.addUser(user);
-            
-            if (userId != -1) {
-                // Add student record
-                Student student = new Student((int) userId, studentCode, className, birthDate);
-                long studentId = dbManager.addStudent(student);
-                
-                if (studentId != -1) {
-                    Toast.makeText(this, "Đăng ký học sinh thành công", Toast.LENGTH_SHORT).show();
-                    setResult(RESULT_OK);
-                    finish();
-                } else {
-                    // Rollback user creation if student creation fails
-                    dbManager.deleteUser((int) userId);
-                    Toast.makeText(this, "Lỗi khi tạo thông tin học sinh", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(this, "Lỗi khi tạo tài khoản người dùng", Toast.LENGTH_SHORT).show();
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(RegisterStudentActivity.this, "Lỗi kiểm tra tên đăng nhập: " + error, Toast.LENGTH_SHORT).show();
+                });
             }
-        } catch (Exception e) {
-            Toast.makeText(this, "Lỗi đăng ký học sinh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            dbManager.close();
-        }
+        });
     }
 }

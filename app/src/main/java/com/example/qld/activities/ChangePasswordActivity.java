@@ -10,7 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.qld.R;
-import com.example.qld.database.DatabaseManager;
+import com.example.qld.database.mysql.MySQLManager;
 import com.example.qld.models.User;
 import com.example.qld.utils.SessionManager;
 
@@ -21,7 +21,7 @@ import com.example.qld.utils.SessionManager;
 public class ChangePasswordActivity extends AppCompatActivity {
     private EditText etCurrentPassword, etNewPassword, etConfirmPassword;
     private Button btnChangePassword, btnCancel;
-    private DatabaseManager dbManager;
+    private MySQLManager mysqlManager;
     private SessionManager sessionManager;
     private User currentUser;
     
@@ -38,7 +38,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         btnCancel = findViewById(R.id.btn_cancel);
         
         // Initialize managers
-        dbManager = new DatabaseManager(this);
+        mysqlManager = new MySQLManager(this);
         sessionManager = new SessionManager(this);
         
         // Check if user is logged in
@@ -73,14 +73,21 @@ public class ChangePasswordActivity extends AppCompatActivity {
      * Tải thông tin người dùng hiện tại từ database
      */
     private void loadCurrentUser() {
-        try {
-            dbManager.open();
-            currentUser = dbManager.getUserById(sessionManager.getUserId());
-        } catch (Exception e) {
-            Toast.makeText(this, "Lỗi tải thông tin người dùng: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            dbManager.close();
-        }
+        mysqlManager.getUserById(sessionManager.getUserId(), new MySQLManager.UserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                runOnUiThread(() -> {
+                    currentUser = user;
+                });
+            }
+            
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(ChangePasswordActivity.this, "Lỗi tải thông tin người dùng: " + error, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
     
     /**
@@ -116,31 +123,30 @@ public class ChangePasswordActivity extends AppCompatActivity {
         }
         
         // Update password
-        try {
-            dbManager.open();
-            
-            // Create updated user object
-            User updatedUser = new User();
-            updatedUser.setId(currentUser.getId());
-            updatedUser.setUsername(currentUser.getUsername());
-            updatedUser.setPassword(newPassword); // New password
-            updatedUser.setRole(currentUser.getRole());
-            updatedUser.setFullName(currentUser.getFullName());
-            updatedUser.setCreatedDate(currentUser.getCreatedDate());
-            
-            // Update user in database
-            int result = dbManager.updateUser(updatedUser);
-            
-            if (result > 0) {
-                Toast.makeText(this, "Thay đổi mật khẩu thành công", Toast.LENGTH_SHORT).show();
-                finish();
-            } else {
-                Toast.makeText(this, "Lỗi khi thay đổi mật khẩu", Toast.LENGTH_SHORT).show();
+        // Create updated user object
+        User updatedUser = new User();
+        updatedUser.setId(currentUser.getId());
+        updatedUser.setUsername(currentUser.getUsername());
+        updatedUser.setPassword(newPassword); // New password
+        updatedUser.setRole(currentUser.getRole());
+        updatedUser.setFullName(currentUser.getFullName());
+        updatedUser.setCreatedDate(currentUser.getCreatedDate());
+        
+        mysqlManager.updateUser(updatedUser, new MySQLManager.UserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                runOnUiThread(() -> {
+                    Toast.makeText(ChangePasswordActivity.this, "Thay đổi mật khẩu thành công", Toast.LENGTH_SHORT).show();
+                    finish();
+                });
             }
-        } catch (Exception e) {
-            Toast.makeText(this, "Lỗi thay đổi mật khẩu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            dbManager.close();
-        }
+            
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(ChangePasswordActivity.this, "Lỗi khi thay đổi mật khẩu: " + error, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 }

@@ -11,7 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.qld.R;
-import com.example.qld.database.DatabaseManager;
+import com.example.qld.database.mysql.MySQLManager;
 import com.example.qld.models.Student;
 import com.example.qld.models.User;
 import com.example.qld.utils.ProgressDialogUtil;
@@ -26,7 +26,7 @@ import java.util.Calendar;
 public class AddStudentActivity extends AppCompatActivity {
     private EditText etFullName, etUsername, etPassword, etStudentCode, etClassName, etBirthDate;
     private Button btnSelectDate, btnAddStudent, btnCancel;
-    private DatabaseManager dbManager;
+    private MySQLManager mysqlManager;
     private SessionManager sessionManager;
     private ProgressDialogUtil progressDialogUtil;
     private int selectedYear, selectedMonth, selectedDay;
@@ -36,7 +36,7 @@ public class AddStudentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_student);
         
-        // Initialize views
+        // Khởi tạo các view
         etFullName = findViewById(R.id.et_full_name);
         etUsername = findViewById(R.id.et_username);
         etPassword = findViewById(R.id.et_password);
@@ -47,28 +47,28 @@ public class AddStudentActivity extends AppCompatActivity {
         btnAddStudent = findViewById(R.id.btn_add_student);
         btnCancel = findViewById(R.id.btn_cancel);
         
-        // Initialize managers
-        dbManager = new DatabaseManager(this);
+        // Khởi tạo các manager
+        mysqlManager = new MySQLManager(this);
         sessionManager = new SessionManager(this);
         progressDialogUtil = new ProgressDialogUtil();
         
-        // Check if user is logged in as teacher
+        // Kiểm tra xem người dùng đã đăng nhập chưa và có phải giáo viên không
         if (!sessionManager.isLoggedIn() || sessionManager.getUserRole() != 1) {
-            // Redirect to login if not logged in or not a teacher
+            // Chuyển hướng đến màn hình đăng nhập nếu chưa đăng nhập hoặc không phải giáo viên
             Intent intent = new Intent(AddStudentActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
             return;
         }
         
-        // Set current date as default
+        // Đặt ngày hiện tại làm mặc định
         Calendar calendar = Calendar.getInstance();
         selectedYear = calendar.get(Calendar.YEAR);
         selectedMonth = calendar.get(Calendar.MONTH);
         selectedDay = calendar.get(Calendar.DAY_OF_MONTH);
         updateDateDisplay();
         
-        // Set click listeners
+        // Thiết lập các sự kiện click
         btnSelectDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,71 +129,85 @@ public class AddStudentActivity extends AppCompatActivity {
         String className = etClassName.getText().toString().trim();
         String birthDate = etBirthDate.getText().toString().trim();
         
-        // Validate input
+        // Kiểm tra dữ liệu đầu vào
         if (fullName.isEmpty() || username.isEmpty() || password.isEmpty() || 
             studentCode.isEmpty() || className.isEmpty() || birthDate.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
             return;
         }
         
-        // Show progress dialog
+        // Hiển thị dialog tiến trình
         progressDialogUtil.showProgressDialog(this, "Đang thêm học sinh...");
         
-        new Thread(new Runnable() {
+        // Kiểm tra xem tên đăng nhập đã tồn tại chưa
+        mysqlManager.getUserByUsername(username, new MySQLManager.UserCallback() {
             @Override
-            public void run() {
-                try {
-                    dbManager.open();
-                    
-                    // Check if username already exists
-                    // This is a simplified check - in a real app you'd need a more robust solution
-                    // For now, we'll just try to add the user
-                    
-                    // Add user first
-                    User user = new User(username, password, 0, fullName); // role 0 = student
-                    long userId = dbManager.addUser(user);
-                    
-                    if (userId != -1) {
-                        // Add student record
-                        Student student = new Student((int) userId, studentCode, className, birthDate);
-                        long studentId = dbManager.addStudent(student);
-                        
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressDialogUtil.hideProgressDialog();
-                                if (studentId != -1) {
-                                    Toast.makeText(AddStudentActivity.this, "Thêm học sinh thành công", Toast.LENGTH_SHORT).show();
-                                    setResult(RESULT_OK);
-                                    finish();
-                                } else {
-                                    // Rollback user creation if student creation fails
-                                    // In a real app, you'd use transactions
-                                    Toast.makeText(AddStudentActivity.this, "Lỗi khi thêm thông tin học sinh", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                    } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressDialogUtil.hideProgressDialog();
-                                Toast.makeText(AddStudentActivity.this, "Tên đăng nhập đã tồn tại", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                } catch (Exception e) {
-                    runOnUiThread(new Runnable() {
+            public void onSuccess(User user) {
+                if (user != null) {
+                    runOnUiThread(() -> {
+                        progressDialogUtil.hideProgressDialog();
+                        Toast.makeText(AddStudentActivity.this, "Tên đăng nhập đã tồn tại", Toast.LENGTH_SHORT).show();
+                    });
+                } else {
+                    // Thêm người dùng trước
+                    User newUser = new User(username, password, 0, fullName); // role 0 = học sinh
+                    mysqlManager.addUser(newUser, new MySQLManager.UserCallback() {
                         @Override
-                        public void run() {
-                            progressDialogUtil.hideProgressDialog();
-                            Toast.makeText(AddStudentActivity.this, "Lỗi thêm học sinh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        public void onSuccess(User user) {
+                            // Thêm bản ghi học sinh
+                            Student student = new Student(user.getId(), studentCode, className, birthDate);
+                            mysqlManager.addStudent(student, new MySQLManager.StudentCallback() {
+                                @Override
+                                public void onSuccess(Student student) {
+                                    runOnUiThread(() -> {
+                                        progressDialogUtil.hideProgressDialog();
+                                        Toast.makeText(AddStudentActivity.this, "Thêm học sinh thành công", Toast.LENGTH_SHORT).show();
+                                        setResult(RESULT_OK);
+                                        finish();
+                                    });
+                                }
+                                
+                                @Override
+                                public void onError(String error) {
+                                    // Hoàn tác việc tạo người dùng nếu việc tạo học sinh thất bại
+                                    mysqlManager.deleteUser(user.getId(), new MySQLManager.UserCallback() {
+                                        @Override
+                                        public void onSuccess(User user) {
+                                            // User deleted
+                                        }
+                                        
+                                        @Override
+                                        public void onError(String error) {
+                                            // Error deleting user
+                                        }
+                                    });
+                                    
+                                    runOnUiThread(() -> {
+                                        progressDialogUtil.hideProgressDialog();
+                                        Toast.makeText(AddStudentActivity.this, "Lỗi khi thêm thông tin học sinh: " + error, Toast.LENGTH_SHORT).show();
+                                    });
+                                }
+                            });
+                        }
+                        
+                        @Override
+                        public void onError(String error) {
+                            runOnUiThread(() -> {
+                                progressDialogUtil.hideProgressDialog();
+                                Toast.makeText(AddStudentActivity.this, "Lỗi khi thêm người dùng: " + error, Toast.LENGTH_SHORT).show();
+                            });
                         }
                     });
-                } finally {
-                    dbManager.close();
                 }
             }
-        }).start();
+            
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    progressDialogUtil.hideProgressDialog();
+                    Toast.makeText(AddStudentActivity.this, "Lỗi kiểm tra tên đăng nhập: " + error, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 }

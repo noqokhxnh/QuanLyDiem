@@ -8,7 +8,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.qld.R;
-import com.example.qld.database.DatabaseManager;
+import com.example.qld.database.mysql.MySQLManager;
 import com.example.qld.models.Score;
 import com.example.qld.models.Student;
 import com.example.qld.models.Subject;
@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class StatisticsActivity extends AppCompatActivity {
     private TextView tvStatistics;
-    private DatabaseManager dbManager;
+    private MySQLManager mysqlManager;
     private SessionManager sessionManager;
     
     @Override
@@ -36,7 +36,7 @@ public class StatisticsActivity extends AppCompatActivity {
         tvStatistics = findViewById(R.id.tv_statistics);
         
         // Initialize managers
-        dbManager = new DatabaseManager(this);
+        mysqlManager = new MySQLManager(this);
         sessionManager = new SessionManager(this);
         
         // Check if user is logged in as teacher
@@ -68,77 +68,105 @@ public class StatisticsActivity extends AppCompatActivity {
      * Tải và hiển thị thống kê điểm
      */
     private void loadStatistics() {
-        try {
-            dbManager.open();
-            
-            // Get all students
-            List<Student> students = dbManager.getAllStudents();
-            
-            // Get all subjects
-            List<Subject> subjects = dbManager.getAllSubjects();
-            
-            // Get all scores
-            List<Score> scores = dbManager.getAllScores();
-            
-            // Build statistics string
-            StringBuilder stats = new StringBuilder();
-            stats.append("THỐNG KÊ ĐIỂM\n\n");
-            
-            // Overall statistics
-            stats.append("Tổng số học sinh: ").append(students.size()).append("\n");
-            stats.append("Tổng số môn học: ").append(subjects.size()).append("\n");
-            stats.append("Tổng số điểm đã nhập: ").append(scores.size()).append("\n\n");
-            
-            // Calculate class average
-            if (!scores.isEmpty()) {
-                double total = 0;
-                for (Score score : scores) {
-                    total += score.getScore();
-                }
-                double classAverage = total / scores.size();
-                DecimalFormat df = new DecimalFormat("#.##");
-                stats.append("Điểm trung bình toàn lớp: ").append(df.format(classAverage)).append("\n\n");
-            }
-            
-            // Subject averages
-            stats.append("ĐIỂM TRUNG BÌNH THEO MÔN:\n");
-            for (Subject subject : subjects) {
-                List<Score> subjectScores = getScoresBySubject(scores, subject.getId());
-                if (!subjectScores.isEmpty()) {
-                    double total = 0;
-                    for (Score score : subjectScores) {
-                        total += score.getScore();
+        mysqlManager.getAllStudents(new MySQLManager.StudentsCallback() {
+            @Override
+            public void onSuccess(List<Student> students) {
+                mysqlManager.getAllSubjects(new MySQLManager.SubjectsCallback() {
+                    @Override
+                    public void onSuccess(List<Subject> subjects) {
+                        mysqlManager.getAllScores(new MySQLManager.ScoresCallback() {
+                            @Override
+                            public void onSuccess(List<Score> scores) {
+                                // Build statistics string
+                                StringBuilder stats = new StringBuilder();
+                                stats.append("THỐNG KÊ ĐIỂM\n\n");
+                                
+                                // Overall statistics
+                                stats.append("Tổng số học sinh: ").append(students.size()).append("\n");
+                                stats.append("Tổng số môn học: ").append(subjects.size()).append("\n");
+                                stats.append("Tổng số điểm đã nhập: ").append(scores.size()).append("\n\n");
+                                
+                                // Calculate class average
+                                if (!scores.isEmpty()) {
+                                    double total = 0;
+                                    for (Score score : scores) {
+                                        total += score.getScore();
+                                    }
+                                    double classAverage = total / scores.size();
+                                    DecimalFormat df = new DecimalFormat("#.##");
+                                    stats.append("Điểm trung bình toàn lớp: ").append(df.format(classAverage)).append("\n\n");
+                                }
+                                
+                                // Subject averages
+                                stats.append("ĐIỂM TRUNG BÌNH THEO MÔN:\n");
+                                for (Subject subject : subjects) {
+                                    List<Score> subjectScores = getScoresBySubject(scores, subject.getId());
+                                    if (!subjectScores.isEmpty()) {
+                                        double total = 0;
+                                        for (Score score : subjectScores) {
+                                            total += score.getScore();
+                                        }
+                                        double subjectAverage = total / subjectScores.size();
+                                        DecimalFormat df = new DecimalFormat("#.##");
+                                        stats.append("- ").append(subject.getSubjectName()).append(": ").append(df.format(subjectAverage)).append("\n");
+                                    }
+                                }
+                                
+                                // Student averages
+                                stats.append("\nĐIỂM TRUNG BÌNH THEO HỌC SINH:\n");
+                                for (Student student : students) {
+                                    mysqlManager.getUserById(student.getUserId(), new MySQLManager.UserCallback() {
+                                        @Override
+                                        public void onSuccess(com.example.qld.models.User user) {
+                                            List<Score> studentScores = getScoresByStudent(scores, student.getId());
+                                            if (!studentScores.isEmpty()) {
+                                                double total = 0;
+                                                for (Score score : studentScores) {
+                                                    total += score.getScore();
+                                                }
+                                                double studentAverage = total / studentScores.size();
+                                                DecimalFormat df = new DecimalFormat("#.##");
+                                                stats.append("- ").append(user.getFullName()).append(": ").append(df.format(studentAverage)).append("\n");
+                                            }
+                                        }
+                                        
+                                        @Override
+                                        public void onError(String error) {
+                                            // Handle error
+                                        }
+                                    });
+                                }
+                                
+                                runOnUiThread(() -> {
+                                    tvStatistics.setText(stats.toString());
+                                });
+                            }
+                            
+                            @Override
+                            public void onError(String error) {
+                                runOnUiThread(() -> {
+                                    Toast.makeText(StatisticsActivity.this, "Lỗi tải danh sách điểm: " + error, Toast.LENGTH_SHORT).show();
+                                });
+                            }
+                        });
                     }
-                    double subjectAverage = total / subjectScores.size();
-                    DecimalFormat df = new DecimalFormat("#.##");
-                    stats.append("- ").append(subject.getSubjectName()).append(": ").append(df.format(subjectAverage)).append("\n");
-                }
-            }
-            
-            // Student averages
-            stats.append("\nĐIỂM TRUNG BÌNH THEO HỌC SINH:\n");
-            for (Student student : students) {
-                com.example.qld.models.User user = dbManager.getUserById(student.getUserId());
-                if (user != null) {
-                    List<Score> studentScores = getScoresByStudent(scores, student.getId());
-                    if (!studentScores.isEmpty()) {
-                        double total = 0;
-                        for (Score score : studentScores) {
-                            total += score.getScore();
-                        }
-                        double studentAverage = total / studentScores.size();
-                        DecimalFormat df = new DecimalFormat("#.##");
-                        stats.append("- ").append(user.getFullName()).append(": ").append(df.format(studentAverage)).append("\n");
+                    
+                    @Override
+                    public void onError(String error) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(StatisticsActivity.this, "Lỗi tải danh sách môn học: " + error, Toast.LENGTH_SHORT).show();
+                        });
                     }
-                }
+                });
             }
             
-            tvStatistics.setText(stats.toString());
-        } catch (Exception e) {
-            Toast.makeText(this, "Lỗi tải thống kê: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            dbManager.close();
-        }
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(StatisticsActivity.this, "Lỗi tải danh sách học sinh: " + error, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
     
     /**

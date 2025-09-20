@@ -10,7 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.qld.R;
-import com.example.qld.database.DatabaseManager;
+import com.example.qld.database.mysql.MySQLManager;
 import com.example.qld.models.User;
 import com.example.qld.utils.SessionManager;
 
@@ -21,7 +21,7 @@ import com.example.qld.utils.SessionManager;
 public class LoginActivity extends AppCompatActivity {
     private EditText etUsername, etPassword;
     private Button btnLogin, btnRegisterTeacher;
-    private DatabaseManager dbManager;
+    private MySQLManager mysqlManager;
     private SessionManager sessionManager;
     
     private static final int TEACHER_REGISTRATION_REQUEST = 1;
@@ -38,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         btnRegisterTeacher = findViewById(R.id.btn_register_teacher);
         
         // Initialize managers
-        dbManager = new DatabaseManager(this);
+        mysqlManager = new MySQLManager(this);
         sessionManager = new SessionManager(this);
         
         // Check if user is already logged in
@@ -78,26 +78,39 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
         
-        try {
-            dbManager.open();
-            
-            // Authenticate user
-            User user = dbManager.authenticateUser(username, password);
-            
-            if (user != null) {
-                // Login successful
-                sessionManager.createLoginSession(user.getId(), user.getUsername(), user.getFullName(), user.getRole());
-                Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
-                redirectToMainActivity();
-            } else {
-                // Login failed
-                Toast.makeText(this, "Tên đăng nhập hoặc mật khẩu không đúng", Toast.LENGTH_SHORT).show();
+        // Show loading indicator
+        btnLogin.setEnabled(false);
+        btnLogin.setText("Đang đăng nhập...");
+        
+        // Authenticate user
+        mysqlManager.authenticateUser(username, password, new MySQLManager.UserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                runOnUiThread(() -> {
+                    btnLogin.setEnabled(true);
+                    btnLogin.setText("Đăng nhập");
+                    
+                    if (user != null) {
+                        // Login successful
+                        sessionManager.createLoginSession(user.getId(), user.getUsername(), user.getFullName(), user.getRole());
+                        Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                        redirectToMainActivity();
+                    } else {
+                        // Login failed
+                        Toast.makeText(LoginActivity.this, "Tên đăng nhập hoặc mật khẩu không đúng", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
-        } catch (Exception e) {
-            Toast.makeText(this, "Lỗi đăng nhập: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            dbManager.close();
-        }
+            
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    btnLogin.setEnabled(true);
+                    btnLogin.setText("Đăng nhập");
+                    Toast.makeText(LoginActivity.this, "Lỗi đăng nhập: " + error, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
     
     /**

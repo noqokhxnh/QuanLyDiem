@@ -9,7 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.qld.R;
-import com.example.qld.database.DatabaseManager;
+import com.example.qld.database.mysql.MySQLManager;
 import com.example.qld.models.Score;
 import com.example.qld.models.Student;
 import com.example.qld.models.Subject;
@@ -29,7 +29,7 @@ import java.util.Locale;
  */
 public class ExportReportActivity extends AppCompatActivity {
     private Button btnExportReport;
-    private DatabaseManager dbManager;
+    private MySQLManager mysqlManager;
     private SessionManager sessionManager;
     
     @Override
@@ -41,7 +41,7 @@ public class ExportReportActivity extends AppCompatActivity {
         btnExportReport = findViewById(R.id.btn_export_report);
         
         // Khởi tạo các manager
-        dbManager = new DatabaseManager(this);
+        mysqlManager = new MySQLManager(this);
         sessionManager = new SessionManager(this);
         
         // Kiểm tra xem người dùng đã đăng nhập chưa và có phải giáo viên không
@@ -78,71 +78,136 @@ public class ExportReportActivity extends AppCompatActivity {
      * Xuất báo cáo điểm ra file
      */
     private void exportReport() {
-        try {
-            dbManager.open();
-            
-            // Lấy tất cả dữ liệu
-            List<Student> students = dbManager.getAllStudents();
-            List<Subject> subjects = dbManager.getAllSubjects();
-            List<Score> scores = dbManager.getAllScores();
-            
-            // Tạo nội dung báo cáo
-            StringBuilder report = new StringBuilder();
-            report.append("BÁO CÁO ĐIỂM\n");
-            report.append("Thời gian xuất: ").append(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date())).append("\n\n");
-            
-            // Danh sách học sinh
-            report.append("DANH SÁCH HỌC SINH:\n");
-            for (Student student : students) {
-                com.example.qld.models.User user = dbManager.getUserById(student.getUserId());
-                if (user != null) {
-                    report.append("- ").append(user.getFullName())
-                            .append(" (Mã: ").append(student.getStudentCode())
-                            .append(", Lớp: ").append(student.getClassName()).append(")\n");
-                }
+        // Lấy tất cả dữ liệu
+        mysqlManager.getAllStudents(new MySQLManager.StudentsCallback() {
+            @Override
+            public void onSuccess(List<Student> students) {
+                mysqlManager.getAllSubjects(new MySQLManager.SubjectsCallback() {
+                    @Override
+                    public void onSuccess(List<Subject> subjects) {
+                        mysqlManager.getAllScores(new MySQLManager.ScoresCallback() {
+                            @Override
+                            public void onSuccess(List<Score> scores) {
+                                // Tạo nội dung báo cáo
+                                StringBuilder report = new StringBuilder();
+                                report.append("BÁO CÁO ĐIỂM\n");
+                                report.append("Thời gian xuất: ").append(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date())).append("\n\n");
+                                
+                                // Danh sách học sinh
+                                report.append("DANH SÁCH HỌC SINH:\n");
+                                for (Student student : students) {
+                                    mysqlManager.getUserById(student.getUserId(), new MySQLManager.UserCallback() {
+                                        @Override
+                                        public void onSuccess(com.example.qld.models.User user) {
+                                            report.append("- ").append(user.getFullName())
+                                                    .append(" (Mã: ").append(student.getStudentCode())
+                                                    .append(", Lớp: ").append(student.getClassName()).append(")\n");
+                                        }
+                                        
+                                        @Override
+                                        public void onError(String error) {
+                                            // Handle error
+                                        }
+                                    });
+                                }
+                                
+                                report.append("\n");
+                                
+                                // Danh sách môn học
+                                report.append("DANH SÁCH MÔN HỌC:\n");
+                                for (Subject subject : subjects) {
+                                    report.append("- ").append(subject.getSubjectName())
+                                            .append(" (Mã: ").append(subject.getSubjectCode()).append(")\n");
+                                }
+                                
+                                report.append("\n");
+                                
+                                // Danh sách điểm
+                                report.append("DANH SÁCH ĐIỂM:\n");
+                                for (Score score : scores) {
+                                    mysqlManager.getStudentById(score.getStudentId(), new MySQLManager.StudentCallback() {
+                                        @Override
+                                        public void onSuccess(Student student) {
+                                            mysqlManager.getSubjectById(score.getSubjectId(), new MySQLManager.SubjectCallback() {
+                                                @Override
+                                                public void onSuccess(Subject subject) {
+                                                    mysqlManager.getUserById(student.getUserId(), new MySQLManager.UserCallback() {
+                                                        @Override
+                                                        public void onSuccess(com.example.qld.models.User user) {
+                                                            mysqlManager.getUserById(score.getTeacherId(), new MySQLManager.UserCallback() {
+                                                                @Override
+                                                                public void onSuccess(com.example.qld.models.User teacher) {
+                                                                    String studentName = (user != null) ? user.getFullName() : "Unknown";
+                                                                    String subjectName = (subject != null) ? subject.getSubjectName() : "Unknown";
+                                                                    String teacherName = (teacher != null) ? teacher.getFullName() : "Unknown";
+                                                                    String scoreType = getScoreTypeDisplay(score.getScoreType());
+                                                                    
+                                                                    report.append("- Học sinh: ").append(studentName)
+                                                                            .append(", Môn: ").append(subjectName)
+                                                                            .append(", Loại: ").append(scoreType)
+                                                                            .append(", Điểm: ").append(score.getScore())
+                                                                            .append(", Giáo viên: ").append(teacherName)
+                                                                            .append(", Ngày: ").append(score.getDateCreated()).append("\n");
+                                                                }
+                                                                
+                                                                @Override
+                                                                public void onError(String error) {
+                                                                    // Handle error
+                                                                }
+                                                            });
+                                                        }
+                                                        
+                                                        @Override
+                                                        public void onError(String error) {
+                                                            // Handle error
+                                                        }
+                                                    });
+                                                }
+                                                
+                                                @Override
+                                                public void onError(String error) {
+                                                    // Handle error
+                                                }
+                                            });
+                                        }
+                                        
+                                        @Override
+                                        public void onError(String error) {
+                                            // Handle error
+                                        }
+                                    });
+                                }
+                                
+                                // Lưu vào file
+                                String fileName = "report_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date()) + ".txt";
+                                saveToFile(report.toString(), fileName);
+                            }
+                            
+                            @Override
+                            public void onError(String error) {
+                                runOnUiThread(() -> {
+                                    Toast.makeText(ExportReportActivity.this, "Lỗi lấy danh sách điểm: " + error, Toast.LENGTH_SHORT).show();
+                                });
+                            }
+                        });
+                    }
+                    
+                    @Override
+                    public void onError(String error) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(ExportReportActivity.this, "Lỗi lấy danh sách môn học: " + error, Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                });
             }
             
-            report.append("\n");
-            
-            // Danh sách môn học
-            report.append("DANH SÁCH MÔN HỌC:\n");
-            for (Subject subject : subjects) {
-                report.append("- ").append(subject.getSubjectName())
-                        .append(" (Mã: ").append(subject.getSubjectCode()).append(")\n");
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(ExportReportActivity.this, "Lỗi lấy danh sách học sinh: " + error, Toast.LENGTH_SHORT).show();
+                });
             }
-            
-            report.append("\n");
-            
-            // Danh sách điểm
-            report.append("DANH SÁCH ĐIỂM:\n");
-            for (Score score : scores) {
-                Student student = dbManager.getStudentById(score.getStudentId());
-                Subject subject = dbManager.getSubjectById(score.getSubjectId());
-                com.example.qld.models.User user = dbManager.getUserById(student.getUserId());
-                com.example.qld.models.User teacher = dbManager.getUserById(score.getTeacherId());
-                
-                String studentName = (user != null) ? user.getFullName() : "Unknown";
-                String subjectName = (subject != null) ? subject.getSubjectName() : "Unknown";
-                String teacherName = (teacher != null) ? teacher.getFullName() : "Unknown";
-                String scoreType = getScoreTypeDisplay(score.getScoreType());
-                
-                report.append("- Học sinh: ").append(studentName)
-                        .append(", Môn: ").append(subjectName)
-                        .append(", Loại: ").append(scoreType)
-                        .append(", Điểm: ").append(score.getScore())
-                        .append(", Giáo viên: ").append(teacherName)
-                        .append(", Ngày: ").append(score.getDateCreated()).append("\n");
-            }
-            
-            // Lưu vào file
-            String fileName = "report_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date()) + ".txt";
-            saveToFile(report.toString(), fileName);
-            
-        } catch (Exception e) {
-            Toast.makeText(this, "Lỗi xuất báo cáo: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            dbManager.close();
-        }
+        });
     }
     
     /**
@@ -176,9 +241,13 @@ public class ExportReportActivity extends AppCompatActivity {
             writer.close();
             
             // Hiển thị thông báo thành công với vị trí file
-            Toast.makeText(this, "Xuất báo cáo thành công. File được lưu trong: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+            runOnUiThread(() -> {
+                Toast.makeText(this, "Xuất báo cáo thành công. File được lưu trong: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+            });
         } catch (IOException e) {
-            Toast.makeText(this, "Lỗi lưu file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            runOnUiThread(() -> {
+                Toast.makeText(this, "Lỗi lưu file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
         }
     }
 }
