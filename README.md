@@ -8,48 +8,73 @@
 - Tính năng dành cho giáo viên:
   - Quản lý học sinh (thêm, sửa, xóa)
   - Quản lý điểm (thêm, sửa, xóa)
+  - Thống kê điểm theo lớp/môn
+  - Xuất báo cáo điểm
 - Tính năng dành cho học sinh:
   - Xem điểm cá nhân
   - Xem điểm trung bình
-- Cơ sở dữ liệu SQLite để lưu trữ dữ liệu cục bộ
+- Cơ sở dữ liệu MySQL để lưu trữ dữ liệu trên server
 - Giao diện người dùng sạch sẽ, trực quan
 
 ## Công nghệ sử dụng
 - Java
-- Cơ sở dữ liệu SQLite
+- Cơ sở dữ liệu MySQL với REST API
 - Android SDK
+- Thư viện Volley để giao tiếp mạng
 - Thành phần Thiết kế Material
 
-## Điều kiện tiên quyết
-Trước khi bắt đầu, hãy đảm bảo bạn đã cài đặt:
-- Android Studio (khuyến nghị phiên bản mới nhất)
+## Yêu cầu hệ thống
+Trước khi bắt đầu, đảm bảo bạn đã cài đặt:
+- Android Studio (phiên bản mới nhất được khuyến nghị)
+- XAMPP (hoặc bất kỳ môi trường server nào có Apache và MySQL)
 - Git
-- Android SDK (API level 21 trở lên)
+- Android SDK (API level 21 hoặc cao hơn)
 
-## Cách sao chép dự án
+## Cài đặt và cấu hình
+
+### 1. Cài đặt XAMPP
+1. Tải XAMPP từ https://www.apachefriends.org/
+2. Cài đặt XAMPP theo hướng dẫn
+3. Khởi động Apache và MySQL services trong XAMPP Control Panel
+
+### 2. Cấu hình cơ sở dữ liệu MySQL
+1. Truy cập phpMyAdmin thông qua http://localhost/phpmyadmin
+2. Tạo database mới có tên "student_manager"
+3. Chạy script SQL từ file `student_manager_database.sql` để tạo các bảng và chèn dữ liệu mẫu
+
+### 3. Cấu hình REST API
+1. Sao chép tất cả các file trong thư mục `api/` vào thư mục `htdocs/api/` của XAMPP
+2. Mở file `config.php` trong thư mục `api/` và cập nhật thông tin kết nối database nếu cần
+
+### 4. Cấu hình ứng dụng Android
+1. Mở project trong Android Studio
+2. Kiểm tra và cập nhật URL API trong file `ApiClient.java` nếu cần
+3. Đảm bảo thiết bị Android hoặc emulator có thể truy cập được server
+
+## Làm thế nào để clone project
 
 ### Phương pháp 1: Sử dụng Android Studio (Khuyến nghị)
 1. Mở Android Studio
 2. Chọn "Get from VCS" hoặc "Get from Version Control"
-3. Nhập URL repository: `https://github.com/noqokhxnh/QuanLyDiem.git` 
-4. Chọn thư mục nơi bạn muốn sao chép dự án
-5. Nhấp "Clone"
+3. Nhập URL repository
+4. Chọn thư mục nơi bạn muốn clone project
+5. Click "Clone"
 
 ### Phương pháp 2: Sử dụng dòng lệnh
 1. Mở terminal/dòng lệnh
-2. Điều hướng đến thư mục nơi bạn muốn sao chép dự án:
+2. Điều hướng đến thư mục nơi bạn muốn clone project:
    ```bash
    cd /đường/dẫn/đến/thư/mục/mong/muốn
    ```
-3. Sao chép repository:
+3. Clone repository:
    ```bash
-   git clone https://github.com/noqokhxnh/QuanLyDiem.git
+   git clone [URL_REPOSITORY]
    ```
 4. Mở Android Studio
 5. Chọn "Open an existing Android Studio project"
-6. Điều hướng đến thư mục dự án đã sao chép và chọn nó
+6. Điều hướng đến thư mục project đã clone và chọn nó
 
-## Cấu trúc dự án
+## Cấu trúc project
 ```
 app/src/main/java/com/example/qld/
 ├── activities/
@@ -58,58 +83,48 @@ app/src/main/java/com/example/qld/
 │   ├── StudentMainActivity.java
 │   ├── ManageStudentsActivity.java
 │   ├── ManageScoresActivity.java
-│   └── ViewScoresActivity.java
+│   ├── ViewScoresActivity.java
+│   └── ... (các activity khác)
 ├── adapters/
 │   ├── StudentAdapter.java
 │   └── ScoreAdapter.java
 ├── database/
-│   ├── DatabaseHelper.java
-│   └── DatabaseManager.java
+│   └── mysql/
+│       ├── MySQLManager.java
+│       └── ... (các class liên quan đến MySQL)
 ├── models/
 │   ├── User.java
 │   ├── Student.java
 │   ├── Subject.java
 │   └── Score.java
+├── network/
+│   └── ApiClient.java
 └── utils/
     ├── SessionManager.java
-    └── Constants.java
+    └── ... (các utility class)
 ```
 
-## Lược đồ cơ sở dữ liệu
-Ứng dụng sử dụng SQLite với các bảng sau:
-1. `users` - Lưu trữ thông tin người dùng (giáo viên và học sinh)
-2. `students` - Lưu trữ thông tin cụ thể của học sinh
-3. `subjects` - Lưu trữ thông tin môn học
-4. `scores` - Lưu trữ bản ghi điểm
-
-## Dữ liệu mẫu
-Ứng dụng đi kèm với dữ liệu mẫu để kiểm thử:
-- Tài khoản giáo viên: tên đăng nhập `teacher1`, mật khẩu `123456`
-- Tài khoản học sinh: 
-  - tên đăng nhập `student1`, mật khẩu `123456`
-  - tên đăng nhập `student2`, mật khẩu `123456`
-
-## Cách xây dựng và chạy
+## Làm thế nào để build và chạy
 
 ### Sử dụng Android Studio (Khuyến nghị)
-1. Mở dự án trong Android Studio
+1. Mở project trong Android Studio
 2. Chờ Gradle đồng bộ (có thể mất vài phút)
-3. Kết nối thiết bị Android hoặc khởi động trình giả lập
-4. Nhấp nút "Run" (tam giác xanh) hoặc nhấn `Shift + F10`
+3. Kết nối thiết bị Android hoặc khởi động emulator
+4. Click nút "Run" (tam giác xanh) hoặc nhấn `Shift + F10`
 
 ### Sử dụng dòng lệnh
 1. Mở terminal/dòng lệnh
-2. Điều hướng đến thư mục dự án:
+2. Điều hướng đến thư mục project:
    ```bash
-   cd /đường/dẫn/đến/QLD
+   cd /đường/dẫn/đến/project
    ```
-3. Xây dựng dự án:
+3. Build project:
    ```bash
    ./gradlew assembleDebug
    ```
-4. Cài đặt APK trên thiết bị Android hoặc trình giả lập
+4. Cài đặt APK trên thiết bị Android hoặc emulator
 
-## Thực hiện thay đổi trong dự án
+## Làm thế nào để thay đổi code
 
 ### 1. Tạo nhánh mới (Khuyến nghị)
 Trước khi thực hiện bất kỳ thay đổi nào, hãy tạo nhánh mới:
@@ -117,95 +132,75 @@ Trước khi thực hiện bất kỳ thay đổi nào, hãy tạo nhánh mới:
 git checkout -b feature/tên-tính-năng-của-bạn
 ```
 
-### 2. Sửa đổi mã
-- Mở dự án trong Android Studio
-- Thực hiện các thay đổi mong muốn trong mã
+### 2. Sửa đổi code
+- Mở project trong Android Studio
+- Thực hiện các thay đổi mong muốn trong code
 - Kiểm tra kỹ các thay đổi của bạn
 
-### 3. Cam kết thay đổi của bạn
+### 3. Commit các thay đổi
 Sau khi thực hiện thay đổi:
 
-1. Chuẩn bị các thay đổi:
+1. Stage các thay đổi:
    ```bash
    git add .
    ```
-   Hoặc để thêm các tệp cụ thể:
+   Hoặc để thêm các file cụ thể:
    ```bash
-   git add đường/dẫn/đến/tệp.java
+   git add đường/dẫn/đến/file.java
    ```
 
-2. Cam kết các thay đổi với thông báo mô tả:
+2. Commit các thay đổi với thông báo mô tả:
    ```bash
-   git commit -m "Thêm tính năng: mô tả ngắn gọn những gì bạn đã làm"
+   git commit -m "Mô tả ngắn gọn những gì bạn đã làm"
    ```
 
-### 4. Đẩy thay đổi lên GitHub
-Đẩy các thay đổi của bạn lên GitHub:
+### 4. Đẩy thay đổi lên repository
+Đẩy các thay đổi của bạn lên repository:
 ```bash
 git push origin feature/tên-tính-năng-của-bạn
 ```
 
-### 5. Tạo Pull Request (nếu làm việc với người khác)
-1. Truy cập repository của bạn trên GitHub
-2. Nhấp "Compare & pull request"
-3. Thêm tiêu đề và mô tả cho các thay đổi của bạn
-4. Nhấp "Create pull request"
-
-## Các tác vụ phát triển phổ biến
-
-### Thêm tính năng mới
-1. Tạo nhánh mới cho tính năng của bạn
-2. Triển khai tính năng
-3. Kiểm tra kỹ lưỡng
-4. Cam kết và đẩy các thay đổi
-5. Tạo pull request nếu cần
-
-### Sửa lỗi
-1. Tạo nhánh mới cho bản sửa lỗi
-2. Triển khai bản sửa
-3. Kiểm tra để đảm bảo lỗi đã được giải quyết
-4. Cam kết và đẩy các thay đổi
-5. Tạo pull request nếu cần
-
-### Cập nhật phụ thuộc
-1. Mở tệp `build.gradle` (Module: app)
-2. Sửa đổi phần phụ thuộc nếu cần
-3. Đồng bộ dự án với tệp Gradle
-
 ## Khắc phục sự cố
 
-### Vấn đề đồng bộ Gradle
-Nếu bạn gặp vấn đề đồng bộ Gradle:
-1. Thử "File" → "Sync Project with Gradle Files"
-2. Nếu không hiệu quả, thử "File" → "Invalidate Caches and Restart"
+### Vấn đề kết nối mạng
+Nếu bạn gặp vấn đề kết nối mạng:
+1. Kiểm tra xem Apache và MySQL trong XAMPP có đang chạy không
+2. Kiểm tra firewall có chặn kết nối không
+3. Kiểm tra URL API trong file `ApiClient.java` có đúng không
 
-### Vấn đề cơ sở dữ liệu
-Nếu bạn gặp vấn đề cơ sở dữ liệu:
-1. Gỡ cài đặt ứng dụng khỏi thiết bị/trình giả lập của bạn
-2. Dọn dẹp dự án: "Build" → "Clean Project"
-3. Xây dựng lại dự án: "Build" → "Rebuild Project"
+### Vấn đề database
+Nếu bạn gặp vấn đề database:
+1. Kiểm tra xem database `student_manager` đã được tạo chưa
+2. Kiểm tra các bảng đã được tạo chưa
+3. Kiểm tra có dữ liệu mẫu trong các bảng không
 
-### Vấn đề trình giả lập
-Nếu trình giả lập không hoạt động:
-1. Thử tạo AVD mới (Android Virtual Device)
-2. Đảm bảo bạn có đủ tài nguyên hệ thống được phân bổ
-3. Thử sử dụng thiết bị thực tế thay thế
+### Vấn đề API
+Nếu bạn gặp vấn đề API:
+1. Kiểm tra các file PHP có nằm đúng thư mục không
+2. Kiểm tra có lỗi PHP nào không (Bật display_errors trong php.ini)
 
 ## Đóng góp
 1. Fork repository
 2. Tạo nhánh mới cho tính năng hoặc bản sửa lỗi của bạn
 3. Thực hiện các thay đổi
 4. Kiểm tra kỹ lưỡng
-5. Cam kết các thay đổi với thông báo mô tả
+5. Commit các thay đổi với thông báo mô tả
 6. Đẩy lên fork của bạn
 7. Tạo pull request
 
-## Cải tiến trong tương lai
-- Thêm xác thực dữ liệu và xử lý lỗi
-- Triển khai mã hóa mật khẩu
-- Thêm khả năng tìm kiếm và lọc
-- Triển khai thống kê và báo cáo
-- Thêm khả năng ngoại tuyến
+## Tài nguyên bổ sung
+
+### Tài liệu tham khảo
+- [Tài liệu chính thức XAMPP](https://www.apachefriends.org/docs/)
+- [Hướng dẫn MySQL](https://dev.mysql.com/doc/)
+- [Hướng dẫn PHP](https://www.php.net/manual/)
+- [Tài liệu Android Developer](https://developer.android.com/docs)
+
+### File quan trọng
+- `XAMPP_SETUP_GUIDE.md` - Hướng dẫn chi tiết cài đặt và cấu hình XAMPP
+- `student_manager_database.sql` - Script SQL để tạo database và chèn dữ liệu mẫu
+- `api/` - Thư mục chứa các file REST API
+- `MYSQL_MIGRATION_PLAN.md` - Kế hoạch chuyển đổi từ SQLite sang MySQL
 
 ## Giấy phép
-Dự án này dành cho mục đích giáo dục và không có giấy phép cụ thể. Vui lòng kiểm tra với tổ chức của bạn để biết hướng dẫn sử dụng.
+Project này dành cho mục đích giáo dục và không có giấy phép cụ thể. Vui lòng kiểm tra với tổ chức của bạn để biết hướng dẫn sử dụng.

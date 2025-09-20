@@ -8,7 +8,7 @@ public class User {
     private String fullName;
     private String createdDate;
     
-    // Constructors
+    // Các constructor
     public User() {
     }
     
@@ -28,7 +28,7 @@ public class User {
         this.createdDate = createdDate;
     }
     
-    // Getters and Setters
+    // Các phương thức getter và setter
     public int getId() {
         return id;
     }

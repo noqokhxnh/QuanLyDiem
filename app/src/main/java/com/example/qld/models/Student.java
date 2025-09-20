@@ -1,9 +1,5 @@
 package com.example.qld.models;
 
-/**
- * Lớp mô hình học sinh
- * Đại diện cho một học sinh trong hệ thống
- */
 public class Student {
     private int id;
     private int userId;

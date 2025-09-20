@@ -9,7 +9,7 @@ public class Score {
     private String dateCreated;
     private int teacherId;
     
-    // Constructors
+    // Các constructor
     public Score() {
     }
     
@@ -31,7 +31,7 @@ public class Score {
         this.teacherId = teacherId;
     }
     
-    // Getters and Setters
+    // Các phương thức getter và setter
     public int getId() {
         return id;
     }

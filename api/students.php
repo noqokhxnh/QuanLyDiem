@@ -1,5 +1,5 @@
 <?php
-// users.php - Quản lý người dùng
+// students.php - Quản lý học sinh
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
@@ -11,26 +11,26 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
     case 'GET':
-        // Lấy danh sách người dùng hoặc thông tin người dùng theo ID
+        // Lấy danh sách học sinh hoặc thông tin học sinh theo ID
         if (isset($_GET['id'])) {
-            // Lấy thông tin người dùng theo ID
+            // Lấy thông tin học sinh theo ID
             try {
-                $query = "SELECT * FROM users WHERE id = :id";
+                $query = "SELECT * FROM students WHERE id = :id";
                 $stmt = $pdo->prepare($query);
                 $stmt->bindParam(':id', $_GET['id']);
                 $stmt->execute();
                 
                 if ($stmt->rowCount() > 0) {
-                    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $student = $stmt->fetch(PDO::FETCH_ASSOC);
                     echo json_encode(array(
                         "status" => "success",
-                        "data" => $user
+                        "data" => $student
                     ));
                 } else {
                     http_response_code(404);
                     echo json_encode(array(
                         "status" => "error",
-                        "message" => "Không tìm thấy người dùng"
+                        "message" => "Không tìm thấy học sinh"
                     ));
                 }
             } catch (PDOException $e) {
@@ -40,19 +40,19 @@ switch ($method) {
                     "message" => "Lỗi khi truy vấn database: " . $e->getMessage()
                 ));
             }
-        } else if (isset($_GET['username'])) {
-            // Lấy thông tin người dùng theo username
+        } else if (isset($_GET['user_id'])) {
+            // Lấy thông tin học sinh theo user_id
             try {
-                $query = "SELECT * FROM users WHERE username = :username";
+                $query = "SELECT * FROM students WHERE user_id = :user_id";
                 $stmt = $pdo->prepare($query);
-                $stmt->bindParam(':username', $_GET['username']);
+                $stmt->bindParam(':user_id', $_GET['user_id']);
                 $stmt->execute();
                 
                 if ($stmt->rowCount() > 0) {
-                    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $student = $stmt->fetch(PDO::FETCH_ASSOC);
                     echo json_encode(array(
                         "status" => "success",
-                        "data" => $user
+                        "data" => $student
                     ));
                 } else {
                     echo json_encode(array(
@@ -68,16 +68,16 @@ switch ($method) {
                 ));
             }
         } else {
-            // Lấy danh sách tất cả người dùng
+            // Lấy danh sách tất cả học sinh
             try {
-                $query = "SELECT * FROM users";
+                $query = "SELECT * FROM students";
                 $stmt = $pdo->prepare($query);
                 $stmt->execute();
-                $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 
                 echo json_encode(array(
                     "status" => "success",
-                    "data" => $users
+                    "data" => $students
                 ));
             } catch (PDOException $e) {
                 http_response_code(500);
@@ -90,29 +90,29 @@ switch ($method) {
         break;
         
     case 'POST':
-        // Thêm người dùng mới
+        // Thêm học sinh mới
         $data = json_decode(file_get_contents("php://input"));
         
-        if (!empty($data->username) && !empty($data->password) && !empty($data->role) && !empty($data->full_name)) {
+        if (!empty($data->user_id) && !empty($data->student_code) && !empty($data->class_name) && !empty($data->birth_date)) {
             try {
-                $query = "INSERT INTO users (username, password, role, full_name) VALUES (:username, :password, :role, :full_name)";
+                $query = "INSERT INTO students (user_id, student_code, class_name, birth_date) VALUES (:user_id, :student_code, :class_name, :birth_date)";
                 $stmt = $pdo->prepare($query);
-                $stmt->bindParam(':username', $data->username);
-                $stmt->bindParam(':password', $data->password);
-                $stmt->bindParam(':role', $data->role);
-                $stmt->bindParam(':full_name', $data->full_name);
+                $stmt->bindParam(':user_id', $data->user_id);
+                $stmt->bindParam(':student_code', $data->student_code);
+                $stmt->bindParam(':class_name', $data->class_name);
+                $stmt->bindParam(':birth_date', $data->birth_date);
                 
                 if ($stmt->execute()) {
                     echo json_encode(array(
                         "status" => "success",
-                        "message" => "Thêm người dùng thành công",
+                        "message" => "Thêm học sinh thành công",
                         "data" => array("id" => $pdo->lastInsertId())
                     ));
                 } else {
                     http_response_code(500);
                     echo json_encode(array(
                         "status" => "error",
-                        "message" => "Không thể thêm người dùng"
+                        "message" => "Không thể thêm học sinh"
                     ));
                 }
             } catch (PDOException $e) {
@@ -120,13 +120,13 @@ switch ($method) {
                     http_response_code(409);
                     echo json_encode(array(
                         "status" => "error",
-                        "message" => "Tên đăng nhập đã tồn tại"
+                        "message" => "Mã học sinh đã tồn tại"
                     ));
                 } else {
                     http_response_code(500);
                     echo json_encode(array(
                         "status" => "error",
-                        "message" => "Lỗi khi thêm người dùng: " . $e->getMessage()
+                        "message" => "Lỗi khi thêm học sinh: " . $e->getMessage()
                     ));
                 }
             }
@@ -140,29 +140,29 @@ switch ($method) {
         break;
         
     case 'PUT':
-        // Cập nhật thông tin người dùng
+        // Cập nhật thông tin học sinh
         $data = json_decode(file_get_contents("php://input"));
         
-        if (!empty($data->id) && !empty($data->username) && !empty($data->password) && !empty($data->role) && !empty($data->full_name)) {
+        if (!empty($data->id) && !empty($data->user_id) && !empty($data->student_code) && !empty($data->class_name) && !empty($data->birth_date)) {
             try {
-                $query = "UPDATE users SET username = :username, password = :password, role = :role, full_name = :full_name WHERE id = :id";
+                $query = "UPDATE students SET user_id = :user_id, student_code = :student_code, class_name = :class_name, birth_date = :birth_date WHERE id = :id";
                 $stmt = $pdo->prepare($query);
                 $stmt->bindParam(':id', $data->id);
-                $stmt->bindParam(':username', $data->username);
-                $stmt->bindParam(':password', $data->password);
-                $stmt->bindParam(':role', $data->role);
-                $stmt->bindParam(':full_name', $data->full_name);
+                $stmt->bindParam(':user_id', $data->user_id);
+                $stmt->bindParam(':student_code', $data->student_code);
+                $stmt->bindParam(':class_name', $data->class_name);
+                $stmt->bindParam(':birth_date', $data->birth_date);
                 
                 if ($stmt->execute()) {
                     echo json_encode(array(
                         "status" => "success",
-                        "message" => "Cập nhật người dùng thành công"
+                        "message" => "Cập nhật học sinh thành công"
                     ));
                 } else {
                     http_response_code(500);
                     echo json_encode(array(
                         "status" => "error",
-                        "message" => "Không thể cập nhật người dùng"
+                        "message" => "Không thể cập nhật học sinh"
                     ));
                 }
             } catch (PDOException $e) {
@@ -170,13 +170,13 @@ switch ($method) {
                     http_response_code(409);
                     echo json_encode(array(
                         "status" => "error",
-                        "message" => "Tên đăng nhập đã tồn tại"
+                        "message" => "Mã học sinh đã tồn tại"
                     ));
                 } else {
                     http_response_code(500);
                     echo json_encode(array(
                         "status" => "error",
-                        "message" => "Lỗi khi cập nhật người dùng: " . $e->getMessage()
+                        "message" => "Lỗi khi cập nhật học sinh: " . $e->getMessage()
                     ));
                 }
             }
@@ -190,64 +190,38 @@ switch ($method) {
         break;
         
     case 'DELETE':
-        // Xóa người dùng
+        // Xóa học sinh
         if (isset($_GET['id'])) {
             try {
-                // Kiểm tra xem người dùng có phải là giáo viên không
-                $checkQuery = "SELECT role FROM users WHERE id = :id";
-                $checkStmt = $pdo->prepare($checkQuery);
-                $checkStmt->bindParam(':id', $_GET['id']);
-                $checkStmt->execute();
+                // Xóa học sinh (sẽ tự động xóa các bản ghi liên quan do ràng buộc khóa ngoại)
+                $query = "DELETE FROM students WHERE id = :id";
+                $stmt = $pdo->prepare($query);
+                $stmt->bindParam(':id', $_GET['id']);
                 
-                if ($checkStmt->rowCount() > 0) {
-                    $user = $checkStmt->fetch(PDO::FETCH_ASSOC);
-                    
-                    // Nếu là giáo viên, không cho phép xóa
-                    if ($user['role'] == 1) {
-                        http_response_code(403);
-                        echo json_encode(array(
-                            "status" => "error",
-                            "message" => "Không thể xóa tài khoản giáo viên"
-                        ));
-                        exit();
-                    }
-                    
-                    // Xóa học sinh và các bản ghi liên quan
-                    $query = "DELETE FROM users WHERE id = :id";
-                    $stmt = $pdo->prepare($query);
-                    $stmt->bindParam(':id', $_GET['id']);
-                    
-                    if ($stmt->execute()) {
-                        echo json_encode(array(
-                            "status" => "success",
-                            "message" => "Xóa người dùng thành công"
-                        ));
-                    } else {
-                        http_response_code(500);
-                        echo json_encode(array(
-                            "status" => "error",
-                            "message" => "Không thể xóa người dùng"
-                        ));
-                    }
+                if ($stmt->execute()) {
+                    echo json_encode(array(
+                        "status" => "success",
+                        "message" => "Xóa học sinh thành công"
+                    ));
                 } else {
-                    http_response_code(404);
+                    http_response_code(500);
                     echo json_encode(array(
                         "status" => "error",
-                        "message" => "Không tìm thấy người dùng"
+                        "message" => "Không thể xóa học sinh"
                     ));
                 }
             } catch (PDOException $e) {
                 http_response_code(500);
                 echo json_encode(array(
                     "status" => "error",
-                    "message" => "Lỗi khi xóa người dùng: " . $e->getMessage()
+                    "message" => "Lỗi khi xóa học sinh: " . $e->getMessage()
                 ));
             }
         } else {
             http_response_code(400);
             echo json_encode(array(
                 "status" => "error",
-                "message" => "Vui lòng cung cấp ID người dùng"
+                "message" => "Vui lòng cung cấp ID học sinh"
             ));
         }
         break;

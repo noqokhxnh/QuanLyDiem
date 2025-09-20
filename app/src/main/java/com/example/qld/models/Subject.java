@@ -5,7 +5,7 @@ public class Subject {
     private String subjectName;
     private String subjectCode;
     
-    // Constructors
+    // Các constructor
     public Subject() {
     }
     
@@ -20,7 +20,7 @@ public class Subject {
         this.subjectCode = subjectCode;
     }
     
-    // Getters and Setters
+    // Các phương thức getter và setter
     public int getId() {
         return id;
     }

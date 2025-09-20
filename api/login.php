@@ -1,5 +1,5 @@
 <?php
-// api/login.php
+// login.php - Xác thực người dùng
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
@@ -32,18 +32,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ));
             }
         } catch (PDOException $e) {
+            http_response_code(500);
             echo json_encode(array(
                 "status" => "error",
                 "message" => "Lỗi khi truy vấn database: " . $e->getMessage()
             ));
         }
     } else {
+        http_response_code(400);
         echo json_encode(array(
             "status" => "error",
             "message" => "Vui lòng cung cấp tên đăng nhập và mật khẩu"
         ));
     }
 } else {
+    http_response_code(405);
     echo json_encode(array(
         "status" => "error",
         "message" => "Phương thức không được hỗ trợ"
