@@ -1,5 +1,10 @@
 -- SQL Script to create the Student Manager Database
--- This script creates all tables and inserts sample data
+-- This script creates the database, all tables, and inserts sample data
+
+-- Create and use the database
+DROP DATABASE IF EXISTS student_manager;
+CREATE DATABASE student_manager;
+USE student_manager;
 
 -- Drop existing tables if they exist (in reverse order of dependencies)
 DROP TABLE IF EXISTS scores;
