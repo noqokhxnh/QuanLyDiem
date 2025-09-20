@@ -2,13 +2,8 @@ package com.example.qld.database.mysql;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.example.qld.models.Score;
 import com.example.qld.models.Student;
 import com.example.qld.models.Subject;
@@ -75,7 +70,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -113,7 +108,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -150,7 +145,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -190,7 +185,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -223,7 +218,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -261,7 +256,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -286,7 +281,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -334,7 +329,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -373,7 +368,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -405,7 +400,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -442,7 +437,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -480,7 +475,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -505,7 +500,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -551,7 +546,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -588,7 +583,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -618,7 +613,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -667,7 +662,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -708,7 +703,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -749,7 +744,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -783,7 +778,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -822,7 +817,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -847,7 +842,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 
@@ -891,7 +886,7 @@ public class MySQLManager {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing JSON response", e);
-                    callback.onError("Lỗi khi xử lý phản hồi");
+                    callback.onError("Lỗi khi xử lý phản hồi từ máy chủ");
                 }
             }
 

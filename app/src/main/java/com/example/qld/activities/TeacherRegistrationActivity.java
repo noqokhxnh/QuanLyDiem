@@ -107,7 +107,7 @@ public class TeacherRegistrationActivity extends AppCompatActivity {
                             @Override
                             public void onError(String error) {
                                 runOnUiThread(() -> {
-                                    Toast.makeText(TeacherRegistrationActivity.this, "Lỗi khi đăng ký tài khoản: " + error, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(TeacherRegistrationActivity.this, error, Toast.LENGTH_LONG).show();
                                 });
                             }
                         });
@@ -118,7 +118,7 @@ public class TeacherRegistrationActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    Toast.makeText(TeacherRegistrationActivity.this, "Lỗi kiểm tra tên đăng nhập: " + error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TeacherRegistrationActivity.this, error, Toast.LENGTH_LONG).show();
                 });
             }
         });

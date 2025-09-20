@@ -84,7 +84,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    Toast.makeText(ChangePasswordActivity.this, "Lỗi tải thông tin người dùng: " + error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChangePasswordActivity.this, error, Toast.LENGTH_LONG).show();
                 });
             }
         });
@@ -144,7 +144,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    Toast.makeText(ChangePasswordActivity.this, "Lỗi khi thay đổi mật khẩu: " + error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChangePasswordActivity.this, error, Toast.LENGTH_LONG).show();
                 });
             }
         });

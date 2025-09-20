@@ -124,7 +124,7 @@ public class ViewScoresActivity extends AppCompatActivity {
                         @Override
                         public void onError(String error) {
                             runOnUiThread(() -> {
-                                Toast.makeText(ViewScoresActivity.this, "Lỗi tải danh sách điểm: " + error, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ViewScoresActivity.this, error, Toast.LENGTH_LONG).show();
                             });
                         }
                     });
@@ -138,7 +138,7 @@ public class ViewScoresActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    Toast.makeText(ViewScoresActivity.this, "Lỗi tải thông tin học sinh: " + error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ViewScoresActivity.this, error, Toast.LENGTH_LONG).show();
                 });
             }
         });
@@ -161,7 +161,7 @@ public class ViewScoresActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    Toast.makeText(ViewScoresActivity.this, "Lỗi tính điểm trung bình: " + error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ViewScoresActivity.this, error, Toast.LENGTH_LONG).show();
                 });
             }
         });

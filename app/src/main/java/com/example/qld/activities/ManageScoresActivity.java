@@ -169,7 +169,7 @@ public class ManageScoresActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    Toast.makeText(ManageScoresActivity.this, "Lỗi tải danh sách điểm: " + error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ManageScoresActivity.this, error, Toast.LENGTH_LONG).show();
                     swipeRefresh.setRefreshing(false);
                 });
             }
@@ -303,7 +303,7 @@ public class ManageScoresActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    Toast.makeText(ManageScoresActivity.this, "Lỗi tải danh sách môn học: " + error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ManageScoresActivity.this, error, Toast.LENGTH_LONG).show();
                 });
             }
         });

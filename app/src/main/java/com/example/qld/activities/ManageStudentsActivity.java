@@ -140,7 +140,7 @@ public class ManageStudentsActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    Toast.makeText(ManageStudentsActivity.this, "Lỗi tải danh sách học sinh: " + error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ManageStudentsActivity.this, error, Toast.LENGTH_LONG).show();
                     swipeRefresh.setRefreshing(false);
                 });
             }

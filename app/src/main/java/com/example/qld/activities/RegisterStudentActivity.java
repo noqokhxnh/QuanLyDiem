@@ -180,7 +180,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
                                         });
                                         
                                         runOnUiThread(() -> {
-                                            Toast.makeText(RegisterStudentActivity.this, "Lỗi khi tạo thông tin học sinh: " + error, Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(RegisterStudentActivity.this, error, Toast.LENGTH_LONG).show();
                                         });
                                     }
                                 });
@@ -189,7 +189,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
                             @Override
                             public void onError(String error) {
                                 runOnUiThread(() -> {
-                                    Toast.makeText(RegisterStudentActivity.this, "Lỗi khi tạo tài khoản người dùng: " + error, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RegisterStudentActivity.this, error, Toast.LENGTH_LONG).show();
                                 });
                             }
                         });
@@ -200,7 +200,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    Toast.makeText(RegisterStudentActivity.this, "Lỗi kiểm tra tên đăng nhập: " + error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterStudentActivity.this, error, Toast.LENGTH_LONG).show();
                 });
             }
         });

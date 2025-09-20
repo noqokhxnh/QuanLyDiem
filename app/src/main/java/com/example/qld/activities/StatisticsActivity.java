@@ -145,7 +145,7 @@ public class StatisticsActivity extends AppCompatActivity {
                             @Override
                             public void onError(String error) {
                                 runOnUiThread(() -> {
-                                    Toast.makeText(StatisticsActivity.this, "Lỗi tải danh sách điểm: " + error, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(StatisticsActivity.this, error, Toast.LENGTH_LONG).show();
                                 });
                             }
                         });
@@ -154,7 +154,7 @@ public class StatisticsActivity extends AppCompatActivity {
                     @Override
                     public void onError(String error) {
                         runOnUiThread(() -> {
-                            Toast.makeText(StatisticsActivity.this, "Lỗi tải danh sách môn học: " + error, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(StatisticsActivity.this, error, Toast.LENGTH_LONG).show();
                         });
                     }
                 });
@@ -163,7 +163,7 @@ public class StatisticsActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    Toast.makeText(StatisticsActivity.this, "Lỗi tải danh sách học sinh: " + error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StatisticsActivity.this, error, Toast.LENGTH_LONG).show();
                 });
             }
         });

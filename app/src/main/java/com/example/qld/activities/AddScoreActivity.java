@@ -143,7 +143,7 @@ public class AddScoreActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    Toast.makeText(AddScoreActivity.this, "Lỗi tải danh sách học sinh: " + error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddScoreActivity.this, error, Toast.LENGTH_LONG).show();
                 });
             }
         });
@@ -175,7 +175,7 @@ public class AddScoreActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    Toast.makeText(AddScoreActivity.this, "Lỗi tải danh sách môn học: " + error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddScoreActivity.this, error, Toast.LENGTH_LONG).show();
                 });
             }
         });
@@ -260,7 +260,7 @@ public class AddScoreActivity extends AppCompatActivity {
                 public void onError(String error) {
                     runOnUiThread(() -> {
                         progressDialogUtil.hideProgressDialog();
-                        Toast.makeText(AddScoreActivity.this, "Lỗi khi thêm điểm: " + error, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddScoreActivity.this, error, Toast.LENGTH_LONG).show();
                     });
                 }
             });

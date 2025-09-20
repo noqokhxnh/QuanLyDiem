@@ -184,7 +184,7 @@ public class AddStudentActivity extends AppCompatActivity {
                                     
                                     runOnUiThread(() -> {
                                         progressDialogUtil.hideProgressDialog();
-                                        Toast.makeText(AddStudentActivity.this, "Lỗi khi thêm thông tin học sinh: " + error, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(AddStudentActivity.this, error, Toast.LENGTH_LONG).show();
                                     });
                                 }
                             });
@@ -194,7 +194,7 @@ public class AddStudentActivity extends AppCompatActivity {
                         public void onError(String error) {
                             runOnUiThread(() -> {
                                 progressDialogUtil.hideProgressDialog();
-                                Toast.makeText(AddStudentActivity.this, "Lỗi khi thêm người dùng: " + error, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AddStudentActivity.this, error, Toast.LENGTH_LONG).show();
                             });
                         }
                     });
@@ -205,7 +205,7 @@ public class AddStudentActivity extends AppCompatActivity {
             public void onError(String error) {
                 runOnUiThread(() -> {
                     progressDialogUtil.hideProgressDialog();
-                    Toast.makeText(AddStudentActivity.this, "Lỗi kiểm tra tên đăng nhập: " + error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddStudentActivity.this, error, Toast.LENGTH_LONG).show();
                 });
             }
         });

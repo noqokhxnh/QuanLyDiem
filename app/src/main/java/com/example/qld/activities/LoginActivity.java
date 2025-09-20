@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     btnLogin.setEnabled(true);
                     btnLogin.setText("Đăng nhập");
-                    Toast.makeText(LoginActivity.this, "Lỗi đăng nhập: " + error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
                 });
             }
         });
