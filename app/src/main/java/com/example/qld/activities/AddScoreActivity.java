@@ -105,25 +105,38 @@ public class AddScoreActivity extends AppCompatActivity {
                     // Create adapter for students spinner
                     String[] studentNames = new String[studentList.size()];
                     for (int i = 0; i < studentList.size(); i++) {
-                        // Get student's full name from user table
                         Student student = studentList.get(i);
-                        mysqlManager.getUserById(student.getUserId(), new MySQLManager.UserCallback() {
-                            @Override
-                            public void onSuccess(com.example.qld.models.User user) {
-                                studentNames[i] = user.getFullName();
-                            }
-                            
-                            @Override
-                            public void onError(String error) {
-                                studentNames[i] = "Unknown Student";
-                            }
-                        });
+                        // Store a placeholder, we'll update with real names later
+                        studentNames[i] = "Loading...";
                     }
                     
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(AddScoreActivity.this, 
                         android.R.layout.simple_spinner_item, studentNames);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spStudents.setAdapter(adapter);
+                    
+                    // Update with real names
+                    for (int i = 0; i < studentList.size(); i++) {
+                        final int index = i;
+                        Student student = studentList.get(i);
+                        mysqlManager.getUserById(student.getUserId(), new MySQLManager.UserCallback() {
+                            @Override
+                            public void onSuccess(com.example.qld.models.User user) {
+                                runOnUiThread(() -> {
+                                    studentNames[index] = user.getFullName();
+                                    adapter.notifyDataSetChanged();
+                                });
+                            }
+                            
+                            @Override
+                            public void onError(String error) {
+                                runOnUiThread(() -> {
+                                    studentNames[index] = "Unknown Student";
+                                    adapter.notifyDataSetChanged();
+                                });
+                            }
+                        });
+                    }
                 });
             }
             
