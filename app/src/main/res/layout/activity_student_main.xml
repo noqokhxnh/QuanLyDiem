@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light">
+
+    <!-- Khung để chứa các Fragment -->
+    <FrameLayout
+        android:id="@+id/student_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/student_bottom_navigation"/>
+
+    <!-- Thanh điều hướng dưới -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/student_bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:menu="@menu/student_bottom_menu"
+        app:labelVisibilityMode="labeled"
+        android:background="@color/surface"
+        app:itemIconTint="@color/primary"
+        app:itemTextColor="@color/primary"
+        app:itemIconSize="24dp"
+        app:itemTextAppearanceActive="@style/BottomNavigationTextActive"
+        app:itemTextAppearanceInactive="@style/BottomNavigationTextInactive"
+        android:elevation="8dp"/>
+</RelativeLayout>

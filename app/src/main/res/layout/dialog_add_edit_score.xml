@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:maxHeight="600dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvDialogTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thêm điểm số mới"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/gray_900"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Student Selection -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/ModernTextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Chọn sinh viên"
+            app:startIconDrawable="@drawable/ic_student_modern"
+            app:startIconTint="@color/primary"
+            android:layout_marginBottom="16dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/autoCompleteStudent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textSize="16sp"
+                android:textColor="@color/gray_900" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Subject -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/ModernTextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tên môn học"
+            app:startIconDrawable="@drawable/ic_score_modern"
+            app:startIconTint="@color/primary"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtSubject"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textSize="16sp"
+                android:textColor="@color/gray_900" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Midterm Score -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/ModernTextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Điểm giữa kỳ"
+            app:startIconDrawable="@drawable/ic_score_modern"
+            app:startIconTint="@color/primary"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtMidtermScore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:textSize="16sp"
+                android:textColor="@color/gray_900" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Final Score -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/ModernTextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Điểm cuối kỳ"
+            app:startIconDrawable="@drawable/ic_score_modern"
+            app:startIconTint="@color/primary"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtFinalScore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:textSize="16sp"
+                android:textColor="@color/gray_900" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Semester -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/ModernTextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Học kỳ"
+            app:startIconDrawable="@drawable/ic_schedule_modern"
+            app:startIconTint="@color/primary"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtSemester"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textSize="16sp"
+                android:textColor="@color/gray_900" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Year -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/ModernTextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Năm học"
+            app:startIconDrawable="@drawable/ic_schedule_modern"
+            app:startIconTint="@color/primary"
+            android:layout_marginBottom="24dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtYear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textSize="16sp"
+                android:textColor="@color/gray_900" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Average Score Display -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            style="@style/ModernCard">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_button_primary">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_score_modern"
+                    android:contentDescription="Average"
+                    android:layout_marginEnd="12dp"
+                    android:tint="@color/white" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Điểm trung bình:"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvAverageScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.0"
+                    android:textSize="20sp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
+                style="@style/ModernButton.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="Hủy" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                style="@style/ModernButton.Primary"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="Lưu" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

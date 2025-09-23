@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Colors -->
+    <color name="primary">#6366F1</color>
+    <color name="primary_dark">#4F46E5</color>
+    <color name="primary_light">#A5B4FC</color>
+    
+    <!-- Secondary Colors -->
+    <color name="secondary">#EC4899</color>
+    <color name="secondary_dark">#DB2777</color>
+    <color name="secondary_light">#F9A8D4</color>
+    
+    <!-- Accent Colors -->
+    <color name="accent">#10B981</color>
+    <color name="accent_dark">#059669</color>
+    <color name="accent_light">#6EE7B7</color>
+    
+    <!-- Neutral Colors -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#111827</color>
+    <color name="gray_50">#F9FAFB</color>
+    <color name="gray_100">#F3F4F6</color>
+    <color name="gray_200">#E5E7EB</color>
+    <color name="gray_300">#D1D5DB</color>
+    <color name="gray_400">#9CA3AF</color>
+    <color name="gray_500">#6B7280</color>
+    <color name="gray_600">#4B5563</color>
+    <color name="gray_700">#374151</color>
+    <color name="gray_800">#1F2937</color>
+    <color name="gray_900">#111827</color>
+    
+    <!-- Status Colors -->
+    <color name="success">#10B981</color>
+    <color name="warning">#F59E0B</color>
+    <color name="error">#EF4444</color>
+    <color name="info">#3B82F6</color>
+    
+    <!-- Background Colors -->
+    <color name="background_light">#FAFAFA</color>
+    <color name="background_dark">#0F0F23</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F8F9FA</color>
+    
+    <!-- Legacy colors for compatibility -->
+    <color name="teal_700">#0F766E</color>
+    <color name="purple_500">#6366F1</color>
+    <color name="purple_700">#4F46E5</color>
+</resources>

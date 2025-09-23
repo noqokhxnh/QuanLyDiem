@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    style="@style/ModernCard"
+    android:layout_marginBottom="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <!-- Subject Icon -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="4dp"
+            android:layout_marginEnd="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_button_secondary">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_score_modern"
+                    android:contentDescription="Subject"
+                    android:tint="@color/white" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Score Info -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvSubject"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lập trình Java"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/gray_900"
+                android:layout_marginBottom="4dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Giữa kỳ: "
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_600" />
+
+                <TextView
+                    android:id="@+id/tvMidtermScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="8.5"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/gray_900" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" | Cuối kỳ: "
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_600"
+                    android:layout_marginStart="8dp" />
+
+                <TextView
+                    android:id="@+id/tvFinalScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="9.0"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/gray_900" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvSemesterYear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="HK1 - 2024-2025"
+                android:textSize="12sp"
+                android:textColor="@color/gray_500" />
+        </LinearLayout>
+
+        <!-- Average Score -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginEnd="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TB"
+                android:textSize="12sp"
+                android:textColor="@color/gray_600" />
+
+            <TextView
+                android:id="@+id/tvAverageScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="8.75"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/accent" />
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/btnEdit"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_settings_modern"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Edit"
+                android:tint="@color/primary" />
+
+            <ImageView
+                android:id="@+id/btnDelete"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_notifications_modern"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:contentDescription="Delete"
+                android:tint="@color/error" />
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_home"
+        android:title="Trang chủ"
+        android:icon="@drawable/ic_home" />
+
+    <item
+        android:id="@+id/nav_scores"
+        android:title="Xem điểm"
+        android:icon="@drawable/ic_score" />
+
+    <item
+        android:id="@+id/nav_schedule"
+        android:title="Lịch học"
+        android:icon="@drawable/ic_calendar" />
+
+    <item
+        android:id="@+id/nav_notifications"
+        android:title="Thông báo"
+        android:icon="@drawable/ic_notifications" />
+
+    <item
+        android:id="@+id/nav_profile"
+        android:title="Cá nhân"
+        android:icon="@drawable/ic_person" />
+
+</menu>

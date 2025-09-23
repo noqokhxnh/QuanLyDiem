@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.StudentScoreManager"
+        android:usesCleartextTraffic="true">
+
+        <!-- Màn hình Login (mặc định chạy đầu tiên) -->
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Màn hình Register -->
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ForgotPassword"
+            android:exported="false" />
+        <activity
+            android:name=".StudentMainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminRegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminForgotPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminLoginActivity"
+            android:exported="true" />
+        <activity
+            android:name=".AdminDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminAddStudentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminAddScoreActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminScheduleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminNotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminTimetableActivity"
+            android:exported="false" />
+        <activity
+            android:name=".StudentProfileActivity"
+            android:exported="false" />
+
+    </application>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+</manifest>
