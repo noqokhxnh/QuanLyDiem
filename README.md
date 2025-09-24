@@ -1,206 +1,185 @@
-# Ứng dụng Quản lý Học sinh
+# Ứng dụng Quản lý Điểm Học Sinh
 
-## Tổng quan
-Đây là một ứng dụng Android để quản lý điểm số của học sinh, với các vai trò riêng biệt cho giáo viên và học sinh. Ứng dụng cho phép giáo viên quản lý học sinh và nhập điểm, trong khi học sinh có thể xem điểm và điểm trung bình của mình.
+## 📋 Tổng quan
+Đây là một ứng dụng Android quản lý điểm số cho giáo viên và học sinh, được phát triển như một phần của môn Lập trình Mobile. Ứng dụng cho phép giáo viên quản lý học sinh và nhập điểm, trong khi học sinh có thể xem điểm và điểm trung bình của mình.
 
-## Tính năng
-- Xác thực người dùng với quyền truy cập dựa trên vai trò (giáo viên/học sinh)
-- Tính năng dành cho giáo viên:
-  - Quản lý học sinh (thêm, sửa, xóa)
-  - Quản lý điểm (thêm, sửa, xóa)
-  - Thống kê điểm theo lớp/môn
-  - Xuất báo cáo điểm
-- Tính năng dành cho học sinh:
-  - Xem điểm cá nhân
-  - Xem điểm trung bình
-- Cơ sở dữ liệu MySQL để lưu trữ dữ liệu trên server
-- Giao diện người dùng sạch sẽ, trực quan
+## 🚀 Tính năng
 
-## Công nghệ sử dụng
-- Java
-- Cơ sở dữ liệu MySQL với REST API
-- Android SDK
-- Thư viện Volley để giao tiếp mạng
-- Thành phần Thiết kế Material
+### Cốt lõi
+- **Xác thực người dùng** với phân quyền theo vai trò (giáo viên/học sinh)
+- **CRUD học sinh** (chỉ giáo viên)
+- **CRUD điểm số** (giáo viên nhập, học sinh xem)
+- **Tính điểm trung bình** tự động
+- **Giao diện người dùng thân thiện** với thiết kế Material
 
-## Yêu cầu hệ thống
-Trước khi bắt đầu, đảm bảo bạn đã cài đặt:
-- Android Studio (phiên bản mới nhất được khuyến nghị)
-- XAMPP (hoặc bất kỳ môi trường server nào có Apache và MySQL)
-- Git
-- Android SDK (API level 21 hoặc cao hơn)
+### Tính năng giáo viên
+- ✅ Xem danh sách tất cả học sinh
+- ✅ Thêm/sửa/xóa học sinh
+- ✅ Nhập điểm cho học sinh (tất cả loại điểm: miệng, 15 phút, 1 tiết, học kỳ)
+- ✅ Sửa/xóa điểm đã nhập
+- ✅ Xem thống kê điểm theo lớp/môn
+- ✅ Xuất báo cáo điểm
+- ✅ Đổi mật khẩu
 
-## Cài đặt và cấu hình
+### Tính năng học sinh
+- ✅ Xem điểm của chính mình
+- ✅ Xem điểm trung bình cá nhân
+- ✅ Tra cứu lịch sử điểm
+- ✅ Đổi mật khẩu
 
-### 1. Cài đặt XAMPP
-1. Tải XAMPP từ https://www.apachefriends.org/
-2. Cài đặt XAMPP theo hướng dẫn
-3. Khởi động Apache và MySQL services trong XAMPP Control Panel
+## 🛠️ Công nghệ sử dụng
 
-### 2. Cấu hình cơ sở dữ liệu MySQL
-1. Truy cập phpMyAdmin thông qua http://localhost/phpmyadmin
-2. Tạo database mới có tên "student_manager"
-3. Chạy script SQL từ file `student_manager_database.sql` để tạo các bảng và chèn dữ liệu mẫu
+### Công nghệ chính (theo yêu cầu)
+- **Ngôn ngữ**: Java (không dùng Kotlin)
+- **IDE**: Android Studio
+- **Database**: SQLite với SQLiteOpenHelper
+- **UI**: XML Layout (không dùng Jetpack Compose)
+- **Kiến trúc**: MVC đơn giản
+- **Lưu trữ session**: SharedPreferences
+- **UI Framework**: Thiết kế Material
 
-### 3. Cấu hình REST API
-1. Sao chép tất cả các file trong thư mục `api/` vào thư mục `htdocs/api/` của XAMPP
-2. Mở file `config.php` trong thư mục `api/` và cập nhật thông tin kết nối database nếu cần
+### Không sử dụng
+- ❌ Kotlin
+- ❌ Jetpack Compose  
+- ❌ Room Database
+- ❌ Retrofit/API calls
+- ❌ Firebase
+- ❌ MVP/MVVM pattern phức tạp
+- ❌ Dependency Injection frameworks
 
-### 4. Cấu hình ứng dụng Android
-1. Mở project trong Android Studio
-2. Kiểm tra và cập nhật URL API trong file `ApiClient.java` nếu cần
-3. Đảm bảo thiết bị Android hoặc emulator có thể truy cập được server
+## 🏗️ Cấu trúc Project
 
-## Làm thế nào để clone project
-
-### Phương pháp 1: Sử dụng Android Studio (Khuyến nghị)
-1. Mở Android Studio
-2. Chọn "Get from VCS" hoặc "Get from Version Control"
-3. Nhập URL repository
-4. Chọn thư mục nơi bạn muốn clone project
-5. Click "Clone"
-
-### Phương pháp 2: Sử dụng dòng lệnh
-1. Mở terminal/dòng lệnh
-2. Điều hướng đến thư mục nơi bạn muốn clone project:
-   ```bash
-   cd /đường/dẫn/đến/thư/mục/mong/muốn
-   ```
-3. Clone repository:
-   ```bash
-   git clone [URL_REPOSITORY]
-   ```
-4. Mở Android Studio
-5. Chọn "Open an existing Android Studio project"
-6. Điều hướng đến thư mục project đã clone và chọn nó
-
-## Cấu trúc project
 ```
-app/src/main/java/com/example/qld/
+app/src/main/java/com/yourname/studentmanager/
+├── models/
+│   ├── User.java
+│   ├── Student.java  
+│   ├── Subject.java
+│   └── Score.java
+├── database/
+│   ├── DatabaseHelper.java
+│   └── DatabaseManager.java
 ├── activities/
 │   ├── LoginActivity.java
 │   ├── TeacherMainActivity.java
 │   ├── StudentMainActivity.java
 │   ├── ManageStudentsActivity.java
 │   ├── ManageScoresActivity.java
-│   ├── ViewScoresActivity.java
-│   └── ... (các activity khác)
+│   └── ViewScoresActivity.java
 ├── adapters/
 │   ├── StudentAdapter.java
 │   └── ScoreAdapter.java
-├── database/
-│   └── mysql/
-│       ├── MySQLManager.java
-│       └── ... (các class liên quan đến MySQL)
-├── models/
-│   ├── User.java
-│   ├── Student.java
-│   ├── Subject.java
-│   └── Score.java
-├── network/
-│   └── ApiClient.java
 └── utils/
     ├── SessionManager.java
-    └── ... (các utility class)
+    └── Constants.java
 ```
 
-## Làm thế nào để build và chạy
+## 📊 Schema Cơ sở dữ liệu
 
-### Sử dụng Android Studio (Khuyến nghị)
-1. Mở project trong Android Studio
-2. Chờ Gradle đồng bộ (có thể mất vài phút)
-3. Kết nối thiết bị Android hoặc khởi động emulator
-4. Click nút "Run" (tam giác xanh) hoặc nhấn `Shift + F10`
-
-### Sử dụng dòng lệnh
-1. Mở terminal/dòng lệnh
-2. Điều hướng đến thư mục project:
-   ```bash
-   cd /đường/dẫn/đến/project
-   ```
-3. Build project:
-   ```bash
-   ./gradlew assembleDebug
-   ```
-4. Cài đặt APK trên thiết bị Android hoặc emulator
-
-## Làm thế nào để thay đổi code
-
-### 1. Tạo nhánh mới (Khuyến nghị)
-Trước khi thực hiện bất kỳ thay đổi nào, hãy tạo nhánh mới:
-```bash
-git checkout -b feature/tên-tính-năng-của-bạn
+### Bảng users
+```sql
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    role INTEGER NOT NULL, -- 0: học sinh, 1: giáo viên
+    full_name TEXT NOT NULL,
+    created_date TEXT DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
-### 2. Sửa đổi code
-- Mở project trong Android Studio
-- Thực hiện các thay đổi mong muốn trong code
-- Kiểm tra kỹ các thay đổi của bạn
-
-### 3. Commit các thay đổi
-Sau khi thực hiện thay đổi:
-
-1. Stage các thay đổi:
-   ```bash
-   git add .
-   ```
-   Hoặc để thêm các file cụ thể:
-   ```bash
-   git add đường/dẫn/đến/file.java
-   ```
-
-2. Commit các thay đổi với thông báo mô tả:
-   ```bash
-   git commit -m "Mô tả ngắn gọn những gì bạn đã làm"
-   ```
-
-### 4. Đẩy thay đổi lên repository
-Đẩy các thay đổi của bạn lên repository:
-```bash
-git push origin feature/tên-tính-năng-của-bạn
+### Bảng students  
+```sql
+CREATE TABLE students (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    student_code TEXT UNIQUE NOT NULL,
+    class_name TEXT NOT NULL,
+    birth_date TEXT,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
 ```
 
-## Khắc phục sự cố
+### Bảng subjects
+```sql
+CREATE TABLE subjects (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    subject_name TEXT NOT NULL,
+    subject_code TEXT UNIQUE NOT NULL
+);
+```
 
-### Vấn đề kết nối mạng
-Nếu bạn gặp vấn đề kết nối mạng:
-1. Kiểm tra xem Apache và MySQL trong XAMPP có đang chạy không
-2. Kiểm tra firewall có chặn kết nối không
-3. Kiểm tra URL API trong file `ApiClient.java` có đúng không
+### Bảng scores
+```sql
+CREATE TABLE scores (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_id INTEGER,
+    subject_id INTEGER,
+    score_type TEXT NOT NULL, -- 'mieng', '15phut', '1tiet', 'hocky'
+    score REAL NOT NULL,
+    date_created TEXT DEFAULT CURRENT_TIMESTAMP,
+    teacher_id INTEGER,
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    FOREIGN KEY (subject_id) REFERENCES subjects(id),
+    FOREIGN KEY (teacher_id) REFERENCES users(id)
+);
+```
 
-### Vấn đề database
-Nếu bạn gặp vấn đề database:
-1. Kiểm tra xem database `student_manager` đã được tạo chưa
-2. Kiểm tra các bảng đã được tạo chưa
-3. Kiểm tra có dữ liệu mẫu trong các bảng không
+## 📱 Cài đặt và chạy ứng dụng
 
-### Vấn đề API
-Nếu bạn gặp vấn đề API:
-1. Kiểm tra các file PHP có nằm đúng thư mục không
-2. Kiểm tra có lỗi PHP nào không (Bật display_errors trong php.ini)
+### Yêu cầu hệ thống
+- Android Studio (bản mới nhất)
+- Android SDK API level 21 trở lên
+- Thiết bị hoặc emulator Android
 
-## Đóng góp
+### Cài đặt
+1. Clone hoặc tải project về máy
+2. Mở project trong Android Studio
+3. Đồng bộ Gradle
+4. Build và chạy ứng dụng trên thiết bị hoặc emulator
+
+### Dữ liệu mẫu
+Khi khởi động lần đầu, ứng dụng sẽ tạo các tài khoản mẫu:
+
+Tài khoản giáo viên:
+- Username: `teacher1`
+- Password: `123456`
+- Họ tên: `Nguyễn Văn Giáo`
+
+Tài khoản học sinh:
+- Username: `student1`
+- Password: `123456`
+- Họ tên: `Trần Thị Học`
+
+## 👥 Phân quyền người dùng
+
+### Role = 1: Giáo viên
+Có toàn quyền quản lý học sinh và điểm số
+
+### Role = 0: Học sinh  
+Chỉ được xem điểm cá nhân
+
+## 🎯 Quy tắc Code
+
+### Naming Convention
+- Classes: PascalCase (ví dụ: `LoginActivity.java`)
+- Methods: camelCase (ví dụ: `authenticateUser()`)
+- Variables: camelCase (ví dụ: `etUsername`)
+- Constants: UPPER_SNAKE_CASE (ví dụ: `DATABASE_NAME`)
+- Database fields: snake_case (ví dụ: `student_id`)
+
+### Ngôn ngữ
+- Code: 100% tiếng Anh
+- Giao diện người dùng: 100% tiếng Việt
+
+## 🔧 Cách đóng góp
+
 1. Fork repository
-2. Tạo nhánh mới cho tính năng hoặc bản sửa lỗi của bạn
-3. Thực hiện các thay đổi
-4. Kiểm tra kỹ lưỡng
-5. Commit các thay đổi với thông báo mô tả
-6. Đẩy lên fork của bạn
-7. Tạo pull request
+2. Tạo nhánh mới cho tính năng của bạn
+3. Commit thay đổi với mô tả rõ ràng
+4. Push lên nhánh của bạn
+5. Tạo Pull Request
 
-## Tài nguyên bổ sung
+## 📝 Giấy phép
 
-### Tài liệu tham khảo
-- [Tài liệu chính thức XAMPP](https://www.apachefriends.org/docs/)
-- [Hướng dẫn MySQL](https://dev.mysql.com/doc/)
-- [Hướng dẫn PHP](https://www.php.net/manual/)
-- [Tài liệu Android Developer](https://developer.android.com/docs)
-
-### File quan trọng
-- `XAMPP_SETUP_GUIDE.md` - Hướng dẫn chi tiết cài đặt và cấu hình XAMPP
-- `student_manager_database.sql` - Script SQL để tạo database và chèn dữ liệu mẫu
-- `api/` - Thư mục chứa các file REST API
-- `MYSQL_MIGRATION_PLAN.md` - Kế hoạch chuyển đổi từ SQLite sang MySQL
-
-## Giấy phép
-Project này dành cho mục đích giáo dục và không có giấy phép cụ thể. Vui lòng kiểm tra với tổ chức của bạn để biết hướng dẫn sử dụng.
+Dự án này dành cho mục đích học tập, ưu tiên sự đơn giản và dễ hiểu hơn là công nghệ mới nhất.
