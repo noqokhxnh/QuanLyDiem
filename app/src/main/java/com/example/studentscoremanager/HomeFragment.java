@@ -1,8 +1,10 @@
 package com.example.studentscoremanager;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,25 +49,26 @@ public class HomeFragment extends Fragment {
             dbHelper = new DatabaseHelper(requireContext());
 
             // Xử lý sự kiện click
+            addPressAnimation(cardDiemSo);
             cardDiemSo.setOnClickListener(v -> {
                 Log.d("HomeFragment", "Card Điểm số clicked");
                 openFragment(new ScoresFragment(), "Điểm số");
             });
+            addPressAnimation(cardLichHoc);
             cardLichHoc.setOnClickListener(v -> {
                 Log.d("HomeFragment", "Card Lịch học clicked");
-                openFragment(new ScheduleFragment(), "Lịch học");
+                openFragment(new TimetableFragment(), "Lịch học");
             });
+            addPressAnimation(cardTinTuc);
             cardTinTuc.setOnClickListener(v -> {
                 Log.d("HomeFragment", "Card Tin tức clicked");
-                openFragment(new TimetableFragment(), "Thời khóa biểu");
+                openFragment(new ScheduleFragment(), "Thời khóa biểu");
             });
-//            cardCaiDat.setOnClickListener(v -> {
-//                Log.d("HomeFragment", "Card Cài đặt clicked");
-//                openFragment(new SettingsFragment(), "Cài đặt");
-//            });
+            addPressAnimation(cardThongBao);
             cardThongBao.setOnClickListener(v -> {
                 openFragment(new NotificationsFragment(), "Thông báo");
             });
+            addPressAnimation(cardProfile);
             cardProfile.setOnClickListener(v -> {
                 Log.d("HomeFragment", "Card Profile clicked");
                 Intent intent = new Intent(getActivity(), StudentProfileActivity.class);
@@ -86,6 +89,12 @@ public class HomeFragment extends Fragment {
     // Hàm mở Fragment khác
     private void openFragment(Fragment fragment, String tag) {
         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(
+                R.anim.fragment_fade_in,
+                R.anim.fragment_fade_out,
+                R.anim.fragment_fade_in,
+                R.anim.fragment_fade_out
+        );
         transaction.replace(R.id.student_fragment_container, fragment, tag);
         transaction.addToBackStack(tag);
         transaction.commit();
@@ -94,6 +103,29 @@ public class HomeFragment extends Fragment {
     // Hàm hiển thị Toast tạm
     private void showToast(String message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void addPressAnimation(View view) {
+        float pressedScale = 0.98f;
+        view.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case android.view.MotionEvent.ACTION_DOWN:
+                    v.animate().scaleX(pressedScale).scaleY(pressedScale).setDuration(100).start();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        v.animate().translationZ(12f).setDuration(100).start();
+                    }
+                    v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                    break;
+                case android.view.MotionEvent.ACTION_UP:
+                case android.view.MotionEvent.ACTION_CANCEL:
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        v.animate().translationZ(0f).setDuration(100).start();
+                    }
+                    break;
+            }
+            return false;
+        });
     }
 
     private void showScheduleDialog() {

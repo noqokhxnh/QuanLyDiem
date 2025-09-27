@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import androidx.annotation.Nullable;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -286,6 +287,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return exists;
     }
+
+    // Kiểm tra tồn tại theo username
+    public boolean userExists(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_USERS,
+                new String[]{COL_USER_ID},
+                COL_USERNAME + "=?",
+                new String[]{username},
+                null, null, null);
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        db.close();
+        return exists;
+    }
+
+    // Đảm bảo có tài khoản giảng viên mặc định
+    public void ensureLecturerAccount() {
+        try {
+            if (!userExists("giangvien")) {
+                addUser("giangvien", "123", "giangvien@test.com");
+            }
+        } catch (Exception ignored) {
+        }
+    }
     // Lấy mật khẩu bằng email
     public String getPasswordByEmail(String email) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -306,13 +331,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private void insertSampleData(SQLiteDatabase db) {
         Log.d("DatabaseHelper", "Inserting sample data");
         
-        // Thêm user mẫu để test đăng nhập
+        // Thêm user mẫu giảng viên để test đăng nhập
         ContentValues userValues = new ContentValues();
-        userValues.put(COL_USERNAME, "admin");
+        userValues.put(COL_USERNAME, "giangvien");
         userValues.put(COL_PASSWORD, "123");
-        userValues.put(COL_EMAIL, "admin@test.com");
+        userValues.put(COL_EMAIL, "giangvien@test.com");
         long userResult = db.insert(TABLE_USERS, null, userValues);
-        Log.d("DatabaseHelper", "Admin user inserted with result: " + userResult);
+        Log.d("DatabaseHelper", "Lecturer user inserted with result: " + userResult);
 
         // Thêm sinh viên mẫu
         ContentValues studentValues = new ContentValues();
@@ -385,6 +410,111 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getAllStudents() {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.query(TABLE_STUDENTS, null, null, null, null, null, COL_FULL_NAME + " ASC");
+    }
+
+    // Lấy toàn bộ điểm kèm thông tin sinh viên (JOIN)
+    public Cursor getAllScoresWithStudent(@Nullable String semester, @Nullable String year, @Nullable String subjectQuery) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT st.").append(COL_STUDENT_ID).append(", st.").append(COL_FULL_NAME)
+           .append(", st.").append(COL_CLASS)
+           .append(", sc.").append(COL_SUBJECT)
+           .append(", sc.").append(COL_MIDTERM_SCORE)
+           .append(", sc.").append(COL_FINAL_SCORE)
+           .append(", sc.").append(COL_AVERAGE_SCORE)
+           .append(", sc.").append(COL_SEMESTER)
+           .append(", sc.").append(COL_YEAR)
+           .append(" FROM ").append(TABLE_SCORES).append(" sc ")
+           .append(" JOIN ").append(TABLE_STUDENTS).append(" st ON sc.").append(COL_STUDENT_ID)
+           .append(" = st.").append(COL_STUDENT_ID)
+           .append(" WHERE 1=1");
+
+        java.util.List<String> args = new java.util.ArrayList<>();
+        if (semester != null && !semester.trim().isEmpty() && !"Tất cả".equals(semester)) {
+            sql.append(" AND sc.").append(COL_SEMESTER).append("=?");
+            args.add(semester);
+        }
+        if (year != null && !year.trim().isEmpty() && !"Tất cả".equals(year)) {
+            sql.append(" AND sc.").append(COL_YEAR).append("=?");
+            args.add(year);
+        }
+        if (subjectQuery != null && !subjectQuery.trim().isEmpty()) {
+            sql.append(" AND sc.").append(COL_SUBJECT).append(" LIKE ?");
+            args.add("%" + subjectQuery.trim() + "%");
+        }
+
+        sql.append(" ORDER BY st.").append(COL_FULL_NAME).append(" ASC, sc.").append(COL_SUBJECT).append(" ASC");
+
+        return db.rawQuery(sql.toString(), args.toArray(new String[0]));
+    }
+
+    // Đếm số lượng sinh viên đã đăng ký
+    public int getStudentsCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_STUDENTS, null);
+        int count = 0;
+        if (cursor != null) {
+            try {
+                if (cursor.moveToFirst()) {
+                    count = cursor.getInt(0);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return count;
+    }
+
+    // Đếm số lượng lịch học
+    public int getSchedulesCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_SCHEDULES, null);
+        int count = 0;
+        if (cursor != null) {
+            try {
+                if (cursor.moveToFirst()) {
+                    count = cursor.getInt(0);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return count;
+    }
+
+    // Đếm số lượng thông báo
+    public int getNotificationsCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_NOTIFICATIONS, null);
+        int count = 0;
+        if (cursor != null) {
+            try {
+                if (cursor.moveToFirst()) {
+                    count = cursor.getInt(0);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return count;
+    }
+
+    // Đếm số lượng thời khóa biểu
+    public int getTimetablesCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_TIMETABLES, null);
+        int count = 0;
+        if (cursor != null) {
+            try {
+                if (cursor.moveToFirst()) {
+                    count = cursor.getInt(0);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return count;
     }
 
     // Xóa sinh viên và toàn bộ điểm của sinh viên đó

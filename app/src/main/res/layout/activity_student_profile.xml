@@ -17,8 +17,10 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/primary"
-            app:titleTextColor="@color/white"
-            app:navigationIconTint="@color/white" />
+            app:title="Thông tin sinh viên"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:titleTextColor="@color/black"
+            app:navigationIconTint="@color/black" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

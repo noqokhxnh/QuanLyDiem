@@ -16,9 +16,9 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@android:color/transparent"
             app:title="Quản lý Thời khóa biểu"
-            app:titleTextColor="@color/white"
+            app:titleTextColor="@color/black"
             app:navigationIcon="@drawable/ic_arrow_back"
-            app:navigationIconTint="@color/white" />
+            app:navigationIconTint="@color/black" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

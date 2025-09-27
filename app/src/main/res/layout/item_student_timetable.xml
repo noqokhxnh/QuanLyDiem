@@ -34,14 +34,14 @@
             <TextView
                 android:id="@+id/tvDay"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Thứ 2"
-                android:textSize="14sp"
-                android:textColor="@color/primary"
-                android:textStyle="bold"
+                android:layout_height="30dp"
+                android:layout_marginStart="8dp"
                 android:background="@drawable/bg_day_tag"
                 android:padding="8dp"
-                android:layout_marginStart="8dp" />
+                android:text="Thứ 2"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 

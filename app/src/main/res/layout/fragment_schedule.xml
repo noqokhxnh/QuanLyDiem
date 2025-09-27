@@ -15,7 +15,9 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@android:color/transparent"
             app:title="Lịch học"
-            app:titleTextColor="@color/white" />
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="@color/black"
+            app:titleTextColor="@color/black" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

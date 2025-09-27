@@ -37,9 +37,9 @@
                 android:layout_height="wrap_content"
                 android:text="Thứ 2"
                 android:textSize="14sp"
-                android:textColor="@color/primary"
+                android:textColor="@color/black"
                 android:textStyle="bold"
-                android:background="@drawable/bg_day_tag"
+                android:background="#F65A4F"
                 android:padding="8dp"
                 android:layout_marginStart="8dp" />
 

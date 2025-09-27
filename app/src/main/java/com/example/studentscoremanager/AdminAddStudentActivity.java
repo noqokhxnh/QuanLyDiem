@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
-public class AdminAddStudentActivity extends AppCompatActivity {
+public class  AdminAddStudentActivity extends AppCompatActivity {
 
     private DatabaseHelper dbHelper;
 
@@ -25,6 +25,7 @@ public class AdminAddStudentActivity extends AppCompatActivity {
         TextInputEditText edtPhone = findViewById(R.id.edtPhone);
         TextInputEditText edtEmail = findViewById(R.id.edtEmail);
         MaterialButton btnSave = findViewById(R.id.btnSave);
+        TextInputEditText edtDefaultPassword = findViewById(R.id.edtDefaultPassword);
 
         btnSave.setOnClickListener(v -> {
             String id = textOf(edtStudentId);
@@ -38,8 +39,18 @@ public class AdminAddStudentActivity extends AppCompatActivity {
                 return;
             }
             boolean ok = dbHelper.addStudent(id, name, className, faculty, phone, email);
-            Toast.makeText(this, ok ? "Đã thêm sinh viên" : "Thêm thất bại (trùng mã?)", Toast.LENGTH_SHORT).show();
-            if (ok) finish();
+            if (!ok) {
+                Toast.makeText(this, "Thêm thất bại (trùng mã?)", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Tạo tài khoản đăng nhập cho sinh viên với username = mã SV, mật khẩu do giảng viên cấp
+            String defaultPassword = textOf(edtDefaultPassword);
+            if (defaultPassword.isEmpty()) defaultPassword = "123456";
+            boolean userOk = dbHelper.addUser(id, defaultPassword, email);
+
+            Toast.makeText(this, userOk ? "Đã thêm sinh viên và tạo tài khoản" : "Đã thêm SV nhưng tạo tài khoản thất bại", Toast.LENGTH_SHORT).show();
+            if (userOk) finish();
         });
     }
 

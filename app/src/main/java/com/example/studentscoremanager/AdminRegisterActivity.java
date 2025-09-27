@@ -25,6 +25,7 @@ public class AdminRegisterActivity extends AppCompatActivity {
         edtPassword = findViewById(R.id.edtPassword);
         btnRegister = findViewById(R.id.btnRegister);
 
+
         btnRegister.setOnClickListener(v -> doRegister());
     }
 

@@ -31,6 +31,11 @@ public class ProfileFragment extends Fragment {
 
         dbHelper = new DatabaseHelper(getContext());
         prefsHelper = new SharedPreferencesHelper(getContext());
+        // Lấy MSSV từ session (được gán = username khi sinh viên đăng nhập)
+        String sid = prefsHelper.getCurrentStudentId();
+        if (sid != null && !sid.isEmpty()) {
+            currentStudentId = sid;
+        }
 
         // Ánh xạ views
         tvStudentName = view.findViewById(R.id.tvStudentName);
@@ -44,8 +49,9 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setupClickListeners(View view) {
-        // Edit Profile
-        view.findViewById(R.id.btnEditProfile).setOnClickListener(v -> showEditProfileDialog());
+        // Edit Profile: chỉ cho phép đổi mật khẩu, ẩn chỉnh sửa thông tin
+        View btnEdit = view.findViewById(R.id.btnEditProfile);
+        if (btnEdit != null) btnEdit.setVisibility(View.GONE);
 
         // Change Password
         view.findViewById(R.id.btnChangePassword).setOnClickListener(v -> showChangePasswordDialog());

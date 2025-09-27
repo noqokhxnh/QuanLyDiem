@@ -40,22 +40,24 @@ public class AdminLoginActivity extends AppCompatActivity {
     }
 
     private void doLogin() {
+        // Đảm bảo có tài khoản giảng viên mặc định nếu DB cũ không có
+        dbHelper.ensureLecturerAccount();
         String username = edtUsername.getText() == null ? "" : edtUsername.getText().toString().trim();
         String password = edtPassword.getText() == null ? "" : edtPassword.getText().toString().trim();
         if (username.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ", Toast.LENGTH_SHORT).show();
             return;
         }
-        // Giới hạn chỉ tài khoản admin
-        if (!"admin".equalsIgnoreCase(username)) {
-            Toast.makeText(this, "Chỉ tài khoản admin được phép", Toast.LENGTH_SHORT).show();
+        // Chỉ tài khoản giảng viên
+        if (!"giangvien".equalsIgnoreCase(username)) {
+            Toast.makeText(this, "Chỉ tài khoản giảng viên được phép", Toast.LENGTH_SHORT).show();
             return;
         }
         boolean ok = dbHelper.checkUser(username, password);
         if (ok) {
-            Toast.makeText(this, "Đăng nhập admin thành công", Toast.LENGTH_SHORT).show();
-            // Lưu session admin
-            prefsHelper.saveLoginInfo("admin", password, prefsHelper.getCurrentStudentId());
+            Toast.makeText(this, "Đăng nhập giảng viên thành công", Toast.LENGTH_SHORT).show();
+            // Lưu session giảng viên
+            prefsHelper.saveLoginInfo("giangvien", password, prefsHelper.getCurrentStudentId());
             startActivity(new Intent(this, AdminDashboardActivity.class));
             finish();
         } else {

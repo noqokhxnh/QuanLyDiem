@@ -37,22 +37,22 @@ public class LoginActivity extends AppCompatActivity {
         prefsHelper = new SharedPreferencesHelper(this);
 
         // Nút đăng nhập
-        btnLogin.setOnClickListener(v -> loginOrRegisterUser());
+        btnLogin.setOnClickListener(v -> doLogin());
 
-        // Chuyển sang màn hình đăng ký thủ công
+        // Vô hiệu tự đăng ký: chuyển sang ẩn/không hoạt động
         tvRegister.setOnClickListener(v ->
-                startActivity(new Intent(LoginActivity.this, RegisterActivity.class)));
+                Toast.makeText(LoginActivity.this, "Tài khoản do giảng viên tạo", Toast.LENGTH_SHORT).show());
 
         // Quên mật khẩu
         tvForgotPassword.setOnClickListener(v ->
                 startActivity(new Intent(LoginActivity.this, ForgotPassword.class)));
 
-        // Link: Đăng nhập với tư cách Admin → mở màn đăng nhập admin riêng
+        // Link: Đăng nhập với tư cách Giảng viên
         tvAdminLogin.setOnClickListener(v ->
                 startActivity(new Intent(LoginActivity.this, AdminLoginActivity.class)));
     }
 
-    private void loginOrRegisterUser() {
+    private void doLogin() {
         String username = edtUsername.getText().toString().trim();
         String password = edtPassword.getText().toString().trim();
 
@@ -63,68 +63,31 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Nếu tài khoản tồn tại → cho đăng nhập
+        // Giảng viên đăng nhập đặc biệt bằng username cố định
+        if ("giangvien".equalsIgnoreCase(username)) {
+            boolean ok = dbHelper.checkUser(username, password);
+            if (!ok) {
+                Toast.makeText(this, "Sai thông tin giảng viên", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            prefsHelper.saveLoginInfo(username, password, prefsHelper.getCurrentStudentId());
+            startActivity(new Intent(LoginActivity.this, AdminDashboardActivity.class));
+            finish();
+            return;
+        }
+
+        // Sinh viên: phải là tài khoản do giảng viên tạo sẵn
         boolean userExists = dbHelper.checkUser(username, password);
         Log.d("LoginActivity", "User check result: " + userExists);
-        
-        if (userExists) {
-            Log.d("LoginActivity", "Login successful");
-            Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-
-            // Lưu thông tin đăng nhập vào SharedPreferences
-            prefsHelper.saveLoginInfo(username, password, "20201234"); // Mặc định student ID
-
-            // Điều hướng theo vai trò
-            if ("admin".equalsIgnoreCase(username)) {
-                startActivity(new Intent(LoginActivity.this, AdminDashboardActivity.class));
-            } else {
-                startActivity(new Intent(LoginActivity.this, StudentMainActivity.class));
-            }
-            finish();
-        } else {
-            Log.d("LoginActivity", "User not found, showing registration dialog");
-            // Nếu chưa tồn tại → hỏi email để đăng ký mới
-            showEmailDialog(username, password);
+        if (!userExists) {
+            Toast.makeText(this, "Tài khoản chưa tồn tại. Vui lòng liên hệ giảng viên.", Toast.LENGTH_SHORT).show();
+            return;
         }
-    }
 
-    private void showEmailDialog(String username, String password) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Tài khoản mới");
-        builder.setMessage("Tài khoản chưa tồn tại.\nNhập email để đăng ký:");
-
-        // Tạo ô nhập email
-        final TextInputEditText input = new TextInputEditText(this);
-        input.setHint("Email");
-        input.setSingleLine(true);
-        builder.setView(input);
-
-        // Xử lý nút "Đăng ký"
-        builder.setPositiveButton("Đăng ký", (dialog, which) -> {
-            String email = input.getText() != null ? input.getText().toString().trim() : "";
-
-            if (email.isEmpty()) {
-                Toast.makeText(this, "Email không được để trống", Toast.LENGTH_SHORT).show();
-            } else {
-                boolean success = dbHelper.addUser(username, password, email);
-                if (success) {
-                    Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                    
-                    // Lưu thông tin đăng nhập vào SharedPreferences
-                    prefsHelper.saveLoginInfo(username, password, "20201234");
-                    
-                    // Chuyển đến trang chủ chính
-                    startActivity(new Intent(LoginActivity.this, StudentMainActivity.class));
-                    finish();
-                } else {
-                    Toast.makeText(this, "Tên đăng nhập đã tồn tại!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        // Nút hủy
-        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
-
-        builder.show();
+        // Lưu studentId = username để ánh xạ hồ sơ
+        prefsHelper.saveLoginInfo(username, password, username);
+        Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(LoginActivity.this, StudentMainActivity.class));
+        finish();
     }
 }

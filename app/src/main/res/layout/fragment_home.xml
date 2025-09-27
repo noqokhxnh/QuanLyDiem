@@ -19,28 +19,28 @@
             style="@style/ModernCard.Elevated"
             android:layout_marginBottom="24dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
                 android:padding="24dp"
                 android:background="@drawable/bg_gradient_modern">
 
-                <TextView
-                    android:id="@+id/tvWelcome"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+        <TextView
+            android:id="@+id/tvWelcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
                     android:text="Xin chào! 👋"
                     android:textSize="24sp"
-                    android:textStyle="bold"
+            android:textStyle="bold"
                     android:textColor="@color/white"
                     android:layout_marginBottom="8dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
                     android:text="Chọn chức năng bên dưới để bắt đầu"
-                    android:textSize="16sp"
+            android:textSize="16sp"
                     android:textColor="@color/white"
                     android:alpha="0.9" />
             </LinearLayout>
@@ -150,7 +150,11 @@
                 android:layout_height="160dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
-                style="@style/ModernCard">
+                style="@style/ModernCard"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -159,25 +163,25 @@
                     android:gravity="center"
                     android:padding="20dp">
 
-                    <androidx.cardview.widget.CardView
+            <androidx.cardview.widget.CardView
                         android:layout_width="56dp"
                         android:layout_height="56dp"
                         app:cardCornerRadius="28dp"
                         app:cardElevation="4dp"
                         android:layout_marginBottom="12dp">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
                             android:gravity="center"
                             android:background="@drawable/bg_button_secondary">
 
-                            <ImageView
+                    <ImageView
                                 android:layout_width="28dp"
                                 android:layout_height="28dp"
                                 android:src="@drawable/ic_score_modern"
-                                android:contentDescription="Điểm số" />
+                        android:contentDescription="Điểm số" />
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
@@ -208,7 +212,11 @@
                 android:layout_height="160dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
-                style="@style/ModernCard">
+                style="@style/ModernCard"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -224,18 +232,18 @@
                         app:cardElevation="4dp"
                         android:layout_marginBottom="12dp">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
                             android:gravity="center"
                             android:background="#F4F4F2">
 
-                            <ImageView
+                    <ImageView
                                 android:layout_width="28dp"
                                 android:layout_height="28dp"
                                 android:src="@drawable/ic_schedule_modern"
-                                android:contentDescription="Lịch học" />
+                        android:contentDescription="Lịch học" />
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
@@ -266,7 +274,11 @@
                 android:layout_height="160dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
-                style="@style/ModernCard">
+                style="@style/ModernCard"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -282,18 +294,18 @@
                         app:cardElevation="4dp"
                         android:layout_marginBottom="12dp">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
                             android:gravity="center"
                             android:background="#25E91E">
 
-                            <ImageView
+                    <ImageView
                                 android:layout_width="28dp"
                                 android:layout_height="28dp"
                                 android:src="@drawable/ic_news_modern"
-                                android:contentDescription="Tin tức" />
+                        android:contentDescription="Tin tức" />
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
@@ -324,7 +336,11 @@
                 android:layout_height="160dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
-                style="@style/ModernCard">
+                style="@style/ModernCard"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -340,14 +356,14 @@
                         app:cardElevation="4dp"
                         android:layout_marginBottom="12dp">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
                             android:gravity="center"
                             android:background="#44D5E7">
 
-                            <ImageView
+                    <ImageView
                                 android:layout_width="28dp"
                                 android:layout_height="28dp"
                                 android:src="@drawable/ic_person"
@@ -382,7 +398,11 @@
                 android:layout_height="160dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
-                style="@style/ModernCard">
+                style="@style/ModernCard"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -398,18 +418,18 @@
                         app:cardElevation="4dp"
                         android:layout_marginBottom="12dp">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
                             android:gravity="center"
                             android:background="#9565EB">
 
-                            <ImageView
+                    <ImageView
                                 android:layout_width="28dp"
                                 android:layout_height="28dp"
                                 android:src="@drawable/ic_notifications_modern"
-                                android:contentDescription="Thông báo" />
+                        android:contentDescription="Thông báo" />
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
