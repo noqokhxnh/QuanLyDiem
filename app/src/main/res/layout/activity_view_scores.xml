@@ -1,148 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
-    tools:context=".activities.ViewScoresActivity">
+    android:padding="16dp">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <TextView
+        android:id="@+id/tv_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:text="Danh sách điểm"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="8dp" />
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/purple_500"
-            app:title="Bảng Điểm Của Tôi"
-            app:titleTextColor="@color/white"
-            app:navigationIcon="?attr/homeAsUpIndicator" />
+    <TextView
+        android:id="@+id/tv_student_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Thông tin học sinh"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:layout_marginBottom="8dp" />
 
-    </com.google.android.material.appbar.AppBarLayout>
+    <TextView
+        android:id="@+id/tv_average_score"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Điểm trung bình: 0.0"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
 
-    <ScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_score_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:layout_marginBottom="16dp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_average"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="24dp"
-                app:cardElevation="4dp"
-                app:cardCornerRadius="16dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="24dp"
-                    android:gravity="center">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ĐIỂM TRUNG BÌNH"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/purple_500" />
-
-                    <TextView
-                        android:id="@+id/tv_average_score"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0.0"
-                        android:textSize="48sp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="16dp" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:layout_marginBottom="24dp"
-                app:cardElevation="4dp"
-                app:cardCornerRadius="12dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        app:startIconDrawable="@android:drawable/ic_menu_search">
-
-                        <EditText
-                            android:id="@+id/et_search"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Tìm kiếm môn học..."
-                            android:inputType="text" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:layout_marginBottom="24dp"
-                app:cardElevation="4dp"
-                app:cardCornerRadius="12dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="DANH SÁCH ĐIỂM"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/purple_500"
-                        android:padding="16dp" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/purple_200" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_score_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:clipToPadding="false" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-        </LinearLayout>
-
-    </ScrollView>
+    <Button
+        android:id="@+id/btn_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Quay lại" />
 
 </LinearLayout>

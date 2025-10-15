@@ -2,9 +2,8 @@ package com.example.qld.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.widget.EditText;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,187 +12,119 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.qld.R;
-import com.example.qld.database.mysql.MySQLManager;
+import com.example.qld.adapters.ScoreAdapter;
+import com.example.qld.database.DatabaseManager;
 import com.example.qld.models.Score;
 import com.example.qld.models.Student;
 import com.example.qld.utils.SessionManager;
-import com.google.android.material.card.MaterialCardView;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Activity để học sinh xem điểm của mình
- * Hiển thị danh sách điểm và điểm trung bình
- */
 public class ViewScoresActivity extends AppCompatActivity {
-    private RecyclerView rvScoreList;
-    private TextView tvAverageScore;
-    private MaterialCardView cardAverage;
-    private EditText etSearch;
-    private MySQLManager mysqlManager;
     private SessionManager sessionManager;
+    private DatabaseManager dbManager;
+    private RecyclerView rvScoreList;
     private ScoreAdapter scoreAdapter;
-    private List<Score> scoreList;
-    private List<Score> filteredScoreList;
-    
+    private Button btnBack;
+    private TextView tvTitle, tvStudentInfo, tvAverageScore;
+
+    private int studentId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_scores);
-        
-        // Initialize views
-        rvScoreList = findViewById(R.id.rv_score_list);
-        tvAverageScore = findViewById(R.id.tv_average_score);
-        cardAverage = findViewById(R.id.card_average);
-        etSearch = findViewById(R.id.et_search);
-        
-        // Initialize managers
-        mysqlManager = new MySQLManager(this);
+
+        // Initialize session and database managers
         sessionManager = new SessionManager(this);
-        
-        // Check if user is logged in as student
-        if (!sessionManager.isLoggedIn() || sessionManager.getUserRole() != 0) {
-            // Redirect to login if not logged in or not a student
-            Intent intent = new Intent(ViewScoresActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+        dbManager = new DatabaseManager(this);
+
+        // Check if user is logged in
+        if (!sessionManager.isLoggedIn()) {
+            redirectToLogin();
             return;
         }
-        
+
+        // Get student ID from intent
+        studentId = getIntent().getIntExtra("STUDENT_ID", sessionManager.getUserId());
+
+        // Initialize views
+        tvTitle = findViewById(R.id.tv_title);
+        tvStudentInfo = findViewById(R.id.tv_student_info);
+        tvAverageScore = findViewById(R.id.tv_average_score);
+        rvScoreList = findViewById(R.id.rv_score_list);
+        btnBack = findViewById(R.id.btn_back);
+
         // Set up RecyclerView
         rvScoreList.setLayoutManager(new LinearLayoutManager(this));
-        
-        // Set up navigation
-        androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        
+
         // Load scores
         loadScores();
-        
-        // Set up search functionality
-        etSearch.addTextChangedListener(new TextWatcher() {
+
+        // Load student info
+        loadStudentInfo();
+
+        // Calculate and display average score
+        calculateAndDisplayAverage();
+
+        // Set click listeners
+        btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-            
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterScores(s.toString());
-            }
-            
-            @Override
-            public void afterTextChanged(Editable s) {
+            public void onClick(View v) {
+                finish();
             }
         });
     }
-    
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
-    
-    /**
-     * Tải danh sách điểm của học sinh từ database và hiển thị lên RecyclerView
-     * Đồng thời tính toán và hiển thị điểm trung bình
-     */
+
     private void loadScores() {
-        mysqlManager.getStudentByUserId(sessionManager.getUserId(), new MySQLManager.StudentCallback() {
-            @Override
-            public void onSuccess(Student student) {
-                if (student != null) {
-                    mysqlManager.getScoresByStudentId(student.getId(), new MySQLManager.ScoresCallback() {
-                        @Override
-                        public void onSuccess(List<Score> scores) {
-                            runOnUiThread(() -> {
-                                scoreList = scores;
-                                filteredScoreList = new ArrayList<>(scoreList);
-                                
-                                scoreAdapter = new ScoreAdapter(ViewScoresActivity.this, filteredScoreList, mysqlManager);
-                                rvScoreList.setAdapter(scoreAdapter);
-                                
-                                // Calculate and display average score
-                                calculateAndDisplayAverage(student.getId());
-                            });
-                        }
-                        
-                        @Override
-                        public void onError(String error) {
-                            runOnUiThread(() -> {
-                                Toast.makeText(ViewScoresActivity.this, error, Toast.LENGTH_LONG).show();
-                            });
-                        }
-                    });
-                } else {
-                    runOnUiThread(() -> {
-                        Toast.makeText(ViewScoresActivity.this, "Không tìm thấy thông tin học sinh", Toast.LENGTH_SHORT).show();
-                    });
-                }
-            }
+        try {
+            dbManager.open();
+            List<Score> scores = dbManager.getScoresByStudentId(studentId);
             
-            @Override
-            public void onError(String error) {
-                runOnUiThread(() -> {
-                    Toast.makeText(ViewScoresActivity.this, error, Toast.LENGTH_LONG).show();
-                });
-            }
-        });
-    }
-    
-    /**
-     * Tính toán và hiển thị điểm trung bình
-     * @param studentId ID của học sinh
-     */
-    private void calculateAndDisplayAverage(int studentId) {
-        mysqlManager.calculateAverageScore(studentId, new MySQLManager.AverageScoreCallback() {
-            @Override
-            public void onSuccess(double average) {
-                runOnUiThread(() -> {
-                    DecimalFormat df = new DecimalFormat("#.##");
-                    tvAverageScore.setText(df.format(average));
-                });
-            }
-            
-            @Override
-            public void onError(String error) {
-                runOnUiThread(() -> {
-                    Toast.makeText(ViewScoresActivity.this, error, Toast.LENGTH_LONG).show();
-                });
-            }
-        });
-    }
-    
-    /**
-     * Lọc danh sách điểm theo từ khóa tìm kiếm
-     * @param query từ khóa tìm kiếm
-     */
-    private void filterScores(String query) {
-        if (scoreList == null) return;
-        
-        filteredScoreList.clear();
-        
-        if (query.isEmpty()) {
-            filteredScoreList.addAll(scoreList);
-        } else {
-            query = query.toLowerCase().trim();
-            for (Score score : scoreList) {
-                // In a real app, you would filter by subject name or other criteria
-                // For now, we'll just show all scores
-                filteredScoreList.add(score);
-            }
+            scoreAdapter = new ScoreAdapter(this, scores);
+            rvScoreList.setAdapter(scoreAdapter);
+        } catch (Exception e) {
+            Toast.makeText(this, "Lỗi khi tải danh sách điểm: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        } finally {
+            dbManager.close();
         }
-        
-        scoreAdapter.notifyDataSetChanged();
     }
-    
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Refresh the score list when returning to this activity
-        loadScores();
+
+    private void loadStudentInfo() {
+        try {
+            dbManager.open();
+            Student student = dbManager.getStudentById(studentId);
+            if (student != null) {
+                // If we don't have a direct way to get student name, we can get it via user info
+                // For now, just showing the student ID
+                tvStudentInfo.setText("Mã học sinh: " + student.getStudentCode() + 
+                                    " | Lớp: " + student.getClassName());
+            } else {
+                tvStudentInfo.setText("Thông tin học sinh");
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Lỗi khi tải thông tin học sinh: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        } finally {
+            dbManager.close();
+        }
+    }
+
+    private void calculateAndDisplayAverage() {
+        try {
+            dbManager.open();
+            double average = dbManager.calculateOverallAverageScore(studentId);
+            tvAverageScore.setText(String.format("Điểm trung bình: %.2f", average));
+        } catch (Exception e) {
+            Toast.makeText(this, "Lỗi khi tính điểm trung bình: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        } finally {
+            dbManager.close();
+        }
+    }
+
+    private void redirectToLogin() {
+        Intent intent = new Intent(ViewScoresActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }

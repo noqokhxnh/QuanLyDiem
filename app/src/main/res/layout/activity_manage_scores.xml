@@ -1,128 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
-    tools:context=".activities.ManageScoresActivity">
+    android:padding="16dp">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/purple_500"
-            app:title="Quản Lý Điểm"
-            app:titleTextColor="@color/white"
-            app:navigationIcon="?attr/homeAsUpIndicator" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <com.google.android.material.card.MaterialCardView
+    <TextView
+        android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="4dp">
+        android:text="Danh sách điểm"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:startIconDrawable="@android:drawable/ic_menu_search">
-
-                <EditText
-                    android:id="@+id/et_search_score"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Tìm kiếm..."
-                    android:inputType="text" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_filter_subject"
-                    android:layout_width="0dp"
-                    android:layout_height="60dp"
-                    android:layout_weight="1"
-                    android:text="Môn học"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    app:cornerRadius="8dp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_sort"
-                    android:layout_width="0dp"
-                    android:layout_height="60dp"
-                    android:layout_weight="1"
-                    android:text="Sắp xếp"
-
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    app:cornerRadius="8dp" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_score_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:layout_marginBottom="16dp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_score_list"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:padding="8dp"
-                android:clipToPadding="false" />
-
-            <TextView
-                android:id="@+id/tv_empty_list"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:text="Không có điểm nào"
-                android:textSize="18sp"
-                android:textColor="@color/purple_500"
-                android:gravity="center"
-                android:visibility="gone" />
-
-        </LinearLayout>
-
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add_score"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="16dp"
-        android:src="@android:drawable/ic_input_add"
-        app:tint="@android:color/white"
-        app:backgroundTint="@color/purple_500" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_add_score"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="Thêm điểm" />
+
+        <Button
+            android:id="@+id/btn_back"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="Quay lại" />
+
+    </LinearLayout>
 
 </LinearLayout>

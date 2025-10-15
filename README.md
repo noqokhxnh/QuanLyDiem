@@ -1,185 +1,116 @@
-# Ứng dụng Quản lý Điểm Học Sinh
+# Ứng dụng Quản lý Điểm (Student Grade Manager)
 
-## 📋 Tổng quan
-Đây là một ứng dụng Android quản lý điểm số cho giáo viên và học sinh, được phát triển như một phần của môn Lập trình Mobile. Ứng dụng cho phép giáo viên quản lý học sinh và nhập điểm, trong khi học sinh có thể xem điểm và điểm trung bình của mình.
+## Tổng quan
 
-## 🚀 Tính năng
+Ứng dụng Android quản lý điểm số cho giáo viên và học sinh, được xây dựng bằng Java với SQLite làm cơ sở dữ liệu. Ứng dụng hỗ trợ phân quyền giữa giáo viên và học sinh với các tính năng riêng biệt cho từng vai trò.
 
-### Cốt lõi
-- **Xác thực người dùng** với phân quyền theo vai trò (giáo viên/học sinh)
-- **CRUD học sinh** (chỉ giáo viên)
-- **CRUD điểm số** (giáo viên nhập, học sinh xem)
-- **Tính điểm trung bình** tự động
-- **Giao diện người dùng thân thiện** với thiết kế Material
+## Tính năng chính
 
-### Tính năng giáo viên
-- ✅ Xem danh sách tất cả học sinh
-- ✅ Thêm/sửa/xóa học sinh
-- ✅ Nhập điểm cho học sinh (tất cả loại điểm: miệng, 15 phút, 1 tiết, học kỳ)
-- ✅ Sửa/xóa điểm đã nhập
-- ✅ Xem thống kê điểm theo lớp/môn
-- ✅ Xuất báo cáo điểm
-- ✅ Đổi mật khẩu
+### Đối với Giáo viên
+- ✅ **Đăng nhập hệ thống** - Xác thực với tài khoản giáo viên
+- ✅ **Quản lý học sinh** - Xem danh sách học sinh
+- ✅ **Đăng ký học sinh** - Tạo tài khoản mới cho học sinh (chỉ giáo viên được phép)
+- ✅ **Quản lý điểm số** - Nhập, chỉnh sửa điểm cho học sinh
+- ✅ **Xem báo cáo** - Thống kê điểm số
+- ✅ **Đổi mật khẩu** - Cập nhật mật khẩu cá nhân
+- ✅ **Đăng xuất** - Kết thúc phiên làm việc
 
-### Tính năng học sinh
-- ✅ Xem điểm của chính mình
-- ✅ Xem điểm trung bình cá nhân
-- ✅ Tra cứu lịch sử điểm
-- ✅ Đổi mật khẩu
+### Đối với Học sinh  
+- ✅ **Đăng nhập hệ thống** - Xác thực với tài khoản học sinh
+- ✅ **Xem điểm của mình** - Tra cứu bảng điểm cá nhân
+- ✅ **Xem báo cáo** - Thống kê điểm số cá nhân
+- ✅ **Đổi mật khẩu** - Cập nhật mật khẩu cá nhân
+- ✅ **Đăng xuất** - Kết thúc phiên làm việc
 
-## 🛠️ Công nghệ sử dụng
+## Kiến trúc ứng dụng
 
-### Công nghệ chính (theo yêu cầu)
-- **Ngôn ngữ**: Java (không dùng Kotlin)
-- **IDE**: Android Studio
-- **Database**: SQLite với SQLiteOpenHelper
-- **UI**: XML Layout (không dùng Jetpack Compose)
+### Công nghệ sử dụng
+- **Ngôn ngữ lập trình**: Java
+- **Cơ sở dữ liệu**: SQLite
+- **Giao diện người dùng**: XML Layout
 - **Kiến trúc**: MVC đơn giản
-- **Lưu trữ session**: SharedPreferences
-- **UI Framework**: Thiết kế Material
 
-### Không sử dụng
-- ❌ Kotlin
-- ❌ Jetpack Compose  
-- ❌ Room Database
-- ❌ Retrofit/API calls
-- ❌ Firebase
-- ❌ MVP/MVVM pattern phức tạp
-- ❌ Dependency Injection frameworks
+### Cấu trúc cơ sở dữ liệu
+1. **users** - Lưu thông tin người dùng (giáo viên và học sinh)
+2. **students** - Lưu thông tin chi tiết của học sinh
+3. **subjects** - Danh sách các môn học
+4. **scores** - Bảng điểm của học sinh
 
-## 🏗️ Cấu trúc Project
-
+### Cấu trúc thư mục
 ```
-app/src/main/java/com/yourname/studentmanager/
-├── models/
+app/src/main/java/com/example/qld/
+├── models/           # Các model class
 │   ├── User.java
 │   ├── Student.java  
 │   ├── Subject.java
 │   └── Score.java
-├── database/
+├── database/         # Database helper và manager
 │   ├── DatabaseHelper.java
 │   └── DatabaseManager.java
-├── activities/
+├── activities/       # Các activity chính
 │   ├── LoginActivity.java
 │   ├── TeacherMainActivity.java
 │   ├── StudentMainActivity.java
 │   ├── ManageStudentsActivity.java
 │   ├── ManageScoresActivity.java
-│   └── ViewScoresActivity.java
-├── adapters/
+│   ├── ViewScoresActivity.java
+│   ├── AddStudentActivity.java
+│   ├── AddScoreActivity.java
+│   ├── ChangePasswordActivity.java
+│   └── StatisticsActivity.java
+├── adapters/         # RecyclerView adapters
 │   ├── StudentAdapter.java
 │   └── ScoreAdapter.java
-└── utils/
+└── utils/            # Utility classes
     ├── SessionManager.java
     └── Constants.java
 ```
 
-## 📊 Schema Cơ sở dữ liệu
+## Tính năng đặc biệt
 
-### Bảng users
-```sql
-CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    role INTEGER NOT NULL, -- 0: học sinh, 1: giáo viên
-    full_name TEXT NOT NULL,
-    created_date TEXT DEFAULT CURRENT_TIMESTAMP
-);
-```
+### 1. Phân quyền người dùng
+- **Giáo viên (Role = 1)**: Có thể quản lý học sinh, nhập điểm, xem báo cáo
+- **Học sinh (Role = 0)**: Chỉ xem điểm của mình, không thể truy cập tính năng giáo viên
 
-### Bảng students  
-```sql
-CREATE TABLE students (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER,
-    student_code TEXT UNIQUE NOT NULL,
-    class_name TEXT NOT NULL,
-    birth_date TEXT,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
-```
+### 2. Đăng ký học sinh
+- Chỉ giáo viên mới có thể đăng ký tài khoản cho học sinh mới
+- Học sinh không thể tự đăng ký (chức năng này đã được vô hiệu hóa)
 
-### Bảng subjects
-```sql
-CREATE TABLE subjects (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    subject_name TEXT NOT NULL,
-    subject_code TEXT UNIQUE NOT NULL
-);
-```
+### 3. Đổi mật khẩu
+- Cả giáo viên và học sinh đều có thể đổi mật khẩu của mình
+- Yêu cầu xác nhận mật khẩu hiện tại trước khi đổi
 
-### Bảng scores
-```sql
-CREATE TABLE scores (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    student_id INTEGER,
-    subject_id INTEGER,
-    score_type TEXT NOT NULL, -- 'mieng', '15phut', '1tiet', 'hocky'
-    score REAL NOT NULL,
-    date_created TEXT DEFAULT CURRENT_TIMESTAMP,
-    teacher_id INTEGER,
-    FOREIGN KEY (student_id) REFERENCES students(id),
-    FOREIGN KEY (subject_id) REFERENCES subjects(id),
-    FOREIGN KEY (teacher_id) REFERENCES users(id)
-);
-```
+### 4. Quản lý điểm linh hoạt
+- Hỗ trợ nhiều loại điểm: điểm miệng, 15 phút, 1 tiết, thi học kỳ
+- Tính điểm trung bình tự động
 
-## 📱 Cài đặt và chạy ứng dụng
+## Cài đặt
 
-### Yêu cầu hệ thống
-- Android Studio (bản mới nhất)
-- Android SDK API level 21 trở lên
-- Thiết bị hoặc emulator Android
-
-### Cài đặt
-1. Clone hoặc tải project về máy
-2. Mở project trong Android Studio
+1. Clone hoặc tải mã nguồn về
+2. Mở dự án trong Android Studio
 3. Đồng bộ Gradle
-4. Build và chạy ứng dụng trên thiết bị hoặc emulator
+4. Build và chạy ứng dụng
 
-### Dữ liệu mẫu
-Khi khởi động lần đầu, ứng dụng sẽ tạo các tài khoản mẫu:
+## Tên đăng nhập mặc định
 
-Tài khoản giáo viên:
-- Username: `teacher1`
-- Password: `123456`
-- Họ tên: `Nguyễn Văn Giáo`
+### Giáo viên
+- **Tên đăng nhập**: `teacher1`
+- **Mật khẩu**: `123456`
 
-Tài khoản học sinh:
-- Username: `student1`
-- Password: `123456`
-- Họ tên: `Trần Thị Học`
+### Học sinh
+- **Tên đăng nhập**: `student1`
+- **Mật khẩu**: `123456`
+- **Tên đăng nhập 2**: `student2`
+- **Mật khẩu 2**: `123456`
 
-## 👥 Phân quyền người dùng
+## Bảo trì
 
-### Role = 1: Giáo viên
-Có toàn quyền quản lý học sinh và điểm số
+Dự án này được xây dựng phục vụ mục đích học tập với các tiêu chí:
+- Đơn giản, dễ hiểu
+- Tính năng đầy đủ
+- Tuân thủ quy tắc lập trình Android
+- Không sử dụng công nghệ quá phức tạp
 
-### Role = 0: Học sinh  
-Chỉ được xem điểm cá nhân
+## Giấy phép
 
-## 🎯 Quy tắc Code
-
-### Naming Convention
-- Classes: PascalCase (ví dụ: `LoginActivity.java`)
-- Methods: camelCase (ví dụ: `authenticateUser()`)
-- Variables: camelCase (ví dụ: `etUsername`)
-- Constants: UPPER_SNAKE_CASE (ví dụ: `DATABASE_NAME`)
-- Database fields: snake_case (ví dụ: `student_id`)
-
-### Ngôn ngữ
-- Code: 100% tiếng Anh
-- Giao diện người dùng: 100% tiếng Việt
-
-## 🔧 Cách đóng góp
-
-1. Fork repository
-2. Tạo nhánh mới cho tính năng của bạn
-3. Commit thay đổi với mô tả rõ ràng
-4. Push lên nhánh của bạn
-5. Tạo Pull Request
-
-## 📝 Giấy phép
-
-Dự án này dành cho mục đích học tập, ưu tiên sự đơn giản và dễ hiểu hơn là công nghệ mới nhất.
+Dự án học tập - được sử dụng cho môn Lập trình Mobile.

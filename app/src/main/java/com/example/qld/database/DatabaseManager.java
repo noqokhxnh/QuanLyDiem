@@ -16,538 +16,498 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseManager {
-    private static final String TAG = "DatabaseManager";
-    
     private DatabaseHelper dbHelper;
     private SQLiteDatabase database;
-    
+
     public DatabaseManager(Context context) {
         dbHelper = new DatabaseHelper(context);
     }
-    
+
     public void open() throws SQLException {
-        Log.d(TAG, "Đang mở kết nối database");
         database = dbHelper.getWritableDatabase();
     }
-    
+
     public void close() {
-        Log.d(TAG, "Đang đóng kết nối database");
-        if (dbHelper != null) {
-            dbHelper.close();
-        }
+        dbHelper.close();
     }
-    
-    // Các thao tác với người dùng
+
+    // User operations
     public User authenticateUser(String username, String password) {
-        String selection = DatabaseHelper.COLUMN_USERNAME + " = ? AND " + DatabaseHelper.COLUMN_PASSWORD + " = ?";
-        String[] selectionArgs = {username, password};
-        
-        Cursor cursor = database.query(
-                DatabaseHelper.TABLE_USERS,
-                null,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null
-        );
-        
         User user = null;
-        if (cursor != null && cursor.moveToFirst()) {
-            user = new User();
-            user.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USER_ID)));
-            user.setUsername(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USERNAME)));
-            user.setPassword(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PASSWORD)));
-            user.setRole(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ROLE)));
-            user.setFullName(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_FULL_NAME)));
-            user.setCreatedDate(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CREATED_DATE)));
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT * FROM " + DatabaseHelper.TABLE_USERS + 
+                          " WHERE " + DatabaseHelper.COLUMN_USERNAME + " = ? AND " + 
+                          DatabaseHelper.COLUMN_PASSWORD + " = ?";
             
-            cursor.close();
-        } else if (cursor != null) {
-            cursor.close();
-        }
-        
-        return user;
-    }
-    
-    public User getUserByUsername(String username) {
-        String selection = DatabaseHelper.COLUMN_USERNAME + " = ?";
-        String[] selectionArgs = {username};
-        
-        Cursor cursor = database.query(
-                DatabaseHelper.TABLE_USERS,
-                null,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null
-        );
-        
-        User user = null;
-        if (cursor != null && cursor.moveToFirst()) {
-            user = new User();
-            user.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USER_ID)));
-            user.setUsername(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USERNAME)));
-            user.setPassword(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PASSWORD)));
-            user.setRole(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ROLE)));
-            user.setFullName(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_FULL_NAME)));
-            user.setCreatedDate(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CREATED_DATE)));
+            cursor = database.rawQuery(query, new String[]{username, password});
             
-            cursor.close();
-        } else if (cursor != null) {
-            cursor.close();
-        }
-        
-        return user;
-    }
-    
-    public long addUser(User user) {
-        ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.COLUMN_USERNAME, user.getUsername());
-        values.put(DatabaseHelper.COLUMN_PASSWORD, user.getPassword());
-        values.put(DatabaseHelper.COLUMN_ROLE, user.getRole());
-        values.put(DatabaseHelper.COLUMN_FULL_NAME, user.getFullName());
-        
-        return database.insert(DatabaseHelper.TABLE_USERS, null, values);
-    }
-    
-    public List<User> getAllUsers() {
-        List<User> users = new ArrayList<>();
-        
-        Cursor cursor = database.query(
-                DatabaseHelper.TABLE_USERS,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-        
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                User user = new User();
-                user.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USER_ID)));
+            if (cursor.moveToFirst()) {
+                user = new User();
+                user.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID)));
                 user.setUsername(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USERNAME)));
                 user.setPassword(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PASSWORD)));
                 user.setRole(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ROLE)));
                 user.setFullName(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_FULL_NAME)));
                 user.setCreatedDate(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CREATED_DATE)));
-                
-                users.add(user);
-            } while (cursor.moveToNext());
-            
-            cursor.close();
-        } else if (cursor != null) {
-            cursor.close();
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseManager", "Error authenticating user: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-        
-        return users;
-    }
-    
-    public User getUserById(int userId) {
-        String selection = DatabaseHelper.COLUMN_USER_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(userId)};
-        
-        Cursor cursor = database.query(
-                DatabaseHelper.TABLE_USERS,
-                null,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null
-        );
-        
-        User user = null;
-        if (cursor != null && cursor.moveToFirst()) {
-            user = new User();
-            user.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USER_ID)));
-            user.setUsername(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USERNAME)));
-            user.setPassword(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PASSWORD)));
-            user.setRole(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ROLE)));
-            user.setFullName(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_FULL_NAME)));
-            user.setCreatedDate(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CREATED_DATE)));
-            
-            cursor.close();
-        } else if (cursor != null) {
-            cursor.close();
-        }
-        
+
         return user;
     }
-    
+
+    public User getUserById(int userId) {
+        User user = null;
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT * FROM " + DatabaseHelper.TABLE_USERS + 
+                          " WHERE " + DatabaseHelper.COLUMN_ID + " = ?";
+            
+            cursor = database.rawQuery(query, new String[]{String.valueOf(userId)});
+            
+            if (cursor.moveToFirst()) {
+                user = new User();
+                user.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID)));
+                user.setUsername(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USERNAME)));
+                user.setPassword(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PASSWORD)));
+                user.setRole(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ROLE)));
+                user.setFullName(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_FULL_NAME)));
+                user.setCreatedDate(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CREATED_DATE)));
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseManager", "Error getting user by ID: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return user;
+    }
+
+    public long createUser(User user) {
+        ContentValues values = new ContentValues();
+        values.put(DatabaseHelper.COLUMN_USERNAME, user.getUsername());
+        values.put(DatabaseHelper.COLUMN_PASSWORD, user.getPassword());
+        values.put(DatabaseHelper.COLUMN_ROLE, user.getRole());
+        values.put(DatabaseHelper.COLUMN_FULL_NAME, user.getFullName());
+
+        return database.insert(DatabaseHelper.TABLE_USERS, null, values);
+    }
+
     public int updateUser(User user) {
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.COLUMN_USERNAME, user.getUsername());
         values.put(DatabaseHelper.COLUMN_PASSWORD, user.getPassword());
         values.put(DatabaseHelper.COLUMN_ROLE, user.getRole());
         values.put(DatabaseHelper.COLUMN_FULL_NAME, user.getFullName());
-        
-        String selection = DatabaseHelper.COLUMN_USER_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(user.getId())};
-        
-        return database.update(DatabaseHelper.TABLE_USERS, values, selection, selectionArgs);
+
+        return database.update(DatabaseHelper.TABLE_USERS, values, 
+                              DatabaseHelper.COLUMN_ID + " = ?", 
+                              new String[]{String.valueOf(user.getId())});
     }
-    
-    public int deleteUser(int userId) {
-        String selection = DatabaseHelper.COLUMN_USER_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(userId)};
-        
-        return database.delete(DatabaseHelper.TABLE_USERS, selection, selectionArgs);
-    }
-    
-    // Các thao tác với học sinh
-    public long addStudent(Student student) {
-        ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.COLUMN_STUDENT_USER_ID, student.getUserId());
-        values.put(DatabaseHelper.COLUMN_STUDENT_CODE, student.getStudentCode());
-        values.put(DatabaseHelper.COLUMN_CLASS_NAME, student.getClassName());
-        values.put(DatabaseHelper.COLUMN_BIRTH_DATE, student.getBirthDate());
-        
-        return database.insert(DatabaseHelper.TABLE_STUDENTS, null, values);
-    }
-    
+
+    // Student operations
     public List<Student> getAllStudents() {
         List<Student> students = new ArrayList<>();
-        
-        Cursor cursor = database.query(
-                DatabaseHelper.TABLE_STUDENTS,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-        
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                Student student = new Student();
-                student.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_STUDENT_ID)));
-                student.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_STUDENT_USER_ID)));
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT s.*, u." + DatabaseHelper.COLUMN_FULL_NAME + 
+                          " FROM " + DatabaseHelper.TABLE_STUDENTS + " s" +
+                          " LEFT JOIN " + DatabaseHelper.TABLE_USERS + " u ON s." + 
+                          DatabaseHelper.COLUMN_USER_ID + " = u." + DatabaseHelper.COLUMN_ID;
+            
+            cursor = database.rawQuery(query, null);
+            
+            if (cursor.moveToFirst()) {
+                do {
+                    Student student = new Student();
+                    student.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID)));
+                    student.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USER_ID)));
+                    student.setStudentCode(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_STUDENT_CODE)));
+                    student.setClassName(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CLASS_NAME)));
+                    student.setBirthDate(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BIRTH_DATE)));
+                    
+                    students.add(student);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseManager", "Error getting all students: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return students;
+    }
+
+    public Student getStudentById(int studentId) {
+        Student student = null;
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT * FROM " + DatabaseHelper.TABLE_STUDENTS + 
+                          " WHERE " + DatabaseHelper.COLUMN_ID + " = ?";
+            
+            cursor = database.rawQuery(query, new String[]{String.valueOf(studentId)});
+            
+            if (cursor.moveToFirst()) {
+                student = new Student();
+                student.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID)));
+                student.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USER_ID)));
                 student.setStudentCode(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_STUDENT_CODE)));
                 student.setClassName(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CLASS_NAME)));
                 student.setBirthDate(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BIRTH_DATE)));
-                
-                students.add(student);
-            } while (cursor.moveToNext());
-            
-            cursor.close();
-        } else if (cursor != null) {
-            cursor.close();
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseManager", "Error getting student by ID: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-        
+
+        return student;
+    }
+
+    public List<Student> getStudentsByUserId(int userId) {
+        List<Student> students = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT * FROM " + DatabaseHelper.TABLE_STUDENTS + 
+                          " WHERE " + DatabaseHelper.COLUMN_USER_ID + " = ?";
+            
+            cursor = database.rawQuery(query, new String[]{String.valueOf(userId)});
+            
+            if (cursor.moveToFirst()) {
+                do {
+                    Student student = new Student();
+                    student.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID)));
+                    student.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USER_ID)));
+                    student.setStudentCode(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_STUDENT_CODE)));
+                    student.setClassName(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CLASS_NAME)));
+                    student.setBirthDate(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BIRTH_DATE)));
+                    
+                    students.add(student);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseManager", "Error getting students by user ID: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
         return students;
     }
-    
-    public Student getStudentById(int studentId) {
-        String selection = DatabaseHelper.COLUMN_STUDENT_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(studentId)};
-        
-        Cursor cursor = database.query(
-                DatabaseHelper.TABLE_STUDENTS,
-                null,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null
-        );
-        
-        Student student = null;
-        if (cursor != null && cursor.moveToFirst()) {
-            student = new Student();
-            student.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_STUDENT_ID)));
-            student.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_STUDENT_USER_ID)));
-            student.setStudentCode(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_STUDENT_CODE)));
-            student.setClassName(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CLASS_NAME)));
-            student.setBirthDate(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BIRTH_DATE)));
-            
-            cursor.close();
-        } else if (cursor != null) {
-            cursor.close();
-        }
-        
-        return student;
-    }
-    
-    public Student getStudentByUserId(int userId) {
-        String selection = DatabaseHelper.COLUMN_STUDENT_USER_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(userId)};
-        
-        Cursor cursor = database.query(
-                DatabaseHelper.TABLE_STUDENTS,
-                null,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null
-        );
-        
-        Student student = null;
-        if (cursor != null && cursor.moveToFirst()) {
-            student = new Student();
-            student.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_STUDENT_ID)));
-            student.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_STUDENT_USER_ID)));
-            student.setStudentCode(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_STUDENT_CODE)));
-            student.setClassName(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CLASS_NAME)));
-            student.setBirthDate(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BIRTH_DATE)));
-            
-            cursor.close();
-        } else if (cursor != null) {
-            cursor.close();
-        }
-        
-        return student;
-    }
-    
-    public int updateStudent(Student student) {
+
+    public long createStudent(Student student) {
         ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.COLUMN_STUDENT_USER_ID, student.getUserId());
+        values.put(DatabaseHelper.COLUMN_USER_ID, student.getUserId());
         values.put(DatabaseHelper.COLUMN_STUDENT_CODE, student.getStudentCode());
         values.put(DatabaseHelper.COLUMN_CLASS_NAME, student.getClassName());
         values.put(DatabaseHelper.COLUMN_BIRTH_DATE, student.getBirthDate());
-        
-        String selection = DatabaseHelper.COLUMN_STUDENT_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(student.getId())};
-        
-        return database.update(DatabaseHelper.TABLE_STUDENTS, values, selection, selectionArgs);
+
+        return database.insert(DatabaseHelper.TABLE_STUDENTS, null, values);
     }
-    
+
+    public int updateStudent(Student student) {
+        ContentValues values = new ContentValues();
+        values.put(DatabaseHelper.COLUMN_USER_ID, student.getUserId());
+        values.put(DatabaseHelper.COLUMN_STUDENT_CODE, student.getStudentCode());
+        values.put(DatabaseHelper.COLUMN_CLASS_NAME, student.getClassName());
+        values.put(DatabaseHelper.COLUMN_BIRTH_DATE, student.getBirthDate());
+
+        return database.update(DatabaseHelper.TABLE_STUDENTS, values, 
+                              DatabaseHelper.COLUMN_ID + " = ?", 
+                              new String[]{String.valueOf(student.getId())});
+    }
+
     public int deleteStudent(int studentId) {
-        String selection = DatabaseHelper.COLUMN_STUDENT_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(studentId)};
-        
-        return database.delete(DatabaseHelper.TABLE_STUDENTS, selection, selectionArgs);
+        return database.delete(DatabaseHelper.TABLE_STUDENTS, 
+                              DatabaseHelper.COLUMN_ID + " = ?", 
+                              new String[]{String.valueOf(studentId)});
     }
-    
-    // Các thao tác với môn học
-    public long addSubject(Subject subject) {
+
+    // Subject operations
+    public List<Subject> getAllSubjects() {
+        List<Subject> subjects = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT * FROM " + DatabaseHelper.TABLE_SUBJECTS;
+            
+            cursor = database.rawQuery(query, null);
+            
+            if (cursor.moveToFirst()) {
+                do {
+                    Subject subject = new Subject();
+                    subject.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID)));
+                    subject.setSubjectName(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SUBJECT_NAME)));
+                    subject.setSubjectCode(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SUBJECT_CODE)));
+                    
+                    subjects.add(subject);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseManager", "Error getting all subjects: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return subjects;
+    }
+
+    public Subject getSubjectById(int subjectId) {
+        Subject subject = null;
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT * FROM " + DatabaseHelper.TABLE_SUBJECTS + 
+                          " WHERE " + DatabaseHelper.COLUMN_ID + " = ?";
+            
+            cursor = database.rawQuery(query, new String[]{String.valueOf(subjectId)});
+            
+            if (cursor.moveToFirst()) {
+                subject = new Subject();
+                subject.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID)));
+                subject.setSubjectName(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SUBJECT_NAME)));
+                subject.setSubjectCode(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SUBJECT_CODE)));
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseManager", "Error getting subject by ID: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return subject;
+    }
+
+    public long createSubject(Subject subject) {
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.COLUMN_SUBJECT_NAME, subject.getSubjectName());
         values.put(DatabaseHelper.COLUMN_SUBJECT_CODE, subject.getSubjectCode());
-        
+
         return database.insert(DatabaseHelper.TABLE_SUBJECTS, null, values);
     }
-    
-    public List<Subject> getAllSubjects() {
-        List<Subject> subjects = new ArrayList<>();
-        
-        Cursor cursor = database.query(
-                DatabaseHelper.TABLE_SUBJECTS,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-        
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                Subject subject = new Subject();
-                subject.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SUBJECT_ID)));
-                subject.setSubjectName(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SUBJECT_NAME)));
-                subject.setSubjectCode(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SUBJECT_CODE)));
-                
-                subjects.add(subject);
-            } while (cursor.moveToNext());
-            
-            cursor.close();
-        } else if (cursor != null) {
-            cursor.close();
-        }
-        
-        return subjects;
-    }
-    
-    public Subject getSubjectById(int subjectId) {
-        String selection = DatabaseHelper.COLUMN_SUBJECT_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(subjectId)};
-        
-        Cursor cursor = database.query(
-                DatabaseHelper.TABLE_SUBJECTS,
-                null,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null
-        );
-        
-        Subject subject = null;
-        if (cursor != null && cursor.moveToFirst()) {
-            subject = new Subject();
-            subject.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SUBJECT_ID)));
-            subject.setSubjectName(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SUBJECT_NAME)));
-            subject.setSubjectCode(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SUBJECT_CODE)));
-            
-            cursor.close();
-        } else if (cursor != null) {
-            cursor.close();
-        }
-        
-        return subject;
-    }
-    
-    // Các thao tác với điểm số
-    public long addScore(Score score) {
+
+    public int updateSubject(Subject subject) {
         ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.COLUMN_SCORE_STUDENT_ID, score.getStudentId());
-        values.put(DatabaseHelper.COLUMN_SCORE_SUBJECT_ID, score.getSubjectId());
-        values.put(DatabaseHelper.COLUMN_SCORE_TYPE, score.getScoreType());
-        values.put(DatabaseHelper.COLUMN_SCORE_VALUE, score.getScore());
-        values.put(DatabaseHelper.COLUMN_TEACHER_ID, score.getTeacherId());
-        
-        return database.insert(DatabaseHelper.TABLE_SCORES, null, values);
+        values.put(DatabaseHelper.COLUMN_SUBJECT_NAME, subject.getSubjectName());
+        values.put(DatabaseHelper.COLUMN_SUBJECT_CODE, subject.getSubjectCode());
+
+        return database.update(DatabaseHelper.TABLE_SUBJECTS, values, 
+                              DatabaseHelper.COLUMN_ID + " = ?", 
+                              new String[]{String.valueOf(subject.getId())});
     }
-    
+
+    public int deleteSubject(int subjectId) {
+        return database.delete(DatabaseHelper.TABLE_SUBJECTS, 
+                              DatabaseHelper.COLUMN_ID + " = ?", 
+                              new String[]{String.valueOf(subjectId)});
+    }
+
+    // Score operations
     public List<Score> getAllScores() {
         List<Score> scores = new ArrayList<>();
-        
-        Cursor cursor = database.query(
-                DatabaseHelper.TABLE_SCORES,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-        
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                Score score = new Score();
-                score.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_ID)));
-                score.setStudentId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_STUDENT_ID)));
-                score.setSubjectId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_SUBJECT_ID)));
-                score.setScoreType(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_TYPE)));
-                score.setScore(cursor.getDouble(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_VALUE)));
-                score.setDateCreated(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DATE_CREATED)));
-                score.setTeacherId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TEACHER_ID)));
-                
-                scores.add(score);
-            } while (cursor.moveToNext());
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT * FROM " + DatabaseHelper.TABLE_SCORES;
             
-            cursor.close();
-        } else if (cursor != null) {
-            cursor.close();
+            cursor = database.rawQuery(query, null);
+            
+            if (cursor.moveToFirst()) {
+                do {
+                    Score score = new Score();
+                    score.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID)));
+                    score.setStudentId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_STUDENT_ID)));
+                    score.setSubjectId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SUBJECT_ID)));
+                    score.setScoreType(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_TYPE)));
+                    score.setScore(cursor.getDouble(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE)));
+                    score.setDateCreated(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DATE_CREATED)));
+                    score.setTeacherId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TEACHER_ID)));
+                    
+                    scores.add(score);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseManager", "Error getting all scores: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-        
+
         return scores;
     }
-    
+
     public List<Score> getScoresByStudentId(int studentId) {
-        String selection = DatabaseHelper.COLUMN_SCORE_STUDENT_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(studentId)};
-        
         List<Score> scores = new ArrayList<>();
-        Cursor cursor = database.query(
-                DatabaseHelper.TABLE_SCORES,
-                null,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null
-        );
-        
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                Score score = new Score();
-                score.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_ID)));
-                score.setStudentId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_STUDENT_ID)));
-                score.setSubjectId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_SUBJECT_ID)));
-                score.setScoreType(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_TYPE)));
-                score.setScore(cursor.getDouble(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_VALUE)));
-                score.setDateCreated(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DATE_CREATED)));
-                score.setTeacherId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TEACHER_ID)));
-                
-                scores.add(score);
-            } while (cursor.moveToNext());
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT * FROM " + DatabaseHelper.TABLE_SCORES + 
+                          " WHERE " + DatabaseHelper.COLUMN_STUDENT_ID + " = ?";
             
-            cursor.close();
-        } else if (cursor != null) {
-            cursor.close();
+            cursor = database.rawQuery(query, new String[]{String.valueOf(studentId)});
+            
+            if (cursor.moveToFirst()) {
+                do {
+                    Score score = new Score();
+                    score.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID)));
+                    score.setStudentId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_STUDENT_ID)));
+                    score.setSubjectId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SUBJECT_ID)));
+                    score.setScoreType(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_TYPE)));
+                    score.setScore(cursor.getDouble(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE)));
+                    score.setDateCreated(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DATE_CREATED)));
+                    score.setTeacherId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TEACHER_ID)));
+                    
+                    scores.add(score);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseManager", "Error getting scores by student ID: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-        
+
         return scores;
     }
-    
-    public Score getScoreById(int scoreId) {
-        String selection = DatabaseHelper.COLUMN_SCORE_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(scoreId)};
-        
-        Cursor cursor = database.query(
-                DatabaseHelper.TABLE_SCORES,
-                null,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null
-        );
-        
-        Score score = null;
-        if (cursor != null && cursor.moveToFirst()) {
-            score = new Score();
-            score.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_ID)));
-            score.setStudentId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_STUDENT_ID)));
-            score.setSubjectId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_SUBJECT_ID)));
-            score.setScoreType(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_TYPE)));
-            score.setScore(cursor.getDouble(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_VALUE)));
-            score.setDateCreated(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DATE_CREATED)));
-            score.setTeacherId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TEACHER_ID)));
+
+    public List<Score> getScoresByStudentIdAndSubjectId(int studentId, int subjectId) {
+        List<Score> scores = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT * FROM " + DatabaseHelper.TABLE_SCORES + 
+                          " WHERE " + DatabaseHelper.COLUMN_STUDENT_ID + " = ? AND " +
+                          DatabaseHelper.COLUMN_SUBJECT_ID + " = ?";
             
-            cursor.close();
-        } else if (cursor != null) {
-            cursor.close();
+            cursor = database.rawQuery(query, new String[]{String.valueOf(studentId), String.valueOf(subjectId)});
+            
+            if (cursor.moveToFirst()) {
+                do {
+                    Score score = new Score();
+                    score.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID)));
+                    score.setStudentId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_STUDENT_ID)));
+                    score.setSubjectId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SUBJECT_ID)));
+                    score.setScoreType(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE_TYPE)));
+                    score.setScore(cursor.getDouble(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE)));
+                    score.setDateCreated(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DATE_CREATED)));
+                    score.setTeacherId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TEACHER_ID)));
+                    
+                    scores.add(score);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseManager", "Error getting scores by student and subject ID: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-        
-        return score;
+
+        return scores;
     }
-    
+
+    public long createScore(Score score) {
+        ContentValues values = new ContentValues();
+        values.put(DatabaseHelper.COLUMN_STUDENT_ID, score.getStudentId());
+        values.put(DatabaseHelper.COLUMN_SUBJECT_ID, score.getSubjectId());
+        values.put(DatabaseHelper.COLUMN_SCORE_TYPE, score.getScoreType());
+        values.put(DatabaseHelper.COLUMN_SCORE, score.getScore());
+        values.put(DatabaseHelper.COLUMN_TEACHER_ID, score.getTeacherId());
+
+        return database.insert(DatabaseHelper.TABLE_SCORES, null, values);
+    }
+
     public int updateScore(Score score) {
         ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.COLUMN_SCORE_STUDENT_ID, score.getStudentId());
-        values.put(DatabaseHelper.COLUMN_SCORE_SUBJECT_ID, score.getSubjectId());
+        values.put(DatabaseHelper.COLUMN_STUDENT_ID, score.getStudentId());
+        values.put(DatabaseHelper.COLUMN_SUBJECT_ID, score.getSubjectId());
         values.put(DatabaseHelper.COLUMN_SCORE_TYPE, score.getScoreType());
-        values.put(DatabaseHelper.COLUMN_SCORE_VALUE, score.getScore());
+        values.put(DatabaseHelper.COLUMN_SCORE, score.getScore());
         values.put(DatabaseHelper.COLUMN_TEACHER_ID, score.getTeacherId());
-        
-        String selection = DatabaseHelper.COLUMN_SCORE_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(score.getId())};
-        
-        return database.update(DatabaseHelper.TABLE_SCORES, values, selection, selectionArgs);
+
+        return database.update(DatabaseHelper.TABLE_SCORES, values, 
+                              DatabaseHelper.COLUMN_ID + " = ?", 
+                              new String[]{String.valueOf(score.getId())});
     }
-    
+
     public int deleteScore(int scoreId) {
-        String selection = DatabaseHelper.COLUMN_SCORE_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(scoreId)};
-        
-        return database.delete(DatabaseHelper.TABLE_SCORES, selection, selectionArgs);
+        return database.delete(DatabaseHelper.TABLE_SCORES, 
+                              DatabaseHelper.COLUMN_ID + " = ?", 
+                              new String[]{String.valueOf(scoreId)});
     }
-    
-    // Các phương thức tiện ích
-    public double calculateAverageScore(int studentId) {
-        String query = "SELECT AVG(" + DatabaseHelper.COLUMN_SCORE_VALUE + ") as average " +
-                "FROM " + DatabaseHelper.TABLE_SCORES + " " +
-                "WHERE " + DatabaseHelper.COLUMN_SCORE_STUDENT_ID + " = ?";
-        
-        String[] selectionArgs = {String.valueOf(studentId)};
-        Cursor cursor = database.rawQuery(query, selectionArgs);
-        
+
+    // Utility methods
+    public double calculateAverageScore(int studentId, int subjectId) {
         double average = 0.0;
-        if (cursor != null && cursor.moveToFirst()) {
-            average = cursor.getDouble(cursor.getColumnIndexOrThrow("average"));
-            cursor.close();
-        } else if (cursor != null) {
-            cursor.close();
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT AVG(" + DatabaseHelper.COLUMN_SCORE + ") as avg_score " +
+                          "FROM " + DatabaseHelper.TABLE_SCORES + 
+                          " WHERE " + DatabaseHelper.COLUMN_STUDENT_ID + " = ? AND " +
+                          DatabaseHelper.COLUMN_SUBJECT_ID + " = ?";
+            
+            cursor = database.rawQuery(query, new String[]{String.valueOf(studentId), String.valueOf(subjectId)});
+            
+            if (cursor.moveToFirst()) {
+                average = cursor.getDouble(cursor.getColumnIndexOrThrow("avg_score"));
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseManager", "Error calculating average score: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-        
+
+        return average;
+    }
+
+    public double calculateOverallAverageScore(int studentId) {
+        double average = 0.0;
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT AVG(" + DatabaseHelper.COLUMN_SCORE + ") as avg_score " +
+                          "FROM " + DatabaseHelper.TABLE_SCORES + 
+                          " WHERE " + DatabaseHelper.COLUMN_STUDENT_ID + " = ?";
+            
+            cursor = database.rawQuery(query, new String[]{String.valueOf(studentId)});
+            
+            if (cursor.moveToFirst()) {
+                average = cursor.getDouble(cursor.getColumnIndexOrThrow("avg_score"));
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseManager", "Error calculating overall average score: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
         return average;
     }
 }
