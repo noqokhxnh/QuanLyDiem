@@ -2,44 +2,36 @@
 
 ## Tổng quan
 
-Ứng dụng Android quản lý điểm số cho giáo viên và học sinh, được xây dựng bằng Java với SQLite làm cơ sở dữ liệu. Ứng dụng hỗ trợ phân quyền giữa giáo viên và học sinh với các tính năng riêng biệt cho từng vai trò.
+Ứng dụng Android quản lý điểm số cho giáo viên, học sinh và quản trị viên, được xây dựng bằng Java với SQLite làm cơ sở dữ liệu. Ứng dụng hỗ trợ phân quyền giữa các vai trò với các tính năng riêng biệt: giáo viên, học sinh và quản trị viên.
 
 ## Tính năng chính
+
+### Đối với Quản trị viên
+- ✅ **Đăng nhập hệ thống** - Xác thực với tài khoản quản trị
+- ✅ **Quản lý người dùng** - Xem, thêm, sửa thông tin giáo viên và học sinh
+- ✅ **Quản lý môn học** - Tạo, cập nhật danh sách môn học
+- ✅ **Xem báo cáo tổng thể** - Thống kê điểm số toàn trường
+- ✅ **Sao lưu dữ liệu** - Xuất dữ liệu học sinh và điểm số
+- ✅ **Xuất báo cáo** - Xuất báo cáo dưới dạng PDF, Excel, CSV
+- ✅ **Đổi mật khẩu** - Cập nhật mật khẩu cá nhân
+- ✅ **Đăng xuất** - Kết thúc phiên làm việc
 
 ### Đối với Giáo viên
 - ✅ **Đăng nhập hệ thống** - Xác thực với tài khoản giáo viên
 - ✅ **Quản lý học sinh** - Xem danh sách học sinh
-- ✅ **Đăng ký học sinh** - Tạo tài khoản mới cho học sinh (chỉ giáo viên được phép)
+- ✅ **Đăng ký học sinh** - Tạo tài khoản mới cho học sinh
 - ✅ **Quản lý điểm số** - Nhập, chỉnh sửa điểm cho học sinh
-- ✅ **Xem báo cáo** - Thống kê điểm số
-- ✅ **Đổi mật khẩu** - Cập nhật mật khẩu cá nhân
-- ✅ **Sao lưu dữ liệu** - Xuất dữ liệu học sinh và điểm số ra file CSV
+- ✅ **Xem báo cáo** - Thống kê điểm số theo lớp/môn học
 - ✅ **Tìm kiếm** - Tìm kiếm học sinh và điểm số
 - ✅ **Xuất báo cáo** - Xuất báo cáo dưới dạng PDF, Excel, CSV
-- ✅ **Đăng xuất** - Kết thúc phiên làm việc
-
-### Đối với Học sinh  
-- ✅ **Đăng nhập hệ thống** - Xác thực với tài khoản học sinh
-- ✅ **Xem điểm của mình** - Tra cứu bảng điểm cá nhân
-- ✅ **Xem báo cáo** - Thống kê điểm số cá nhân
 - ✅ **Đổi mật khẩu** - Cập nhật mật khẩu cá nhân
 - ✅ **Đăng xuất** - Kết thúc phiên làm việc
 
-## Tính năng chính
-
-### Đối với Giáo viên
-- ✅ **Đăng nhập hệ thống** - Xác thực với tài khoản giáo viên
-- ✅ **Quản lý học sinh** - Xem danh sách học sinh
-- ✅ **Đăng ký học sinh** - Tạo tài khoản mới cho học sinh (chỉ giáo viên được phép)
-- ✅ **Quản lý điểm số** - Nhập, chỉnh sửa điểm cho học sinh
-- ✅ **Xem báo cáo** - Thống kê điểm số
-- ✅ **Đổi mật khẩu** - Cập nhật mật khẩu cá nhân
-- ✅ **Đăng xuất** - Kết thúc phiên làm việc
-
-### Đối với Học sinh  
+### Đối với Học sinh
 - ✅ **Đăng nhập hệ thống** - Xác thực với tài khoản học sinh
 - ✅ **Xem điểm của mình** - Tra cứu bảng điểm cá nhân
 - ✅ **Xem báo cáo** - Thống kê điểm số cá nhân
+- ✅ **Tìm kiếm** - Tìm kiếm điểm số theo môn học
 - ✅ **Đổi mật khẩu** - Cập nhật mật khẩu cá nhân
 - ✅ **Đăng xuất** - Kết thúc phiên làm việc
 
@@ -53,7 +45,7 @@
 - **Thư viện hỗ trợ**: Material Components, GridLayout, OpenCSV, iText7
 
 ### Cấu trúc cơ sở dữ liệu
-1. **users** - Lưu thông tin người dùng (giáo viên và học sinh)
+1. **users** - Lưu thông tin người dùng (quản trị, giáo viên và học sinh)
 2. **students** - Lưu thông tin chi tiết của học sinh
 3. **subjects** - Danh sách các môn học
 4. **scores** - Bảng điểm của học sinh
@@ -66,16 +58,18 @@ app/src/main/java/com/example/qld/
 │   ├── Student.java  
 │   ├── Subject.java
 │   ├── Score.java
-│   └── StudentWithUser.java
 ├── database/         # Database helper và manager
 │   ├── DatabaseHelper.java
 │   └── DatabaseManager.java
 ├── activities/       # Các activity chính
 │   ├── LoginActivity.java
+│   ├── AdminMainActivity.java
 │   ├── TeacherMainActivity.java
 │   ├── StudentMainActivity.java
 │   ├── ManageStudentsActivity.java
 │   ├── ManageScoresActivity.java
+│   ├── ManageSubjectsActivity.java
+│   ├── ManageUsersActivity.java
 │   ├── ViewScoresActivity.java
 │   ├── AddStudentActivity.java
 │   ├── AddScoreActivity.java
@@ -97,15 +91,16 @@ app/src/main/java/com/example/qld/
 ## Tính năng đặc biệt
 
 ### 1. Phân quyền người dùng
-- **Giáo viên (Role = 1)**: Có thể quản lý học sinh, nhập điểm, xem báo cáo
-- **Học sinh (Role = 0)**: Chỉ xem điểm của mình, không thể truy cập tính năng giáo viên
+- **Quản trị (Role = ADMIN)**: Quản lý người dùng, môn học, xem báo cáo tổng thể
+- **Giáo viên (Role = TEACHER)**: Quản lý học sinh, nhập điểm, xem báo cáo
+- **Học sinh (Role = STUDENT)**: Xem điểm cá nhân, không thể truy cập tính năng giáo viên
 
 ### 2. Đăng ký học sinh
 - Chỉ giáo viên mới có thể đăng ký tài khoản cho học sinh mới
-- Học sinh không thể tự đăng ký (chức năng này đã được vô hiệu hóa)
+- Học sinh không thể tự đăng ký
 
 ### 3. Đổi mật khẩu
-- Cả giáo viên và học sinh đều có thể đổi mật khẩu của mình
+- Cả ba loại vai trò đều có thể đổi mật khẩu của mình
 - Yêu cầu xác nhận mật khẩu hiện tại trước khi đổi
 - Mật khẩu mới phải đáp ứng các tiêu chí bảo mật: ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường và số
 
@@ -146,6 +141,10 @@ app/src/main/java/com/example/qld/
 
 ## Tên đăng nhập mặc định
 
+### Quản trị viên
+- **Tên đăng nhập**: `admin1`
+- **Mật khẩu**: `123456`
+
 ### Giáo viên
 - **Tên đăng nhập**: `teacher1`
 - **Mật khẩu**: `123456`
@@ -157,6 +156,16 @@ app/src/main/java/com/example/qld/
 - **Mật khẩu 2**: `123456`
 
 ## Hướng dẫn sử dụng
+
+### Đối với quản trị viên:
+1. Đăng nhập với tài khoản quản trị
+2. Sử dụng các nút chức năng để:
+   - **Quản lý người dùng**: Xem, thêm, sửa thông tin người dùng
+   - **Quản lý môn học**: Tạo, cập nhật danh sách môn học
+   - **Xem báo cáo**: Xem thống kê điểm số toàn trường
+   - **Sao lưu & Nhập**: Xuất dữ liệu hoặc nhập dữ liệu từ file
+   - **Xuất báo cáo**: Xuất báo cáo dưới các định dạng khác nhau
+   - **Đổi mật khẩu**: Thay đổi mật khẩu cá nhân
 
 ### Đối với giáo viên:
 1. Đăng nhập với tài khoản giáo viên
