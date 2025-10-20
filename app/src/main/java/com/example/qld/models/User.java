@@ -4,18 +4,20 @@ public class User {
     private int id;
     private String username;
     private String password;
-    private int role; // 0: học sinh, 1: giáo viên
     private String fullName;
+    private String role; // 'ADMIN', 'TEACHER', 'STUDENT'
+    private int studentId; // Foreign key to Students table
     private String createdDate;
 
     public User() {}
 
-    public User(int id, String username, String password, int role, String fullName, String createdDate) {
+    public User(int id, String username, String password, String fullName, String role, int studentId, String createdDate) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.role = role;
         this.fullName = fullName;
+        this.role = role;
+        this.studentId = studentId;
         this.createdDate = createdDate;
     }
 
@@ -29,8 +31,11 @@ public class User {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
-    public int getRole() { return role; }
-    public void setRole(int role) { this.role = role; }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+
+    public int getStudentId() { return studentId; }
+    public void setStudentId(int studentId) { this.studentId = studentId; }
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }

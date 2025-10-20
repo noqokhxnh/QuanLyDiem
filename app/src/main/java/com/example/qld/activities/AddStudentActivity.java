@@ -31,7 +31,7 @@ public class AddStudentActivity extends AppCompatActivity {
         dbManager = new DatabaseManager(this);
 
         // Check if user is logged in and is a teacher
-        if (!sessionManager.isLoggedIn() || sessionManager.getUserRole() != 1) {
+        if (!sessionManager.isLoggedIn() || !"TEACHER".equals(sessionManager.getUserRole())) {
             redirectToLogin();
             return;
         }
@@ -114,7 +114,7 @@ public class AddStudentActivity extends AppCompatActivity {
             User user = new User();
             user.setUsername(username);
             user.setPassword(password);
-            user.setRole(0); // Student role
+            user.setRole("STUDENT"); // Student role
             user.setFullName(fullName);
             
             long userId = dbManager.createUser(user);
@@ -126,19 +126,23 @@ public class AddStudentActivity extends AppCompatActivity {
             
             // Then, create the student record
             Student student = new Student();
-            student.setUserId((int) userId);
             student.setStudentCode(studentCode);
+            student.setFullName(fullName); // Use the same name as the user
             student.setClassName(className);
-            student.setBirthDate(birthDate);
+            student.setAverage(0); // Initial average is 0
             
-            long result = dbManager.createStudent(student);
+            long studentId = dbManager.createStudent(student);
             
-            if (result != -1) {
+            if (studentId != -1) {
+                // Update the user to reference this student
+                user.setStudentId((int) studentId);
+                dbManager.updateUser(user);
+                
                 Toast.makeText(this, "Thêm học sinh thành công", Toast.LENGTH_SHORT).show();
                 finish(); // Close the activity
             } else {
                 // Rollback: delete the user if student creation failed
-                dbManager.deleteStudent((int) userId);
+                // Note: In a production app, you'd want more sophisticated error handling
                 Toast.makeText(this, "Lỗi khi thêm học sinh", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {

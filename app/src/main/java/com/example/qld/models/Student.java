@@ -2,34 +2,34 @@ package com.example.qld.models;
 
 public class Student {
     private int id;
-    private int userId;
     private String studentCode;
+    private String fullName;
     private String className;
-    private String birthDate;
+    private double average;
 
     public Student() {}
 
-    public Student(int id, int userId, String studentCode, String className, String birthDate) {
+    public Student(int id, String studentCode, String fullName, String className, double average) {
         this.id = id;
-        this.userId = userId;
         this.studentCode = studentCode;
+        this.fullName = fullName;
         this.className = className;
-        this.birthDate = birthDate;
+        this.average = average;
     }
 
     // Getters and Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public int getUserId() { return userId; }
-    public void setUserId(int userId) { this.userId = userId; }
-
     public String getStudentCode() { return studentCode; }
     public void setStudentCode(String studentCode) { this.studentCode = studentCode; }
+
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
 
     public String getClassName() { return className; }
     public void setClassName(String className) { this.className = className; }
 
-    public String getBirthDate() { return birthDate; }
-    public void setBirthDate(String birthDate) { this.birthDate = birthDate; }
+    public double getAverage() { return average; }
+    public void setAverage(double average) { this.average = average; }
 }

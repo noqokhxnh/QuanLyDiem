@@ -1,54 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:gravity="center">
+    android:fillViewport="true"
+    android:background="@color/background_color">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Đăng nhập hệ thống"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="32dp" />
-
-    <com.google.android.material.textfield.TextInputLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp">
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center"
+        android:layout_marginTop="48dp"
+        android:layout_marginBottom="48dp">
 
-        <EditText
-            android:id="@+id/et_username"
+        <!-- App Logo/Icon placeholder -->
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_launcher_foreground"
+            android:layout_marginBottom="24dp"
+            android:contentDescription="App Logo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quản lý Điểm"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@color/primary_color"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đăng nhập hệ thống"
+            android:textSize="16sp"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="32dp" />
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Tên đăng nhập" />
+            android:layout_marginTop="16dp"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="12dp"
+            app:cardBackgroundColor="@color/card_background">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        app:passwordToggleEnabled="true"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:startIconDrawable="@drawable/ic_person"
+                    android:hint="Tên đăng nhập">
 
-        <EditText
-            android:id="@+id/et_password"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_username"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    app:startIconDrawable="@drawable/ic_lock"
+                    app:endIconMode="password_toggle"
+                    android:hint="Mật khẩu">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/btn_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Đăng nhập"
+                    android:textSize="16sp"
+                    android:padding="14dp"
+                    android:layout_marginTop="8dp"
+                    style="@style/Widget.QLD.Button" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Space at the bottom for better visual balance -->
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Mật khẩu"
-            android:inputType="textPassword" />
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
-    </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_login"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Đăng nhập"
-        android:textSize="16sp"
-        android:padding="12dp" />
-
-</LinearLayout>
+</ScrollView>

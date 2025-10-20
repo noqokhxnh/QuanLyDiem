@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.qld.R;
 import com.example.qld.database.DatabaseManager;
 import com.example.qld.models.User;
+import com.example.qld.utils.ErrorHandler;
 import com.example.qld.utils.SessionManager;
 
 public class LoginActivity extends AppCompatActivity {
@@ -59,8 +60,20 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+        if (username.length() < 3) {
+            etUsername.setError("Tên đăng nhập phải có ít nhất 3 ký tự");
+            etUsername.requestFocus();
+            return;
+        }
+
         if (password.isEmpty()) {
             etPassword.setError("Vui lòng nhập mật khẩu");
+            etPassword.requestFocus();
+            return;
+        }
+
+        if (password.length() < 6) {
+            etPassword.setError("Mật khẩu phải có ít nhất 6 ký tự");
             etPassword.requestFocus();
             return;
         }
@@ -72,16 +85,18 @@ public class LoginActivity extends AppCompatActivity {
             if (user != null) {
                 // Successful login
                 sessionManager.createLoginSession(user);
-                Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                ErrorHandler.showSuccessSnackbar(findViewById(android.R.id.content), "Đăng nhập thành công");
                 
                 // Redirect to appropriate main activity based on role
                 redirectToMainActivity();
             } else {
                 // Login failed
-                Toast.makeText(this, "Tên đăng nhập hoặc mật khẩu không đúng", Toast.LENGTH_SHORT).show();
+                etPassword.setText("");
+                etPassword.requestFocus();
+                ErrorHandler.showErrorSnackbar(findViewById(android.R.id.content), "Tên đăng nhập hoặc mật khẩu không đúng");
             }
         } catch (Exception e) {
-            Toast.makeText(this, "Lỗi hệ thống: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            ErrorHandler.showErrorToast(this, "Lỗi hệ thống: " + e.getMessage());
         } finally {
             dbManager.close();
         }
@@ -89,10 +104,19 @@ public class LoginActivity extends AppCompatActivity {
 
     private void redirectToMainActivity() {
         Intent intent;
-        if (sessionManager.getUserRole() == 1) { // Teacher
-            intent = new Intent(LoginActivity.this, TeacherMainActivity.class);
-        } else { // Student
-            intent = new Intent(LoginActivity.this, StudentMainActivity.class);
+        String role = sessionManager.getUserRole();
+        
+        switch (role) {
+            case "ADMIN":
+                intent = new Intent(LoginActivity.this, AdminMainActivity.class);
+                break;
+            case "TEACHER":
+                intent = new Intent(LoginActivity.this, TeacherMainActivity.class);
+                break;
+            case "STUDENT":
+            default:
+                intent = new Intent(LoginActivity.this, StudentMainActivity.class);
+                break;
         }
         startActivity(intent);
         finish(); // Close login activity

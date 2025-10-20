@@ -2,12 +2,16 @@ package com.example.qld.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +21,7 @@ import com.example.qld.database.DatabaseManager;
 import com.example.qld.models.Score;
 import com.example.qld.utils.SessionManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ManageScoresActivity extends AppCompatActivity {
@@ -26,6 +31,9 @@ public class ManageScoresActivity extends AppCompatActivity {
     private ScoreAdapter scoreAdapter;
     private Button btnAddScore, btnBack;
     private TextView tvTitle;
+    private EditText etSearch;
+
+    private List<Score> allScores; // Store all scores for search
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,22 +45,44 @@ public class ManageScoresActivity extends AppCompatActivity {
         dbManager = new DatabaseManager(this);
 
         // Check if user is logged in and is a teacher
-        if (!sessionManager.isLoggedIn() || sessionManager.getUserRole() != 1) {
+        if (!sessionManager.isLoggedIn() || !"TEACHER".equals(sessionManager.getUserRole())) {
             redirectToLogin();
             return;
         }
 
         // Initialize views
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+        
         tvTitle = findViewById(R.id.tv_title);
         rvScoreList = findViewById(R.id.rv_score_list);
         btnAddScore = findViewById(R.id.btn_add_score);
         btnBack = findViewById(R.id.btn_back);
+        etSearch = findViewById(R.id.et_search); // Added search edit text
 
         // Set up RecyclerView
         rvScoreList.setLayoutManager(new LinearLayoutManager(this));
 
         // Load scores
         loadScores();
+
+        // Set up search functionality
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterScores(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         // Set click listeners
         btnAddScore.setOnClickListener(new View.OnClickListener() {
@@ -74,15 +104,38 @@ public class ManageScoresActivity extends AppCompatActivity {
     private void loadScores() {
         try {
             dbManager.open();
-            List<Score> scores = dbManager.getAllScores();
+            allScores = dbManager.getAllScores();
             
-            scoreAdapter = new ScoreAdapter(this, scores);
+            scoreAdapter = new ScoreAdapter(this, allScores);
             rvScoreList.setAdapter(scoreAdapter);
         } catch (Exception e) {
             Toast.makeText(this, "Lỗi khi tải danh sách điểm: " + e.getMessage(), Toast.LENGTH_LONG).show();
         } finally {
             dbManager.close();
         }
+    }
+
+    private void filterScores(String query) {
+        List<Score> filteredList = new ArrayList<>();
+        
+        if (query.isEmpty()) {
+            filteredList = allScores;
+        } else {
+            String lowerCaseQuery = query.toLowerCase();
+            
+            for (Score score : allScores) {
+                // In a real implementation, we would search by student name, subject, etc.
+                // For now, searching by score value and type as an example
+                if (String.valueOf(score.getScore()).toLowerCase().contains(lowerCaseQuery)) {
+                    filteredList.add(score);
+                } else if (score.getScoreType() != null && score.getScoreType().toLowerCase().contains(lowerCaseQuery)) {
+                    filteredList.add(score);
+                }
+            }
+        }
+        
+        scoreAdapter = new ScoreAdapter(this, filteredList);
+        rvScoreList.setAdapter(scoreAdapter);
     }
 
     private void redirectToLogin() {

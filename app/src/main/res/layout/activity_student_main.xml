@@ -1,55 +1,208 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@color/background_color">
 
-    <TextView
-        android:id="@+id/tv_welcome"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Xin chào, Học sinh!"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="32dp"
-        android:gravity="center" />
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-    <Button
-        android:id="@+id/btn_view_scores"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/Theme.QLD" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Xem điểm của tôi"
-        android:textSize="16sp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:padding="16dp"
-        android:layout_marginBottom="16dp" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <Button
-        android:id="@+id/btn_view_reports"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Xem báo cáo"
-        android:textSize="16sp"
-        android:padding="16dp"
-        android:layout_marginBottom="16dp" />
+        <TextView
+            android:id="@+id/tv_welcome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Xin chào, Học sinh!"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:layout_marginBottom="24dp"
+            android:gravity="center" />
 
-    <Button
-        android:id="@+id/btn_change_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Đổi mật khẩu"
-        android:textSize="16sp"
-        android:padding="16dp"
-        android:layout_marginBottom="16dp" />
+        <androidx.gridlayout.widget.GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:columnCount="2"
+            app:rowCount="2"
+            android:alignmentMode="alignMargins"
+            android:columnOrderPreserved="false"
+            android:padding="8dp">
 
-    <Button
-        android:id="@+id/btn_logout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Đăng xuất"
-        android:textSize="16sp"
-        android:padding="16dp"
-        android:backgroundTint="#F44336"
-        android:layout_marginTop="16dp" />
+            <!-- Row 1 -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_scores"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_margin="8dp"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="12dp"
+                app:layout_columnWeight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
 
-</LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_score"
+                        android:layout_marginBottom="8dp"
+                        android:contentDescription="View Scores" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Xem điểm của tôi"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:textColor="@color/text_primary" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_reports"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_margin="8dp"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="12dp"
+                app:layout_columnWeight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_report"
+                        android:layout_marginBottom="8dp"
+                        android:contentDescription="View Reports" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Xem báo cáo"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:textColor="@color/text_primary" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Row 2 -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_change_password"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_margin="8dp"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="12dp"
+                app:layout_columnWeight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_password"
+                        android:layout_marginBottom="8dp"
+                        android:contentDescription="Change Password" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Đổi mật khẩu"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:textColor="@color/text_primary" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_logout"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_margin="8dp"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="12dp"
+                app:layout_columnWeight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="@color/error_color">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_logout"
+                        android:layout_marginBottom="8dp"
+                        android:contentDescription="Logout" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Đăng xuất"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </androidx.gridlayout.widget.GridLayout>
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

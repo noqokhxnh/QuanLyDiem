@@ -43,7 +43,7 @@ public class AddScoreActivity extends AppCompatActivity {
         dbManager = new DatabaseManager(this);
 
         // Check if user is logged in and is a teacher
-        if (!sessionManager.isLoggedIn() || sessionManager.getUserRole() != Constants.ROLE_TEACHER) {
+        if (!sessionManager.isLoggedIn() || !"TEACHER".equals(sessionManager.getUserRole())) {
             redirectToLogin();
             return;
         }

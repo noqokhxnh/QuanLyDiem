@@ -27,7 +27,7 @@ public class SessionManager {
         editor.putBoolean(KEY_IS_LOGGED_IN, true);
         editor.putInt(KEY_USER_ID, user.getId());
         editor.putString(KEY_USERNAME, user.getUsername());
-        editor.putInt(KEY_ROLE, user.getRole());
+        editor.putString(KEY_ROLE, user.getRole());
         editor.putString(KEY_FULL_NAME, user.getFullName());
         editor.commit();
     }
@@ -36,7 +36,7 @@ public class SessionManager {
         User user = new User();
         user.setId(pref.getInt(KEY_USER_ID, 0));
         user.setUsername(pref.getString(KEY_USERNAME, null));
-        user.setRole(pref.getInt(KEY_ROLE, -1));
+        user.setRole(pref.getString(KEY_ROLE, null));
         user.setFullName(pref.getString(KEY_FULL_NAME, null));
         return user;
     }
@@ -50,8 +50,8 @@ public class SessionManager {
         editor.commit();
     }
 
-    public int getUserRole() {
-        return pref.getInt(KEY_ROLE, -1);
+    public String getUserRole() {
+        return pref.getString(KEY_ROLE, null);
     }
 
     public int getUserId() {

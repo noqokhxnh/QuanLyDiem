@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,7 +15,8 @@ import com.example.qld.utils.SessionManager;
 public class TeacherMainActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private TextView tvWelcome;
-    private Button btnManageStudents, btnRegisterStudents, btnManageScores, btnViewReports, btnChangePassword, btnLogout;
+    private View cardManageStudents, cardRegisterStudents, cardManageScores, 
+                 cardViewReports, cardChangePassword, cardBackupImport, cardLogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,80 +26,76 @@ public class TeacherMainActivity extends AppCompatActivity {
         // Initialize session manager
         sessionManager = new SessionManager(this);
 
-        // Check if user is logged in
-        if (!sessionManager.isLoggedIn() || sessionManager.getUserRole() != 1) {
+        // Check if user is logged in and is a teacher
+        if (!sessionManager.isLoggedIn() || !"TEACHER".equals(sessionManager.getUserRole())) {
             redirectToLogin();
             return;
         }
 
         // Initialize views
         tvWelcome = findViewById(R.id.tv_welcome);
-        btnManageStudents = findViewById(R.id.btn_manage_students);
-        btnRegisterStudents = findViewById(R.id.btn_register_students);
-        btnManageScores = findViewById(R.id.btn_manage_scores);
-        btnViewReports = findViewById(R.id.btn_view_reports);
-        btnChangePassword = findViewById(R.id.btn_change_password);
-        btnLogout = findViewById(R.id.btn_logout);
+        cardManageStudents = findViewById(R.id.card_manage_students);
+        cardRegisterStudents = findViewById(R.id.card_register_students);
+        cardManageScores = findViewById(R.id.card_manage_scores);
+        cardViewReports = findViewById(R.id.card_view_reports);
+        cardChangePassword = findViewById(R.id.card_change_password);
+        cardBackupImport = findViewById(R.id.card_backup_import);
+        cardLogout = findViewById(R.id.card_logout);
 
         // Set welcome message
         String fullName = sessionManager.getFullName();
         tvWelcome.setText("Xin chào, " + fullName + "!");
 
-        // Set button click listeners with null checks
-        if (btnManageStudents != null) {
-            btnManageStudents.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(TeacherMainActivity.this, ManageStudentsActivity.class));
-                }
-            });
-        }
+        // Set card click listeners
+        cardManageStudents.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(TeacherMainActivity.this, ManageStudentsActivity.class));
+            }
+        });
 
-        if (btnRegisterStudents != null) {
-            btnRegisterStudents.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(TeacherMainActivity.this, AddStudentActivity.class));
-                }
-            });
-        }
+        cardRegisterStudents.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(TeacherMainActivity.this, AddStudentActivity.class));
+            }
+        });
 
-        if (btnManageScores != null) {
-            btnManageScores.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(TeacherMainActivity.this, ManageScoresActivity.class));
-                }
-            });
-        }
+        cardManageScores.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(TeacherMainActivity.this, ManageScoresActivity.class));
+            }
+        });
 
-        if (btnViewReports != null) {
-            btnViewReports.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(TeacherMainActivity.this, StatisticsActivity.class));
-                }
-            });
-        }
+        cardViewReports.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(TeacherMainActivity.this, StatisticsActivity.class));
+            }
+        });
 
-        if (btnChangePassword != null) {
-            btnChangePassword.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(TeacherMainActivity.this, ChangePasswordActivity.class));
-                }
-            });
-        }
+        cardChangePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(TeacherMainActivity.this, ChangePasswordActivity.class));
+            }
+        });
 
-        if (btnLogout != null) {
-            btnLogout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    sessionManager.logoutUser();
-                    redirectToLogin();
-                }
-            });
-        }
+        cardBackupImport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(TeacherMainActivity.this, BackupImportActivity.class));
+            }
+        });
+
+        cardLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sessionManager.logoutUser();
+                redirectToLogin();
+            }
+        });
     }
 
     private void redirectToLogin() {

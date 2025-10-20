@@ -34,15 +34,11 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
     public void onBindViewHolder(@NonNull StudentViewHolder holder, int position) {
         Student student = students.get(position);
         
-        holder.tvStudentName.setText("Học sinh: " + student.getId());  // In a real app, you'd have the full name
+        holder.tvStudentName.setText("Học sinh: " + (student.getFullName() != null ? student.getFullName() : "Không xác định"));
         holder.tvStudentCode.setText("Mã HS: " + student.getStudentCode());
         holder.tvClassName.setText("Lớp: " + student.getClassName());
         
-        if (student.getBirthDate() != null) {
-            holder.tvBirthDate.setText("Ngày sinh: " + student.getBirthDate());
-        } else {
-            holder.tvBirthDate.setText("Ngày sinh: Không có");
-        }
+        holder.tvBirthDate.setText("Điểm TB: " + String.format("%.2f", student.getAverage()));
     }
 
     @Override

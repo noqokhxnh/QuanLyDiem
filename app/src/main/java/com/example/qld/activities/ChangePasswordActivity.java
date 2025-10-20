@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.qld.R;
 import com.example.qld.database.DatabaseManager;
 import com.example.qld.models.User;
+import com.example.qld.utils.ErrorHandler;
+import com.example.qld.utils.PasswordUtil;
 import com.example.qld.utils.SessionManager;
 
 public class ChangePasswordActivity extends AppCompatActivity {
@@ -70,6 +72,12 @@ public class ChangePasswordActivity extends AppCompatActivity {
             return;
         }
 
+        if (currentPassword.length() < 6) {
+            etCurrentPassword.setError("Mật khẩu hiện tại không đúng");
+            etCurrentPassword.requestFocus();
+            return;
+        }
+
         if (newPassword.isEmpty()) {
             etNewPassword.setError("Vui lòng nhập mật khẩu mới");
             etNewPassword.requestFocus();
@@ -78,6 +86,13 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
         if (newPassword.length() < 6) {
             etNewPassword.setError("Mật khẩu phải có ít nhất 6 ký tự");
+            etNewPassword.requestFocus();
+            return;
+        }
+
+        // Add additional password strength validation
+        if (!isPasswordStrong(newPassword)) {
+            etNewPassword.setError("Mật khẩu phải chứa ít nhất 1 chữ cái in hoa, 1 chữ cái thường và 1 số");
             etNewPassword.requestFocus();
             return;
         }
@@ -95,12 +110,12 @@ public class ChangePasswordActivity extends AppCompatActivity {
             User currentUser = dbManager.getUserById(sessionManager.getUserId());
             
             if (currentUser == null) {
-                Toast.makeText(this, "Lỗi: Không tìm thấy người dùng", Toast.LENGTH_SHORT).show();
+                ErrorHandler.showErrorToast(this, "Lỗi: Không tìm thấy người dùng");
                 return;
             }
             
-            // Verify current password
-            if (!currentUser.getPassword().equals(currentPassword)) {
+            // Verify current password using the verification function
+            if (!PasswordUtil.verifyPassword(currentPassword, currentUser.getPassword())) {
                 etCurrentPassword.setError("Mật khẩu hiện tại không đúng");
                 etCurrentPassword.requestFocus();
                 return;
@@ -113,16 +128,32 @@ public class ChangePasswordActivity extends AppCompatActivity {
             if (result > 0) {
                 // Update session if needed
                 // For this simple implementation, we just inform the user
-                Toast.makeText(this, "Đổi mật khẩu thành công", Toast.LENGTH_SHORT).show();
+                ErrorHandler.showSuccessSnackbar(findViewById(android.R.id.content), "Đổi mật khẩu thành công");
                 finish();
             } else {
-                Toast.makeText(this, "Lỗi khi đổi mật khẩu", Toast.LENGTH_SHORT).show();
+                ErrorHandler.showErrorToast(this, "Lỗi khi đổi mật khẩu");
             }
         } catch (Exception e) {
-            Toast.makeText(this, "Lỗi hệ thống: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            ErrorHandler.showErrorToast(this, "Lỗi hệ thống: " + e.getMessage());
         } finally {
             dbManager.close();
         }
+    }
+
+    /**
+     * Validates password strength
+     * @param password the password to validate
+     * @return true if password is strong, false otherwise
+     */
+    private boolean isPasswordStrong(String password) {
+        // At least one uppercase letter
+        boolean hasUppercase = !password.equals(password.toLowerCase());
+        // At least one lowercase letter
+        boolean hasLowercase = !password.equals(password.toUpperCase());
+        // At least one digit
+        boolean hasDigit = password.matches(".*\\d.*");
+
+        return hasUppercase && hasLowercase && hasDigit;
     }
 
     private void redirectToLogin() {
