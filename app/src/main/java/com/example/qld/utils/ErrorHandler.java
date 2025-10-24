@@ -10,21 +10,25 @@ import androidx.core.content.ContextCompat;
 import com.example.qld.R;
 import com.google.android.material.snackbar.Snackbar;
 
+/**
+ * Lớp tiện ích để xử lý lỗi và hiển thị thông báo cho người dùng
+ * Bao gồm các phương thức để hiển thị Toast và Snackbar với các loại thông báo khác nhau
+ */
 public class ErrorHandler {
 
     /**
-     * Shows an error message using Toast
-     * @param context The context
-     * @param message The error message to show
+     * Hiển thị thông báo lỗi bằng Toast
+     * @param context Context của ứng dụng
+     * @param message Thông báo lỗi cần hiển thị
      */
     public static void showErrorToast(Context context, String message) {
         Toast.makeText(context, "Lỗi: " + message, Toast.LENGTH_LONG).show();
     }
 
     /**
-     * Shows an error message using Snackbar
-     * @param view The view to attach the snackbar to
-     * @param message The error message to show
+     * Hiển thị thông báo lỗi bằng Snackbar
+     * @param view View để gắn snackbar vào
+     * @param message Thông báo lỗi cần hiển thị
      */
     public static void showErrorSnackbar(View view, String message) {
         Snackbar.make(view, "Lỗi: " + message, Snackbar.LENGTH_LONG)
@@ -34,9 +38,9 @@ public class ErrorHandler {
     }
 
     /**
-     * Shows an information message using Snackbar
-     * @param view The view to attach the snackbar to
-     * @param message The information message to show
+     * Hiển thị thông báo thông tin bằng Snackbar
+     * @param view View để gắn snackbar vào
+     * @param message Thông báo thông tin cần hiển thị
      */
     public static void showInfoSnackbar(View view, String message) {
         Snackbar.make(view, message, Snackbar.LENGTH_LONG)
@@ -46,9 +50,9 @@ public class ErrorHandler {
     }
 
     /**
-     * Shows a success message using Snackbar
-     * @param view The view to attach the snackbar to
-     * @param message The success message to show
+     * Hiển thị thông báo thành công bằng Snackbar
+     * @param view View để gắn snackbar vào
+     * @param message Thông báo thành công cần hiển thị
      */
     public static void showSuccessSnackbar(View view, String message) {
         Snackbar.make(view, message, Snackbar.LENGTH_LONG)

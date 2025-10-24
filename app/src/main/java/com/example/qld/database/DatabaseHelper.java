@@ -8,6 +8,10 @@ import android.util.Log;
 import com.example.qld.utils.CacheManager;
 import com.example.qld.utils.PasswordUtil;
 
+/**
+ * Lớp hỗ trợ tạo và quản lý cơ sở dữ liệu của ứng dụng
+ * Bao gồm các bảng: users, students, subjects, scores
+ */
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "StudentManager.db";
     private static final int DATABASE_VERSION = 3; // Incremented to force database recreation with updated schema
@@ -47,47 +51,56 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TEACHER_ID = "teacher_id";
 
     // Create Users table
-    private static final String CREATE_TABLE_USERS = "CREATE TABLE " + TABLE_USERS + "("
-            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + COLUMN_USERNAME + " TEXT UNIQUE NOT NULL,"
-            + COLUMN_PASSWORD + " TEXT NOT NULL,"
-            + COLUMN_FULL_NAME + " TEXT NOT NULL,"
-            + COLUMN_ROLE + " TEXT CHECK(" + COLUMN_ROLE + " IN ('ADMIN', 'TEACHER', 'STUDENT')) NOT NULL DEFAULT 'STUDENT',"
-            + COLUMN_USER_STUDENT_ID + " INTEGER,"
-            + COLUMN_CREATED_DATE + " TEXT DEFAULT CURRENT_TIMESTAMP"
+    private static final String CREATE_TABLE_USERS = "create table " + TABLE_USERS + "("
+            + COLUMN_ID + " interger primary key autoincrement,"
+            + COLUMN_USERNAME + " text unique not null,"
+            + COLUMN_PASSWORD + " text not null,"
+            + COLUMN_FULL_NAME + " text not null,"
+            + COLUMN_ROLE + " text check(" + COLUMN_ROLE + " in ('Admin', 'Teacher', 'Student')) not null default 'Student',"
+            + COLUMN_USER_STUDENT_ID + " interger,"
+            + COLUMN_CREATED_DATE + " text default CURRENT_TIMESTAMP"
             + ")";
 
     // Create Students table
     private static final String CREATE_TABLE_STUDENTS = "CREATE TABLE " + TABLE_STUDENTS + "("
-            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + COLUMN_STUDENT_CODE + " TEXT UNIQUE NOT NULL,"
-            + COLUMN_FULL_NAME + " TEXT NOT NULL,"
-            + COLUMN_CLASS_NAME + " TEXT NOT NULL,"
-            + COLUMN_AVERAGE + " REAL DEFAULT 0"
+            + COLUMN_ID + " interger primary key autoincrement,"
+            + COLUMN_STUDENT_CODE + " text unique not null,"
+            + COLUMN_FULL_NAME + " text not null,"
+            + COLUMN_CLASS_NAME + " text not null,"
+            + COLUMN_AVERAGE + " real default 0"
             + ")";
 
     // Create Subjects table
     private static final String CREATE_TABLE_SUBJECTS = "CREATE TABLE " + TABLE_SUBJECTS + "("
-            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + COLUMN_SUBJECT_NAME + " TEXT NOT NULL,"
-            + COLUMN_SUBJECT_CODE + " TEXT UNIQUE NOT NULL"
+            + COLUMN_ID + " interger primary key autoincrement,"
+            + COLUMN_SUBJECT_NAME + " text not null,"
+            + COLUMN_SUBJECT_CODE + " text unique not null"
             + ")";
 
     // Create Scores table
     private static final String CREATE_TABLE_SCORES = "CREATE TABLE " + TABLE_SCORES + "("
-            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + COLUMN_SCORE_STUDENT_ID + " INTEGER,"
-            + COLUMN_SUBJECT_ID + " INTEGER,"
-            + COLUMN_SCORE_TYPE + " TEXT NOT NULL," // 'mieng', '15phut', '1tiet', 'hocky'
-            + COLUMN_SCORE + " REAL NOT NULL,"
-            + COLUMN_DATE_CREATED + " TEXT DEFAULT CURRENT_TIMESTAMP,"
-            + COLUMN_TEACHER_ID + " INTEGER"
+            + COLUMN_ID + " interger primary key autoincrement,"
+            + COLUMN_SCORE_STUDENT_ID + " interger,"
+            + COLUMN_SUBJECT_ID + " interger,"
+            + COLUMN_SCORE_TYPE + " text not null," // 'mieng', '15phut', '1tiet', 'hocky'
+            + COLUMN_SCORE + " real not null,"
+            + COLUMN_DATE_CREATED + " text default CURRENT_TIMESTAMP,"
+            + COLUMN_TEACHER_ID + " interger"
             + ")";
 
+    /**
+     * Constructor cho DatabaseHelper
+     * @param context Context của ứng dụng
+     */
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    /**
+     * Phương thức được gọi khi cơ sở dữ liệu được tạo lần đầu
+     * Tạo các bảng và chèn dữ liệu mẫu
+     * @param db Đối tượng SQLiteDatabase để thực hiện các truy vấn
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         try {
@@ -107,6 +120,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Phương thức được gọi khi phiên bản cơ sở dữ liệu được nâng cấp
+     * Xóa bảng cũ và tạo lại bảng mới
+     * @param db Đối tượng SQLiteDatabase để thực hiện các truy vấn
+     * @param oldVersion Phiên bản cũ của cơ sở dữ liệu
+     * @param newVersion Phiên bản mới của cơ sở dữ liệu
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Clear cache when database is upgraded
@@ -122,6 +142,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    /**
+     * Chèn dữ liệu mẫu vào cơ sở dữ liệu
+     * Bao gồm người dùng mẫu, học sinh mẫu, môn học mẫu và điểm mẫu
+     * @param db Đối tượng SQLiteDatabase để thực hiện các truy vấn
+     */
     private void insertSampleData(SQLiteDatabase db) {
         try {
             // Hash the default passwords
@@ -138,10 +163,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             // Insert sample users (admin, teacher, and students) with hashed passwords
             String insertUsers = "INSERT INTO " + TABLE_USERS + " (id, username, password, full_name, role, student_id, created_date) VALUES " +
-                "(1, 'admin1', '" + adminPassword + "', 'Nguyễn Văn Quản Trị', 'ADMIN', NULL, datetime('now')), " +
-                "(2, 'teacher1', '" + teacherPassword + "', 'Nguyễn Văn Giáo', 'TEACHER', NULL, datetime('now')), " +
-                "(3, 'student1', '" + student1Password + "', 'Trần Thị Học', 'STUDENT', 1, datetime('now')), " +
-                "(4, 'student2', '" + student2Password + "', 'Lê Văn Sinh', 'STUDENT', 2, datetime('now'));";
+                "(1, 'admin1', '" + adminPassword + "', 'Quản Trị Viên', 'Admin', NULL, datetime('now')), " +
+                "(2, 'teacher1', '" + teacherPassword + "', 'Nguyễn Văn Giáo', 'Teacher', NULL, datetime('now')), " +
+                "(3, 'student1', '" + student1Password + "', 'Trần Thị Học', 'Student', 1, datetime('now')), " +
+                "(4, 'student2', '" + student2Password + "', 'Lê Văn Sinh', 'Student', 2, datetime('now'));";
             db.execSQL(insertUsers);
 
             // Insert sample subjects

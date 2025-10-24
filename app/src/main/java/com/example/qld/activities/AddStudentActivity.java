@@ -21,6 +21,10 @@ public class AddStudentActivity extends AppCompatActivity {
     private EditText etFullName, etUsername, etPassword, etStudentCode, etClassName, etBirthDate;
     private Button btnAddStudent, btnBack;
 
+    /**
+     * Phương thức được gọi khi activity được tạo
+     * Khởi tạo giao diện, kiểm tra quyền truy cập và thiết lập các sự kiện
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +66,11 @@ public class AddStudentActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Phương thức thêm học sinh mới vào hệ thống
+     * Thực hiện kiểm tra dữ liệu đầu vào và lưu vào cơ sở dữ liệu
+     * Tạo đồng thời tài khoản người dùng và hồ sơ học sinh
+     */
     private void addStudent() {
         String fullName = etFullName.getText().toString().trim();
         String username = etUsername.getText().toString().trim();
@@ -152,6 +161,10 @@ public class AddStudentActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Phương thức chuyển hướng người dùng đến màn hình đăng nhập
+     * Được gọi khi người dùng không có quyền truy cập vào activity này
+     */
     private void redirectToLogin() {
         Intent intent = new Intent(AddStudentActivity.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

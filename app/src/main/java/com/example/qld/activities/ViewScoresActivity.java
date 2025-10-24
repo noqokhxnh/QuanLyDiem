@@ -30,6 +30,10 @@ public class ViewScoresActivity extends AppCompatActivity {
 
     private int studentId;
 
+    /**
+     * Phương thức được gọi khi activity được tạo
+     * Khởi tạo giao diện, kiểm tra quyền truy cập và tải dữ liệu điểm cho học sinh
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +80,9 @@ public class ViewScoresActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Tải danh sách điểm của học sinh từ cơ sở dữ liệu và hiển thị trong RecyclerView
+     */
     private void loadScores() {
         try {
             dbManager.open();
@@ -90,6 +97,9 @@ public class ViewScoresActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Tải thông tin học sinh từ cơ sở dữ liệu và hiển thị lên giao diện
+     */
     private void loadStudentInfo() {
         try {
             dbManager.open();
@@ -109,6 +119,9 @@ public class ViewScoresActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Tính toán và hiển thị điểm trung bình của học sinh
+     */
     private void calculateAndDisplayAverage() {
         try {
             dbManager.open();
@@ -121,6 +134,10 @@ public class ViewScoresActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Phương thức chuyển hướng người dùng đến màn hình đăng nhập
+     * Được gọi khi người dùng đăng xuất hoặc không có quyền truy cập
+     */
     private void redirectToLogin() {
         Intent intent = new Intent(ViewScoresActivity.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

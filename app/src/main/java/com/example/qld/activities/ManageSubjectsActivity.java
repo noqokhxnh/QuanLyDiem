@@ -19,6 +19,10 @@ public class ManageSubjectsActivity extends AppCompatActivity {
     private TextView tvTitle;
     private Button btnBack;
 
+    /**
+     * Phương thức được gọi khi activity được tạo
+     * Khởi tạo giao diện, kiểm tra quyền truy cập và thiết lập sự kiện cho các thành phần
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +59,10 @@ public class ManageSubjectsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Phương thức chuyển hướng người dùng đến màn hình đăng nhập
+     * Được gọi khi người dùng đăng xuất hoặc không có quyền truy cập
+     */
     private void redirectToLogin() {
         Intent intent = new Intent(ManageSubjectsActivity.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -62,12 +70,22 @@ public class ManageSubjectsActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Phương thức tạo menu cho activity
+     * @param menu Menu sẽ được tạo
+     * @return True nếu thành công
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
+    /**
+     * Phương thức xử lý sự kiện khi người dùng chọn một mục trong menu
+     * @param item Mục được chọn trong menu
+     * @return True nếu sự kiện được xử lý
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();

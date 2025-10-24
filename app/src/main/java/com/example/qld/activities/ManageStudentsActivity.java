@@ -35,6 +35,10 @@ public class ManageStudentsActivity extends AppCompatActivity {
 
     private List<Student> allStudents; // Store all students for search
 
+    /**
+     * Phương thức được gọi khi activity được tạo
+     * Khởi tạo giao diện, kiểm tra quyền truy cập và tải danh sách học sinh
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +105,9 @@ public class ManageStudentsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Tải danh sách học sinh từ cơ sở dữ liệu và hiển thị trong RecyclerView
+     */
     private void loadStudents() {
         try {
             dbManager.open();
@@ -115,6 +122,10 @@ public class ManageStudentsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Lọc danh sách học sinh theo chuỗi tìm kiếm
+     * @param query Chuỗi tìm kiếm để lọc danh sách
+     */
     private void filterStudents(String query) {
         List<Student> filteredList = new ArrayList<>();
         
@@ -138,6 +149,10 @@ public class ManageStudentsActivity extends AppCompatActivity {
         rvStudentList.setAdapter(studentAdapter);
     }
 
+    /**
+     * Phương thức chuyển hướng người dùng đến màn hình đăng nhập
+     * Được gọi khi người dùng đăng xuất hoặc không có quyền truy cập
+     */
     private void redirectToLogin() {
         Intent intent = new Intent(ManageStudentsActivity.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

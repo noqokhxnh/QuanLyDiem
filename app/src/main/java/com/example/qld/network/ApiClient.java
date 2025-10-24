@@ -15,6 +15,10 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+/**
+ * Lớp tiện ích để thực hiện các yêu cầu mạng đến API
+ * Sử dụng Volley để quản lý các yêu cầu mạng HTTP
+ */
 public class ApiClient {
     private static final String TAG = "ApiClient";
     // Sử dụng 10.0.2.2 để truy cập localhost của máy host từ Android Emulator
@@ -24,11 +28,20 @@ public class ApiClient {
     private RequestQueue requestQueue;
     private Context context;
 
+    /**
+     * Constructor riêng tư để đảm bảo chỉ có một thể hiện duy nhất (Singleton pattern)
+     * @param context Context của ứng dụng
+     */
     private ApiClient(Context context) {
         this.context = context;
         this.requestQueue = Volley.newRequestQueue(context);
     }
 
+    /**
+     * Lấy thể hiện duy nhất của ApiClient (Singleton pattern)
+     * @param context Context của ứng dụng
+     * @return Thể hiện duy nhất của ApiClient
+     */
     public static synchronized ApiClient getInstance(Context context) {
         if (instance == null) {
             instance = new ApiClient(context);
@@ -36,11 +49,28 @@ public class ApiClient {
         return instance;
     }
 
+    /**
+     * Giao diện callback để xử lý kết quả từ các yêu cầu API
+     */
     public interface ApiResponseCallback {
+        /**
+         * Được gọi khi yêu cầu thành công
+         * @param response Đối tượng JSON phản hồi từ máy chủ
+         */
         void onSuccess(JSONObject response);
+        
+        /**
+         * Được gọi khi có lỗi xảy ra trong quá trình thực hiện yêu cầu
+         * @param error Mô tả lỗi
+         */
         void onError(String error);
     }
 
+    /**
+     * Thực hiện yêu cầu GET đến API
+     * @param endpoint Đường dẫn cụ thể của API
+     * @param callback Callback để xử lý kết quả
+     */
     public void makeGetRequest(String endpoint, ApiResponseCallback callback) {
         String url = BASE_URL + endpoint;
         
@@ -70,6 +100,12 @@ public class ApiClient {
         requestQueue.add(request);
     }
 
+    /**
+     * Thực hiện yêu cầu POST đến API
+     * @param endpoint Đường dẫn cụ thể của API
+     * @param requestBody Dữ liệu JSON cần gửi trong body
+     * @param callback Callback để xử lý kết quả
+     */
     public void makePostRequest(String endpoint, JSONObject requestBody, ApiResponseCallback callback) {
         String url = BASE_URL + endpoint;
         
@@ -99,6 +135,12 @@ public class ApiClient {
         requestQueue.add(request);
     }
 
+    /**
+     * Thực hiện yêu cầu PUT đến API
+     * @param endpoint Đường dẫn cụ thể của API
+     * @param requestBody Dữ liệu JSON cần gửi trong body
+     * @param callback Callback để xử lý kết quả
+     */
     public void makePutRequest(String endpoint, JSONObject requestBody, ApiResponseCallback callback) {
         String url = BASE_URL + endpoint;
         
@@ -128,6 +170,11 @@ public class ApiClient {
         requestQueue.add(request);
     }
 
+    /**
+     * Thực hiện yêu cầu DELETE đến API
+     * @param endpoint Đường dẫn cụ thể của API
+     * @param callback Callback để xử lý kết quả
+     */
     public void makeDeleteRequest(String endpoint, ApiResponseCallback callback) {
         String url = BASE_URL + endpoint;
         
@@ -159,6 +206,8 @@ public class ApiClient {
 
     /**
      * Xử lý các lỗi Volley một cách thống nhất
+     * @param error Lỗi Volley xảy ra
+     * @param callback Callback để xử lý lỗi
      */
     private void handleError(VolleyError error, ApiResponseCallback callback) {
         Log.e(TAG, "Network error: ", error);

@@ -33,6 +33,10 @@ public class AddScoreActivity extends AppCompatActivity {
     private List<Student> students;
     private List<Subject> subjects;
 
+    /**
+     * Phương thức được gọi khi activity được tạo
+     * Khởi tạo giao diện, kiểm tra quyền truy cập và tải dữ liệu
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +80,10 @@ public class AddScoreActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Phương thức tải dữ liệu sinh viên và môn học từ cơ sở dữ liệu
+     * và hiển thị chúng trong các spinner tương ứng
+     */
     private void loadData() {
         try {
             dbManager.open();
@@ -115,6 +123,10 @@ public class AddScoreActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Phương thức thêm điểm cho học sinh
+     * Thực hiện kiểm tra dữ liệu đầu vào và lưu vào cơ sở dữ liệu
+     */
     private void addScore() {
         // Validate input
         String scoreStr = etScore.getText().toString().trim();
@@ -175,6 +187,11 @@ public class AddScoreActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Phương thức chuyển đổi vị trí trong spinner thành loại điểm tương ứng
+     * @param position Vị trí trong spinner
+     * @return Chuỗi tương ứng với loại điểm
+     */
     private String convertScoreType(int position) {
         switch (position) {
             case 0: return Constants.SCORE_TYPE_MIENG;
@@ -185,6 +202,10 @@ public class AddScoreActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Phương thức chuyển hướng người dùng về màn hình đăng nhập
+     * Hiện tại chỉ đóng activity này
+     */
     private void redirectToLogin() {
         // For now, just finish the activity
         finish();

@@ -21,6 +21,10 @@ public class LoginActivity extends AppCompatActivity {
     private DatabaseManager dbManager;
     private SessionManager sessionManager;
 
+    /**
+     * Phương thức được gọi khi activity được tạo
+     * Khởi tạo giao diện, các thành phần và thiết lập các sự kiện
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +53,12 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Phương thức thực hiện quá trình đăng nhập
+     * Xác thực thông tin đăng nhập của người dùng
+     * Nếu thành công thì tạo session và chuyển hướng
+     * Nếu thất bại thì hiển thị lỗi
+     */
     private void login() {
         String username = etUsername.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
@@ -83,14 +93,14 @@ public class LoginActivity extends AppCompatActivity {
             User user = dbManager.authenticateUser(username, password);
             
             if (user != null) {
-                // Successful login
+
                 sessionManager.createLoginSession(user);
                 ErrorHandler.showSuccessSnackbar(findViewById(android.R.id.content), "Đăng nhập thành công");
                 
-                // Redirect to appropriate main activity based on role
+
                 redirectToMainActivity();
             } else {
-                // Login failed
+
                 etPassword.setText("");
                 etPassword.requestFocus();
                 ErrorHandler.showErrorSnackbar(findViewById(android.R.id.content), "Tên đăng nhập hoặc mật khẩu không đúng");
@@ -102,6 +112,10 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Phương thức chuyển hướng người dùng đến activity chính tương ứng
+     * Dựa trên vai trò (role) của người dùng sau khi đăng nhập
+     */
     private void redirectToMainActivity() {
         Intent intent;
         String role = sessionManager.getUserRole();
@@ -119,6 +133,6 @@ public class LoginActivity extends AppCompatActivity {
                 break;
         }
         startActivity(intent);
-        finish(); // Close login activity
+        finish();
     }
 }

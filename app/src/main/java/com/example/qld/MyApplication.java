@@ -6,9 +6,17 @@ import android.widget.Toast;
 
 import com.example.qld.utils.NotificationUtil;
 
+/**
+ * Lớp Application chính của ứng dụng
+ * Được khởi tạo khi ứng dụng bắt đầu chạy
+ */
 public class MyApplication extends Application {
     private static final String TAG = "MyApplication";
 
+    /**
+     * Phương thức được gọi khi ứng dụng được tạo
+     * Thiết lập kênh thông báo và trình xử lý ngoại lệ toàn cục
+     */
     @Override
     public void onCreate() {
         super.onCreate();

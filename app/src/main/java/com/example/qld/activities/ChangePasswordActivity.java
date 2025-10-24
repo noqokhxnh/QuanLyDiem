@@ -22,6 +22,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
     private EditText etCurrentPassword, etNewPassword, etConfirmNewPassword;
     private Button btnChangePassword, btnBack;
 
+    /**
+     * Phương thức được gọi khi activity được tạo
+     * Khởi tạo giao diện, kiểm tra quyền truy cập và thiết lập sự kiện cho các thành phần
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +64,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Phương thức đổi mật khẩu cho người dùng
+     * Xác thực mật khẩu hiện tại và cập nhật với mật khẩu mới
+     */
     private void changePassword() {
         String currentPassword = etCurrentPassword.getText().toString().trim();
         String newPassword = etNewPassword.getText().toString().trim();
@@ -141,9 +149,9 @@ public class ChangePasswordActivity extends AppCompatActivity {
     }
 
     /**
-     * Validates password strength
-     * @param password the password to validate
-     * @return true if password is strong, false otherwise
+     * Kiểm tra độ mạnh của mật khẩu
+     * @param password mật khẩu cần kiểm tra
+     * @return true nếu mật khẩu mạnh, ngược lại false
      */
     private boolean isPasswordStrong(String password) {
         // At least one uppercase letter
@@ -156,6 +164,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
         return hasUppercase && hasLowercase && hasDigit;
     }
 
+    /**
+     * Phương thức chuyển hướng người dùng đến màn hình đăng nhập
+     * Được gọi khi người dùng đăng xuất hoặc không có quyền truy cập
+     */
     private void redirectToLogin() {
         Intent intent = new Intent(ChangePasswordActivity.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

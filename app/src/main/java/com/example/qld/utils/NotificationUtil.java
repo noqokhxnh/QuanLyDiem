@@ -13,13 +13,17 @@ import androidx.core.app.NotificationManagerCompat;
 import com.example.qld.R;
 
 
+/**
+ * Lớp tiện ích để xử lý thông báo trong ứng dụng
+ * Bao gồm các phương thức để tạo kênh thông báo và hiển thị các loại thông báo khác nhau
+ */
 public class NotificationUtil {
     private static final String CHANNEL_ID = "grade_notification_channel";
     private static final int NOTIFICATION_ID = 1;
 
     /**
-     * Creates a notification channel (required for Android O and above)
-     * @param context The application context
+     * Tạo kênh thông báo (bắt buộc cho Android O trở lên)
+     * @param context Context của ứng dụng
      */
     public static void createNotificationChannel(Context context) {
         // Create the NotificationChannel, but only on API 26+ because
@@ -38,10 +42,10 @@ public class NotificationUtil {
     }
 
     /**
-     * Shows a notification about a grade update
-     * @param context The application context
-     * @param title Title of the notification
-     * @param contentText Content of the notification
+     * Hiển thị thông báo về cập nhật điểm
+     * @param context Context của ứng dụng
+     * @param title Tiêu đề của thông báo
+     * @param contentText Nội dung của thông báo
      */
     public static void showGradeNotification(Context context, String title, String contentText) {
         // Create an explicit intent for an Activity in your app
@@ -66,10 +70,10 @@ public class NotificationUtil {
     }
 
     /**
-     * Shows a general system notification
-     * @param context The application context
-     * @param title Title of the notification
-     * @param contentText Content of the notification
+     * Hiển thị thông báo hệ thống chung
+     * @param context Context của ứng dụng
+     * @param title Tiêu đề của thông báo
+     * @param contentText Nội dung của thông báo
      */
     public static void showSystemNotification(Context context, String title, String contentText) {
         // Create an explicit intent for an Activity in your app

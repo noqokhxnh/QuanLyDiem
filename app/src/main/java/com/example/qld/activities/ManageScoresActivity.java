@@ -35,6 +35,10 @@ public class ManageScoresActivity extends AppCompatActivity {
 
     private List<Score> allScores; // Store all scores for search
 
+    /**
+     * Phương thức được gọi khi activity được tạo
+     * Khởi tạo giao diện, kiểm tra quyền truy cập và tải danh sách điểm
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +105,9 @@ public class ManageScoresActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Tải danh sách điểm từ cơ sở dữ liệu và hiển thị trong RecyclerView
+     */
     private void loadScores() {
         try {
             dbManager.open();
@@ -115,6 +122,10 @@ public class ManageScoresActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Lọc danh sách điểm theo chuỗi tìm kiếm
+     * @param query Chuỗi tìm kiếm để lọc danh sách
+     */
     private void filterScores(String query) {
         List<Score> filteredList = new ArrayList<>();
         
@@ -138,6 +149,10 @@ public class ManageScoresActivity extends AppCompatActivity {
         rvScoreList.setAdapter(scoreAdapter);
     }
 
+    /**
+     * Phương thức chuyển hướng người dùng đến màn hình đăng nhập
+     * Được gọi khi người dùng đăng xuất hoặc không có quyền truy cập
+     */
     private void redirectToLogin() {
         Intent intent = new Intent(ManageScoresActivity.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
