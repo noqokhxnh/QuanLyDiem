@@ -15,8 +15,20 @@ public class PasswordUtil {
 
     /**
      * Băm mật khẩu với salt được tạo ngẫu nhiên
-     * @param password Mật khẩu dạng văn bản thường
+     * 
+     * Cách thức hoạt động:
+     * 1. Tạo một chuỗi salt ngẫu nhiên có độ dài 32 byte
+     * 2. Kết hợp mật khẩu với salt và băm bằng thuật toán SHA-256
+     * 3. Chuyển đổi salt và mật khẩu đã băm sang định dạng hex
+     * 4. Trả về chuỗi theo định dạng "salt:hashed_password"
+     * 
+     * @param password Mật khẩu dạng văn bản thường (chuỗi không được null hoặc rỗng)
      * @return Một chuỗi chứa salt và mật khẩu đã băm được phân tách bởi ':'
+     *         Định dạng: "hex_salt:hex_hashed_password" (vd: "a1b2c3...:d4e5f6...")
+     * @throws RuntimeException Nếu thuật toán băm không được hỗ trợ
+     * 
+     * Ví dụ: Nếu password là "mật khẩu", phương thức sẽ trả về một chuỗi như:
+     * "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8:f7c3bc1d808e04732adf679965ccc34ca7ae3441"
      */
     public static String hashPassword(String password) {
         try {
@@ -48,9 +60,19 @@ public class PasswordUtil {
 
     /**
      * Xác thực mật khẩu với mật khẩu đã băm
-     * @param password Mật khẩu dạng văn bản thường
-     * @param hashedPassword Mật khẩu đã băm trước đó (định dạng: salt:hashed)
-     * @return true nếu mật khẩu khớp, false nếu không
+     * 
+     * Cách thức hoạt động:
+     * 1. Tách chuỗi mật khẩu đã băm thành salt và hash (dựa vào dấu ':')
+     * 2. Băm lại mật khẩu do người dùng cung cấp sử dụng cùng salt
+     * 3. So sánh hash kết quả với hash đã lưu trữ
+     * 4. Trả về kết quả so sánh
+     * 
+     * @param password Mật khẩu dạng văn bản thường do người dùng nhập (chuỗi không được null)
+     * @param hashedPassword Mật khẩu đã băm trước đó lưu trong cơ sở dữ liệu (định dạng: "salt:hashed", chuỗi không được null)
+     * @return true nếu mật khẩu khớp (hash trùng nhau), false nếu không khớp hoặc có lỗi
+     * 
+     * Ví dụ: Nếu password là "mật khẩu" và hashedPassword là "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8:f7c3bc1d808e04732adf679965ccc34ca7ae3441"
+     * thì phương thức sẽ trả về true nếu mật khẩu khớp, false nếu không khớp
      */
     public static boolean verifyPassword(String password, String hashedPassword) {
         if (password == null || hashedPassword == null) {
@@ -81,9 +103,19 @@ public class PasswordUtil {
     }
 
     /**
-     * Chuyển đổi chuỗi thập lục phân thành mảng byte
-     * @param hexString Chuỗi thập lục phân
-     * @return Biểu diễn mảng byte
+     * Chuyển đổi chuỗi thập lục phân (hex) thành mảng byte
+     * 
+     * Cách thức hoạt động:
+     * 1. Chia chuỗi hex thành từng cặp ký tự (mỗi cặp đại diện cho 1 byte)
+     * 2. Chuyển đổi từng cặp ký tự thành giá trị số nguyên
+     * 3. Chuyển đổi giá trị số nguyên thành byte
+     * 4. Trả về mảng byte kết quả
+     * 
+     * @param hexString Chuỗi thập lục phân (chứa các ký tự 0-9, a-f, A-F, độ dài phải chẵn)
+     *                  Ví dụ: "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
+     * @return Biểu diễn mảng byte của chuỗi hex, hoặc mảng rỗng nếu chuỗi rỗng
+     * 
+     * Ví dụ: Nếu hexString là "616263", phương thức sẽ trả về mảng byte tương ứng với chuỗi "abc"
      */
     private static byte[] hexStringToByteArray(String hexString) {
         int len = hexString.length();

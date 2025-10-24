@@ -23,7 +23,7 @@ public class DatabaseManager {
 
     /**
      * Constructor để khởi tạo DatabaseManager
-     * @param context Context của ứng dụng
+     * @param context Context của ứng dụng, dùng để truy cập vào tài nguyên và thiết lập kết nối cơ sở dữ liệu
      */
     public DatabaseManager(Context context) {
         dbHelper = new DatabaseHelper(context);
@@ -31,7 +31,8 @@ public class DatabaseManager {
 
     /**
      * Mở kết nối đến cơ sở dữ liệu
-     * @throws SQLException Nếu có lỗi khi mở cơ sở dữ liệu
+     * Mở cơ sở dữ liệu ở chế độ có thể ghi (writable) để thực hiện các thao tác thêm, sửa, xóa
+     * @throws SQLException Nếu có lỗi khi mở cơ sở dữ liệu, ví dụ như không đủ quyền truy cập hoặc cơ sở dữ liệu bị khóa
      */
     public void open() throws SQLException {
         database = dbHelper.getWritableDatabase();
@@ -39,6 +40,7 @@ public class DatabaseManager {
 
     /**
      * Đóng kết nối đến cơ sở dữ liệu
+     * Giải phóng tài nguyên và đóng kết nối để tránh rò rỉ tài nguyên
      */
     public void close() {
         dbHelper.close();
@@ -47,9 +49,18 @@ public class DatabaseManager {
     // User operations
     /**
      * Xác thực người dùng dựa trên tên đăng nhập và mật khẩu
-     * @param username Tên đăng nhập của người dùng
-     * @param password Mật khẩu của người dùng
+     * So sánh thông tin đăng nhập với dữ liệu trong cơ sở dữ liệu
+     * 
+     * Cách thức hoạt động:
+     * 1. Truy vấn cơ sở dữ liệu để tìm người dùng theo tên đăng nhập
+     * 2. Lấy mật khẩu đã được mã hóa từ cơ sở dữ liệu
+     * 3. Dùng hàm verifyPassword để so sánh mật khẩu đã mã hóa với mật khẩu do người dùng cung cấp
+     * 4. Nếu khớp, trả về đối tượng User; nếu không, trả về null
+     * 
+     * @param username Tên đăng nhập của người dùng cần xác thực (không được null hoặc rỗng)
+     * @param password Mật khẩu của người dùng cần xác thực (trước khi mã hóa, không được null)
      * @return Đối tượng User nếu xác thực thành công, ngược lại trả về null
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình truy vấn cơ sở dữ liệu
      */
     public User authenticateUser(String username, String password) {
         User user = null;
@@ -90,8 +101,17 @@ public class DatabaseManager {
 
     /**
      * Lấy thông tin người dùng dựa trên ID
-     * @param userId ID của người dùng cần lấy
+     * Trước tiên kiểm tra trong cache, sau đó truy vấn cơ sở dữ liệu nếu không tìm thấy
+     * 
+     * Cách thức hoạt động:
+     * 1. Kiểm tra xem người dùng có trong cache hay không
+     * 2. Nếu có, trả về người dùng từ cache
+     * 3. Nếu không có trong cache, thực hiện truy vấn cơ sở dữ liệu
+     * 4. Lưu người dùng vào cache để sử dụng sau này
+     * 
+     * @param userId ID của người dùng cần lấy (phải là số nguyên dương)
      * @return Đối tượng User nếu tìm thấy, ngược lại trả về null
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình truy vấn cơ sở dữ liệu
      */
     public User getUserById(int userId) {
         // First check if user is in cache
@@ -135,8 +155,17 @@ public class DatabaseManager {
 
     /**
      * Thêm người dùng mới vào cơ sở dữ liệu
-     * @param user Đối tượng User chứa thông tin người dùng cần thêm
-     * @return ID của người dùng vừa được thêm, hoặc -1 nếu thêm thất bại
+     * Trước khi lưu, mật khẩu sẽ được mã hóa để bảo mật
+     * 
+     * Cách thức hoạt động:
+     * 1. Chuẩn bị dữ liệu người dùng vào ContentValues để chèn vào cơ sở dữ liệu
+     * 2. Mã hóa mật khẩu trước khi lưu (dùng PasswordUtil.hashPassword)
+     * 3. Chèn dữ liệu vào bảng users
+     * 4. Trả về ID của người dùng vừa được thêm
+     * 
+     * @param user Đối tượng User chứa thông tin người dùng cần thêm (không được null)
+     * @return ID của người dùng vừa được thêm (số nguyên dương), hoặc -1 nếu thêm thất bại
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình chèn cơ sở dữ liệu
      */
     public long createUser(User user) {
         ContentValues values = new ContentValues();
@@ -153,8 +182,18 @@ public class DatabaseManager {
 
     /**
      * Cập nhật thông tin người dùng trong cơ sở dữ liệu
-     * @param user Đối tượng User chứa thông tin người dùng cần cập nhật
-     * @return Số lượng hàng bị ảnh hưởng sau khi cập nhật
+     * Nếu mật khẩu thay đổi, sẽ được mã hóa lại; nếu không thay đổi, giữ nguyên mật khẩu cũ
+     * 
+     * Cách thức hoạt động:
+     * 1. Nếu mật khẩu mới được cung cấp, mã hóa mật khẩu đó
+     * 2. Nếu mật khẩu không được cập nhật, lấy mật khẩu cũ từ cơ sở dữ liệu
+     * 3. Chuẩn bị dữ liệu cập nhật vào ContentValues
+     * 4. Cập nhật bản ghi trong bảng users dựa trên ID người dùng
+     * 5. Nếu cập nhật thành công, cập nhật lại cache
+     * 
+     * @param user Đối tượng User chứa thông tin người dùng cần cập nhật (không được null, phải có ID hợp lệ)
+     * @return Số lượng hàng bị ảnh hưởng sau khi cập nhật (thường là 1 nếu thành công, 0 nếu thất bại)
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình cập nhật cơ sở dữ liệu
      */
     public int updateUser(User user) {
         ContentValues values = new ContentValues();
@@ -192,8 +231,16 @@ public class DatabaseManager {
 
     // Student operations
     /**
-     * Lấy danh sách tất cả học sinh
-     * @return Danh sách các đối tượng Student
+     * Lấy danh sách tất cả học sinh từ cơ sở dữ liệu
+     * 
+     * Cách thức hoạt động:
+     * 1. Truy vấn toàn bộ bản ghi trong bảng students
+     * 2. Duyệt qua từng dòng kết quả trong Cursor
+     * 3. Tạo đối tượng Student từ dữ liệu trong mỗi dòng
+     * 4. Thêm đối tượng Student vào danh sách kết quả
+     * 
+     * @return Danh sách các đối tượng Student, danh sách rỗng nếu không có học sinh nào
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình truy vấn cơ sở dữ liệu
      */
     public List<Student> getAllStudents() {
         List<Student> students = new ArrayList<>();
@@ -229,7 +276,15 @@ public class DatabaseManager {
     
     /**
      * Lấy danh sách tất cả học sinh cùng với thông tin người dùng
-     * @return Danh sách các đối tượng Student
+     * 
+     * Cách thức hoạt động:
+     * 1. Truy vấn các thông tin học sinh trong bảng students
+     * 2. Duyệt qua từng dòng kết quả trong Cursor
+     * 3. Tạo đối tượng Student từ dữ liệu trong mỗi dòng
+     * 4. Thêm đối tượng Student vào danh sách kết quả
+     * 
+     * @return Danh sách các đối tượng Student, danh sách rỗng nếu không có học sinh nào
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình truy vấn cơ sở dữ liệu
      */
     public List<Student> getAllStudentsWithUserInfo() {
         List<Student> students = new ArrayList<>();
@@ -270,8 +325,15 @@ public class DatabaseManager {
 
     /**
      * Lấy thông tin học sinh dựa trên ID
-     * @param studentId ID của học sinh cần lấy
+     * 
+     * Cách thức hoạt động:
+     * 1. Truy vấn học sinh trong bảng students với điều kiện ID
+     * 2. Nếu tìm thấy, tạo đối tượng Student từ dữ liệu trong kết quả
+     * 3. Nếu không tìm thấy, trả về null
+     * 
+     * @param studentId ID của học sinh cần lấy (phải là số nguyên dương)
      * @return Đối tượng Student nếu tìm thấy, ngược lại trả về null
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình truy vấn cơ sở dữ liệu
      */
     public Student getStudentById(int studentId) {
         Student student = null;
@@ -304,8 +366,16 @@ public class DatabaseManager {
 
     /**
      * Lấy danh sách học sinh dựa trên ID người dùng
-     * @param userId ID của người dùng
-     * @return Danh sách các đối tượng Student
+     * 
+     * Cách thức hoạt động:
+     * 1. Lấy thông tin người dùng từ ID người dùng
+     * 2. Nếu người dùng có ID học sinh liên kết, sử dụng ID đó để tìm học sinh
+     * 3. Truy vấn học sinh trong bảng students với điều kiện ID học sinh
+     * 4. Trả về danh sách học sinh tìm được (thường chỉ có một)
+     * 
+     * @param userId ID của người dùng (phải là số nguyên dương)
+     * @return Danh sách các đối tượng Student liên kết với người dùng, danh sách rỗng nếu không có
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình truy vấn cơ sở dữ liệu
      */
     public List<Student> getStudentsByUserId(int userId) {
         List<Student> students = new ArrayList<>();
@@ -345,8 +415,15 @@ public class DatabaseManager {
     
     /**
      * Lấy học sinh dựa trên ID người dùng (trả về một học sinh duy nhất)
-     * @param userId ID của người dùng
+     * 
+     * Cách thức hoạt động:
+     * 1. Gọi phương thức getStudentsByUserId để lấy danh sách học sinh liên kết với người dùng
+     * 2. Nếu danh sách không rỗng, trả về học sinh đầu tiên
+     * 3. Nếu danh sách rỗng, trả về null
+     * 
+     * @param userId ID của người dùng (phải là số nguyên dương)
      * @return Đối tượng Student nếu tìm thấy, ngược lại trả về null
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình truy vấn cơ sở dữ liệu
      */
     public Student getStudentByUserId(int userId) {
         List<Student> students = getStudentsByUserId(userId);
@@ -355,8 +432,15 @@ public class DatabaseManager {
 
     /**
      * Thêm học sinh mới vào cơ sở dữ liệu
-     * @param student Đối tượng Student chứa thông tin học sinh cần thêm
-     * @return ID của học sinh vừa được thêm, hoặc -1 nếu thêm thất bại
+     * 
+     * Cách thức hoạt động:
+     * 1. Chuẩn bị dữ liệu học sinh vào ContentValues để chèn vào cơ sở dữ liệu
+     * 2. Chèn dữ liệu vào bảng students
+     * 3. Trả về ID của học sinh vừa được thêm
+     * 
+     * @param student Đối tượng Student chứa thông tin học sinh cần thêm (không được null)
+     * @return ID của học sinh vừa được thêm (số nguyên dương), hoặc -1 nếu thêm thất bại
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình chèn cơ sở dữ liệu
      */
     public long createStudent(Student student) {
         ContentValues values = new ContentValues();
@@ -370,8 +454,15 @@ public class DatabaseManager {
 
     /**
      * Cập nhật thông tin học sinh trong cơ sở dữ liệu
-     * @param student Đối tượng Student chứa thông tin học sinh cần cập nhật
-     * @return Số lượng hàng bị ảnh hưởng sau khi cập nhật
+     * 
+     * Cách thức hoạt động:
+     * 1. Chuẩn bị dữ liệu cập nhật vào ContentValues
+     * 2. Cập nhật bản ghi trong bảng students dựa trên ID học sinh
+     * 3. Trả về số lượng hàng bị ảnh hưởng
+     * 
+     * @param student Đối tượng Student chứa thông tin học sinh cần cập nhật (không được null, phải có ID hợp lệ)
+     * @return Số lượng hàng bị ảnh hưởng sau khi cập nhật (thường là 1 nếu thành công, 0 nếu thất bại)
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình cập nhật cơ sở dữ liệu
      */
     public int updateStudent(Student student) {
         ContentValues values = new ContentValues();
@@ -387,8 +478,14 @@ public class DatabaseManager {
 
     /**
      * Xóa học sinh khỏi cơ sở dữ liệu
-     * @param studentId ID của học sinh cần xóa
-     * @return Số lượng hàng bị ảnh hưởng sau khi xóa
+     * 
+     * Cách thức hoạt động:
+     * 1. Xóa bản ghi trong bảng students dựa trên ID học sinh
+     * 2. Trả về số lượng hàng bị ảnh hưởng
+     * 
+     * @param studentId ID của học sinh cần xóa (phải là số nguyên dương)
+     * @return Số lượng hàng bị ảnh hưởng sau khi xóa (thường là 1 nếu thành công, 0 nếu không tìm thấy)
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình xóa cơ sở dữ liệu
      */
     public int deleteStudent(int studentId) {
         return database.delete(DatabaseHelper.TABLE_STUDENTS, 
@@ -398,8 +495,16 @@ public class DatabaseManager {
 
     // Subject operations
     /**
-     * Lấy danh sách tất cả môn học
-     * @return Danh sách các đối tượng Subject
+     * Lấy danh sách tất cả môn học từ cơ sở dữ liệu
+     * 
+     * Cách thức hoạt động:
+     * 1. Truy vấn toàn bộ bản ghi trong bảng subjects
+     * 2. Duyệt qua từng dòng kết quả trong Cursor
+     * 3. Tạo đối tượng Subject từ dữ liệu trong mỗi dòng
+     * 4. Thêm đối tượng Subject vào danh sách kết quả
+     * 
+     * @return Danh sách các đối tượng Subject, danh sách rỗng nếu không có môn học nào
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình truy vấn cơ sở dữ liệu
      */
     public List<Subject> getAllSubjects() {
         List<Subject> subjects = new ArrayList<>();
@@ -433,8 +538,15 @@ public class DatabaseManager {
 
     /**
      * Lấy thông tin môn học dựa trên ID
-     * @param subjectId ID của môn học cần lấy
+     * 
+     * Cách thức hoạt động:
+     * 1. Truy vấn môn học trong bảng subjects với điều kiện ID
+     * 2. Nếu tìm thấy, tạo đối tượng Subject từ dữ liệu trong kết quả
+     * 3. Nếu không tìm thấy, trả về null
+     * 
+     * @param subjectId ID của môn học cần lấy (phải là số nguyên dương)
      * @return Đối tượng Subject nếu tìm thấy, ngược lại trả về null
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình truy vấn cơ sở dữ liệu
      */
     public Subject getSubjectById(int subjectId) {
         Subject subject = null;
@@ -465,8 +577,15 @@ public class DatabaseManager {
 
     /**
      * Thêm môn học mới vào cơ sở dữ liệu
-     * @param subject Đối tượng Subject chứa thông tin môn học cần thêm
-     * @return ID của môn học vừa được thêm, hoặc -1 nếu thêm thất bại
+     * 
+     * Cách thức hoạt động:
+     * 1. Chuẩn bị dữ liệu môn học vào ContentValues để chèn vào cơ sở dữ liệu
+     * 2. Chèn dữ liệu vào bảng subjects
+     * 3. Trả về ID của môn học vừa được thêm
+     * 
+     * @param subject Đối tượng Subject chứa thông tin môn học cần thêm (không được null)
+     * @return ID của môn học vừa được thêm (số nguyên dương), hoặc -1 nếu thêm thất bại
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình chèn cơ sở dữ liệu
      */
     public long createSubject(Subject subject) {
         ContentValues values = new ContentValues();
@@ -478,8 +597,15 @@ public class DatabaseManager {
 
     /**
      * Cập nhật thông tin môn học trong cơ sở dữ liệu
-     * @param subject Đối tượng Subject chứa thông tin môn học cần cập nhật
-     * @return Số lượng hàng bị ảnh hưởng sau khi cập nhật
+     * 
+     * Cách thức hoạt động:
+     * 1. Chuẩn bị dữ liệu cập nhật vào ContentValues
+     * 2. Cập nhật bản ghi trong bảng subjects dựa trên ID môn học
+     * 3. Trả về số lượng hàng bị ảnh hưởng
+     * 
+     * @param subject Đối tượng Subject chứa thông tin môn học cần cập nhật (không được null, phải có ID hợp lệ)
+     * @return Số lượng hàng bị ảnh hưởng sau khi cập nhật (thường là 1 nếu thành công, 0 nếu thất bại)
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình cập nhật cơ sở dữ liệu
      */
     public int updateSubject(Subject subject) {
         ContentValues values = new ContentValues();
@@ -493,8 +619,14 @@ public class DatabaseManager {
 
     /**
      * Xóa môn học khỏi cơ sở dữ liệu
-     * @param subjectId ID của môn học cần xóa
-     * @return Số lượng hàng bị ảnh hưởng sau khi xóa
+     * 
+     * Cách thức hoạt động:
+     * 1. Xóa bản ghi trong bảng subjects dựa trên ID môn học
+     * 2. Trả về số lượng hàng bị ảnh hưởng
+     * 
+     * @param subjectId ID của môn học cần xóa (phải là số nguyên dương)
+     * @return Số lượng hàng bị ảnh hưởng sau khi xóa (thường là 1 nếu thành công, 0 nếu không tìm thấy)
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình xóa cơ sở dữ liệu
      */
     public int deleteSubject(int subjectId) {
         return database.delete(DatabaseHelper.TABLE_SUBJECTS, 
@@ -504,8 +636,16 @@ public class DatabaseManager {
 
     // Score operations
     /**
-     * Lấy danh sách tất cả điểm
-     * @return Danh sách các đối tượng Score
+     * Lấy danh sách tất cả điểm từ cơ sở dữ liệu
+     * 
+     * Cách thức hoạt động:
+     * 1. Truy vấn toàn bộ bản ghi trong bảng scores
+     * 2. Duyệt qua từng dòng kết quả trong Cursor
+     * 3. Tạo đối tượng Score từ dữ liệu trong mỗi dòng
+     * 4. Thêm đối tượng Score vào danh sách kết quả
+     * 
+     * @return Danh sách các đối tượng Score, danh sách rỗng nếu không có điểm nào
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình truy vấn cơ sở dữ liệu
      */
     public List<Score> getAllScores() {
         List<Score> scores = new ArrayList<>();
@@ -543,8 +683,16 @@ public class DatabaseManager {
 
     /**
      * Lấy danh sách điểm của học sinh dựa trên ID học sinh
-     * @param studentId ID của học sinh
-     * @return Danh sách các đối tượng Score
+     * 
+     * Cách thức hoạt động:
+     * 1. Truy vấn điểm trong bảng scores với điều kiện ID học sinh
+     * 2. Duyệt qua từng dòng kết quả trong Cursor
+     * 3. Tạo đối tượng Score từ dữ liệu trong mỗi dòng
+     * 4. Thêm đối tượng Score vào danh sách kết quả
+     * 
+     * @param studentId ID của học sinh (phải là số nguyên dương)
+     * @return Danh sách các đối tượng Score của học sinh đó, danh sách rỗng nếu không có điểm nào
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình truy vấn cơ sở dữ liệu
      */
     public List<Score> getScoresByStudentId(int studentId) {
         List<Score> scores = new ArrayList<>();
@@ -583,9 +731,17 @@ public class DatabaseManager {
 
     /**
      * Lấy danh sách điểm của học sinh cho môn học cụ thể dựa trên ID học sinh và ID môn học
-     * @param studentId ID của học sinh
-     * @param subjectId ID của môn học
-     * @return Danh sách các đối tượng Score
+     * 
+     * Cách thức hoạt động:
+     * 1. Truy vấn điểm trong bảng scores với điều kiện ID học sinh và ID môn học
+     * 2. Duyệt qua từng dòng kết quả trong Cursor
+     * 3. Tạo đối tượng Score từ dữ liệu trong mỗi dòng
+     * 4. Thêm đối tượng Score vào danh sách kết quả
+     * 
+     * @param studentId ID của học sinh (phải là số nguyên dương)
+     * @param subjectId ID của môn học (phải là số nguyên dương)
+     * @return Danh sách các đối tượng Score của học sinh cho môn học cụ thể, danh sách rỗng nếu không có điểm nào
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình truy vấn cơ sở dữ liệu
      */
     public List<Score> getScoresByStudentIdAndSubjectId(int studentId, int subjectId) {
         List<Score> scores = new ArrayList<>();
@@ -625,8 +781,15 @@ public class DatabaseManager {
 
     /**
      * Thêm điểm mới vào cơ sở dữ liệu
-     * @param score Đối tượng Score chứa thông tin điểm cần thêm
-     * @return ID của điểm vừa được thêm, hoặc -1 nếu thêm thất bại
+     * 
+     * Cách thức hoạt động:
+     * 1. Chuẩn bị dữ liệu điểm vào ContentValues để chèn vào cơ sở dữ liệu
+     * 2. Chèn dữ liệu vào bảng scores
+     * 3. Trả về ID của điểm vừa được thêm
+     * 
+     * @param score Đối tượng Score chứa thông tin điểm cần thêm (không được null)
+     * @return ID của điểm vừa được thêm (số nguyên dương), hoặc -1 nếu thêm thất bại
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình chèn cơ sở dữ liệu
      */
     public long createScore(Score score) {
         ContentValues values = new ContentValues();
@@ -641,8 +804,15 @@ public class DatabaseManager {
 
     /**
      * Cập nhật thông tin điểm trong cơ sở dữ liệu
-     * @param score Đối tượng Score chứa thông tin điểm cần cập nhật
-     * @return Số lượng hàng bị ảnh hưởng sau khi cập nhật
+     * 
+     * Cách thức hoạt động:
+     * 1. Chuẩn bị dữ liệu cập nhật vào ContentValues
+     * 2. Cập nhật bản ghi trong bảng scores dựa trên ID điểm
+     * 3. Trả về số lượng hàng bị ảnh hưởng
+     * 
+     * @param score Đối tượng Score chứa thông tin điểm cần cập nhật (không được null, phải có ID hợp lệ)
+     * @return Số lượng hàng bị ảnh hưởng sau khi cập nhật (thường là 1 nếu thành công, 0 nếu thất bại)
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình cập nhật cơ sở dữ liệu
      */
     public int updateScore(Score score) {
         ContentValues values = new ContentValues();
@@ -659,8 +829,14 @@ public class DatabaseManager {
 
     /**
      * Xóa điểm khỏi cơ sở dữ liệu
-     * @param scoreId ID của điểm cần xóa
-     * @return Số lượng hàng bị ảnh hưởng sau khi xóa
+     * 
+     * Cách thức hoạt động:
+     * 1. Xóa bản ghi trong bảng scores dựa trên ID điểm
+     * 2. Trả về số lượng hàng bị ảnh hưởng
+     * 
+     * @param scoreId ID của điểm cần xóa (phải là số nguyên dương)
+     * @return Số lượng hàng bị ảnh hưởng sau khi xóa (thường là 1 nếu thành công, 0 nếu không tìm thấy)
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình xóa cơ sở dữ liệu
      */
     public int deleteScore(int scoreId) {
         return database.delete(DatabaseHelper.TABLE_SCORES, 
@@ -671,9 +847,16 @@ public class DatabaseManager {
     // Utility methods
     /**
      * Tính điểm trung bình của học sinh cho môn học cụ thể
-     * @param studentId ID của học sinh
-     * @param subjectId ID của môn học
-     * @return Điểm trung bình của học sinh cho môn học cụ thể
+     * 
+     * Cách thức hoạt động:
+     * 1. Truy vấn bảng scores để lấy các điểm của học sinh cho môn học cụ thể
+     * 2. Sử dụng hàm AVG của SQL để tính điểm trung bình
+     * 3. Trả về điểm trung bình đã tính được
+     * 
+     * @param studentId ID của học sinh (phải là số nguyên dương)
+     * @param subjectId ID của môn học (phải là số nguyên dương)
+     * @return Điểm trung bình của học sinh cho môn học cụ thể, trả về 0 nếu không có điểm nào
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình truy vấn cơ sở dữ liệu
      */
     public double calculateAverageScore(int studentId, int subjectId) {
         double average = 0.0;
@@ -703,8 +886,15 @@ public class DatabaseManager {
 
     /**
      * Tính điểm trung bình tổng kết của học sinh
-     * @param studentId ID của học sinh
-     * @return Điểm trung bình tổng kết của học sinh
+     * 
+     * Cách thức hoạt động:
+     * 1. Truy vấn bảng scores để lấy tất cả điểm của học sinh
+     * 2. Sử dụng hàm AVG của SQL để tính điểm trung bình tổng kết
+     * 3. Trả về điểm trung bình tổng kết đã tính được
+     * 
+     * @param studentId ID của học sinh (phải là số nguyên dương)
+     * @return Điểm trung bình tổng kết của học sinh, trả về 0 nếu không có điểm nào
+     * @throws Exception Nếu có lỗi xảy ra trong quá trình truy vấn cơ sở dữ liệu
      */
     public double calculateOverallAverageScore(int studentId) {
         double average = 0.0;

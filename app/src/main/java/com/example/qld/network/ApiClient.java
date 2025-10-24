@@ -30,7 +30,14 @@ public class ApiClient {
 
     /**
      * Constructor riêng tư để đảm bảo chỉ có một thể hiện duy nhất (Singleton pattern)
-     * @param context Context của ứng dụng
+     * 
+     * Cách thức hoạt động:
+     * 1. Lưu context của ứng dụng để sử dụng trong các thao tác mạng
+     * 2. Tạo một RequestQueue mới bằng Volley để quản lý các yêu cầu mạng
+     * 3. Đảm bảo rằng chỉ có một thể hiện của lớp này tồn tại trong suốt vòng đời ứng dụng
+     * 
+     * @param context Context của ứng dụng (Activity, Service, Application, v.v.)
+     *                Được sử dụng để tạo RequestQueue và thực hiện các yêu cầu mạng
      */
     private ApiClient(Context context) {
         this.context = context;
@@ -39,8 +46,17 @@ public class ApiClient {
 
     /**
      * Lấy thể hiện duy nhất của ApiClient (Singleton pattern)
-     * @param context Context của ứng dụng
-     * @return Thể hiện duy nhất của ApiClient
+     * 
+     * Cách thức hoạt động:
+     * 1. Kiểm tra xem thể hiện đã được tạo chưa
+     * 2. Nếu chưa, tạo mới một thể hiện ApiClient
+     * 3. Trả về thể hiện duy nhất
+     * 
+     * @param context Context của ứng dụng (Activity, Service, Application, v.v.)
+     *                Được sử dụng để tạo ApiClient nếu cần
+     * @return Thể hiện duy nhất của ApiClient, đảm bảo chỉ có một thể hiện trong toàn bộ ứng dụng
+     * 
+     * Ví dụ: ApiClient apiClient = ApiClient.getInstance(context);
      */
     public static synchronized ApiClient getInstance(Context context) {
         if (instance == null) {
@@ -51,25 +67,58 @@ public class ApiClient {
 
     /**
      * Giao diện callback để xử lý kết quả từ các yêu cầu API
+     * 
+     * Cách thức hoạt động:
+     * 1. Khi yêu cầu API thành công, phương thức onSuccess sẽ được gọi
+     * 2. Khi có lỗi xảy ra, phương thức onError sẽ được gọi
+     * 3. Cung cấp hai phương thức để xử lý cả hai trường hợp thành công và lỗi
      */
     public interface ApiResponseCallback {
         /**
-         * Được gọi khi yêu cầu thành công
-         * @param response Đối tượng JSON phản hồi từ máy chủ
+         * Được gọi khi yêu cầu API thành công
+         * 
+         * Cách thức hoạt động:
+         * 1. Nhận dữ liệu phản hồi từ máy chủ dưới dạng JSONObject
+         * 2. Xử lý dữ liệu phản hồi theo logic nghiệp vụ của ứng dụng
+         * 
+         * @param response Đối tượng JSON phản hồi từ máy chủ (không được null)
+         *                 Chứa dữ liệu trả về từ API, có thể là dữ liệu thành công hoặc thông báo
+         * 
+         * Ví dụ: Nếu API trả về {"status": "success", "data": {...}}, phương thức sẽ nhận được đối tượng JSON này
          */
         void onSuccess(JSONObject response);
         
         /**
-         * Được gọi khi có lỗi xảy ra trong quá trình thực hiện yêu cầu
-         * @param error Mô tả lỗi
+         * Được gọi khi có lỗi xảy ra trong quá trình thực hiện yêu cầu API
+         * 
+         * Cách thức hoạt động:
+         * 1. Nhận chuỗi mô tả lỗi từ hệ thống xử lý lỗi
+         * 2. Hiển thị hoặc xử lý lỗi theo logic nghiệp vụ của ứng dụng
+         * 
+         * @param error Mô tả lỗi dưới dạng chuỗi (không được null)
+         *              Có thể là lỗi kết nối, lỗi máy chủ, lỗi timeout, v.v.
+         * 
+         * Ví dụ: Nếu không có kết nối mạng, error có thể là "Kết nối hết thời gian. Vui lòng kiểm tra kết nối mạng."
          */
         void onError(String error);
     }
 
     /**
      * Thực hiện yêu cầu GET đến API
-     * @param endpoint Đường dẫn cụ thể của API
-     * @param callback Callback để xử lý kết quả
+     * 
+     * Cách thức hoạt động:
+     * 1. Ghép nối BASE_URL với endpoint để tạo URL hoàn chỉnh
+     * 2. Tạo một JsonObjectRequest kiểu GET với URL
+     * 3. Thiết lập các callback xử lý phản hồi thành công và lỗi
+     * 4. Thiết lập chính sách thử lại và timeout
+     * 5. Thêm yêu cầu vào hàng đợi để thực hiện
+     * 
+     * @param endpoint Đường dẫn cụ thể của API (chuỗi không được null hoặc rỗng)
+     *                 Ví dụ: "users/123", "students", "scores?subjectId=1"
+     * @param callback Callback để xử lý kết quả (không được null)
+     *                 Gồm hai phương thức onSuccess và onError để xử lý phản hồi
+     * 
+     * Ví dụ: makeGetRequest("users/123", callback) sẽ thực hiện GET request đến http://10.0.2.2/api/users/123
      */
     public void makeGetRequest(String endpoint, ApiResponseCallback callback) {
         String url = BASE_URL + endpoint;
@@ -102,9 +151,23 @@ public class ApiClient {
 
     /**
      * Thực hiện yêu cầu POST đến API
-     * @param endpoint Đường dẫn cụ thể của API
-     * @param requestBody Dữ liệu JSON cần gửi trong body
-     * @param callback Callback để xử lý kết quả
+     * 
+     * Cách thức hoạt động:
+     * 1. Ghép nối BASE_URL với endpoint để tạo URL hoàn chỉnh
+     * 2. Tạo một JsonObjectRequest kiểu POST với URL và dữ liệu body
+     * 3. Thiết lập các callback xử lý phản hồi thành công và lỗi
+     * 4. Thiết lập chính sách thử lại và timeout
+     * 5. Thêm yêu cầu vào hàng đợi để thực hiện
+     * 
+     * @param endpoint Đường dẫn cụ thể của API (chuỗi không được null hoặc rỗng)
+     *                 Ví dụ: "users", "students", "scores"
+     * @param requestBody Dữ liệu JSON cần gửi trong body (có thể là null nếu không cần gửi dữ liệu)
+     *                    Thường chứa thông tin để tạo mới hoặc cập nhật tài nguyên
+     * @param callback Callback để xử lý kết quả (không được null)
+     *                 Gồm hai phương thức onSuccess và onError để xử lý phản hồi
+     * 
+     * Ví dụ: makePostRequest("users", {"username": "john", "password": "123456"}, callback) 
+     * sẽ thực hiện POST request đến http://10.0.2.2/api/users với dữ liệu body
      */
     public void makePostRequest(String endpoint, JSONObject requestBody, ApiResponseCallback callback) {
         String url = BASE_URL + endpoint;
@@ -137,9 +200,23 @@ public class ApiClient {
 
     /**
      * Thực hiện yêu cầu PUT đến API
-     * @param endpoint Đường dẫn cụ thể của API
-     * @param requestBody Dữ liệu JSON cần gửi trong body
-     * @param callback Callback để xử lý kết quả
+     * 
+     * Cách thức hoạt động:
+     * 1. Ghép nối BASE_URL với endpoint để tạo URL hoàn chỉnh
+     * 2. Tạo một JsonObjectRequest kiểu PUT với URL và dữ liệu body
+     * 3. Thiết lập các callback xử lý phản hồi thành công và lỗi
+     * 4. Thiết lập chính sách thử lại và timeout
+     * 5. Thêm yêu cầu vào hàng đợi để thực hiện
+     * 
+     * @param endpoint Đường dẫn cụ thể của API (chuỗi không được null hoặc rỗng)
+     *                 Thường bao gồm ID của tài nguyên cần cập nhật, ví dụ: "users/123", "students/456"
+     * @param requestBody Dữ liệu JSON cần gửi trong body (có thể là null nếu không cần gửi dữ liệu)
+     *                    Thường chứa thông tin cần cập nhật cho tài nguyên
+     * @param callback Callback để xử lý kết quả (không được null)
+     *                 Gồm hai phương thức onSuccess và onError để xử lý phản hồi
+     * 
+     * Ví dụ: makePutRequest("users/123", {"fullName": "John Doe"}, callback) 
+     * sẽ thực hiện PUT request đến http://10.0.2.2/api/users/123 với dữ liệu body
      */
     public void makePutRequest(String endpoint, JSONObject requestBody, ApiResponseCallback callback) {
         String url = BASE_URL + endpoint;
@@ -172,8 +249,21 @@ public class ApiClient {
 
     /**
      * Thực hiện yêu cầu DELETE đến API
-     * @param endpoint Đường dẫn cụ thể của API
-     * @param callback Callback để xử lý kết quả
+     * 
+     * Cách thức hoạt động:
+     * 1. Ghép nối BASE_URL với endpoint để tạo URL hoàn chỉnh
+     * 2. Tạo một JsonObjectRequest kiểu DELETE với URL
+     * 3. Thiết lập các callback xử lý phản hồi thành công và lỗi
+     * 4. Thiết lập chính sách thử lại và timeout
+     * 5. Thêm yêu cầu vào hàng đợi để thực hiện
+     * 
+     * @param endpoint Đường dẫn cụ thể của API (chuỗi không được null hoặc rỗng)
+     *                 Thường bao gồm ID của tài nguyên cần xóa, ví dụ: "users/123", "students/456"
+     * @param callback Callback để xử lý kết quả (không được null)
+     *                 Gồm hai phương thức onSuccess và onError để xử lý phản hồi
+     * 
+     * Ví dụ: makeDeleteRequest("users/123", callback) 
+     * sẽ thực hiện DELETE request đến http://10.0.2.2/api/users/123
      */
     public void makeDeleteRequest(String endpoint, ApiResponseCallback callback) {
         String url = BASE_URL + endpoint;
@@ -206,8 +296,19 @@ public class ApiClient {
 
     /**
      * Xử lý các lỗi Volley một cách thống nhất
-     * @param error Lỗi Volley xảy ra
-     * @param callback Callback để xử lý lỗi
+     * 
+     * Cách thức hoạt động:
+     * 1. Ghi log lỗi để debug (sử dụng Log.e)
+     * 2. Phân tích loại lỗi và mã lỗi từ phản hồi mạng
+     * 3. Tạo thông báo lỗi phù hợp dựa trên loại lỗi
+     * 4. Gọi callback.onError với thông báo lỗi đã tạo
+     * 
+     * @param error Lỗi Volley xảy ra trong quá trình thực hiện yêu cầu (không được null)
+     *              Có thể là TimeoutError, NetworkError, ServerError, v.v.
+     * @param callback Callback để xử lý lỗi (không được null)
+     *                 Sử dụng phương thức onError để truyền thông báo lỗi
+     * 
+     * Ví dụ: Nếu error là TimeoutError, phương thức sẽ gọi callback.onError với thông báo "Kết nối hết thời gian. Vui lòng kiểm tra kết nối mạng."
      */
     private void handleError(VolleyError error, ApiResponseCallback callback) {
         Log.e(TAG, "Network error: ", error);

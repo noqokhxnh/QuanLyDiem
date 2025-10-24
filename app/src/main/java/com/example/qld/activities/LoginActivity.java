@@ -55,9 +55,22 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Phương thức thực hiện quá trình đăng nhập
-     * Xác thực thông tin đăng nhập của người dùng
-     * Nếu thành công thì tạo session và chuyển hướng
-     * Nếu thất bại thì hiển thị lỗi
+     * Xác thực thông tin đăng nhập của người dùng trong hệ thống
+     * 
+     * Cách thức hoạt động:
+     * 1. Lấy thông tin username và password từ giao diện
+     * 2. Thực hiện kiểm tra tính hợp lệ của dữ liệu đầu vào:
+     *    - Kiểm tra xem có nhập username hay không
+     *    - Kiểm tra username có tối thiểu 3 ký tự hay không
+     *    - Kiểm tra có nhập password hay không
+     *    - Kiểm tra password có tối thiểu 6 ký tự hay không
+     * 3. Nếu dữ liệu hợp lệ, kết nối đến cơ sở dữ liệu và xác thực người dùng
+     * 4. Nếu xác thực thành công, tạo session và chuyển hướng người dùng
+     * 5. Nếu xác thực thất bại, hiển thị thông báo lỗi và yêu cầu nhập lại
+     * 
+     * @param username tên đăng nhập do người dùng nhập vào
+     * @param password mật khẩu do người dùng nhập vào (đã được mã hóa)
+     * @return void - phương thức không trả về giá trị, thực hiện đăng nhập hệ thống
      */
     private void login() {
         String username = etUsername.getText().toString().trim();
@@ -114,7 +127,18 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Phương thức chuyển hướng người dùng đến activity chính tương ứng
-     * Dựa trên vai trò (role) của người dùng sau khi đăng nhập
+     * Dựa trên vai trò (role) của người dùng sau khi đăng nhập thành công
+     * 
+     * Cách thức hoạt động:
+     * 1. Lấy vai trò của người dùng từ session
+     * 2. Dựa vào vai trò để xác định activity chính tương ứng:
+     *    - Nếu là ADMIN thì chuyển đến AdminMainActivity
+     *    - Nếu là TEACHER thì chuyển đến TeacherMainActivity
+     *    - Nếu là STUDENT thì chuyển đến StudentMainActivity
+     * 3. Khởi tạo Intent và bắt đầu activity mới
+     * 4. Kết thúc activity hiện tại để người dùng không thể quay lại màn hình đăng nhập
+     * 
+     * @param role vai trò của người dùng đã đăng nhập ('ADMIN', 'TEACHER', 'STUDENT')
      */
     private void redirectToMainActivity() {
         Intent intent;

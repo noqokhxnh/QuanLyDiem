@@ -23,7 +23,14 @@ public class SessionManager {
 
     /**
      * Constructor để khởi tạo SessionManager
-     * @param context Context của ứng dụng
+     * 
+     * Cách thức hoạt động:
+     * 1. Lưu context của ứng dụng để truy cập SharedPreferences
+     * 2. Khởi tạo SharedPreferences với tên "StudentManagerPrefs" ở chế độ PRIVATE
+     * 3. Tạo editor để thực hiện các thao tác ghi dữ liệu
+     * 
+     * @param context Context của ứng dụng (Activity, Service, Application, v.v.)
+     *                Được sử dụng để truy cập SharedPreferences
      */
     public SessionManager(Context context) {
         this.context = context;
@@ -33,7 +40,14 @@ public class SessionManager {
 
     /**
      * Tạo phiên đăng nhập mới cho người dùng
-     * @param user Đối tượng User chứa thông tin người dùng cần lưu
+     * 
+     * Cách thức hoạt động:
+     * 1. Thiết lập trạng thái đăng nhập là true
+     * 2. Lưu ID người dùng, tên đăng nhập, vai trò và họ tên đầy đủ vào SharedPreferences
+     * 3. Hoàn tất ghi dữ liệu bằng phương thức commit()
+     * 
+     * @param user Đối tượng User chứa thông tin người dùng cần lưu (không được null)
+     *             Bao gồm ID, tên đăng nhập, vai trò, họ tên đầy đủ
      */
     public void createLoginSession(User user) {
         editor.putBoolean(KEY_IS_LOGGED_IN, true);
@@ -46,7 +60,15 @@ public class SessionManager {
 
     /**
      * Lấy thông tin người dùng đã lưu trong phiên
-     * @return Đối tượng User chứa thông tin người dùng
+     * 
+     * Cách thức hoạt động:
+     * 1. Tạo một đối tượng User mới
+     * 2. Lấy các giá trị đã lưu trong SharedPreferences (ID, tên đăng nhập, vai trò, họ tên)
+     * 3. Gán các giá trị này vào các thuộc tính tương ứng của đối tượng User
+     * 4. Trả về đối tượng User chứa thông tin người dùng
+     * 
+     * @return Đối tượng User chứa thông tin người dùng đã lưu trong phiên
+     *         Nếu không có giá trị nào được lưu, các thuộc tính sẽ có giá trị mặc định (0 cho int, null cho String)
      */
     public User getUserDetails() {
         User user = new User();
@@ -59,7 +81,13 @@ public class SessionManager {
 
     /**
      * Kiểm tra xem người dùng đã đăng nhập hay chưa
-     * @return true nếu đã đăng nhập, false nếu chưa
+     * 
+     * Cách thức hoạt động:
+     * 1. Lấy giá trị boolean của khóa KEY_IS_LOGGED_IN từ SharedPreferences
+     * 2. Nếu không tìm thấy khóa này, trả về giá trị mặc định là false
+     * 3. Trả về kết quả kiểm tra
+     * 
+     * @return true nếu người dùng đã đăng nhập (trạng thái đăng nhập = true), false nếu chưa đăng nhập
      */
     public boolean isLoggedIn() {
         return pref.getBoolean(KEY_IS_LOGGED_IN, false);
@@ -67,6 +95,13 @@ public class SessionManager {
 
     /**
      * Đăng xuất người dùng bằng cách xóa tất cả dữ liệu phiên
+     * 
+     * Cách thức hoạt động:
+     * 1. Xóa tất cả các cặp khóa-giá trị trong SharedPreferences
+     * 2. Hoàn tất ghi dữ liệu bằng phương thức commit()
+     * 3. Hiệu ứng: người dùng sẽ được coi là chưa đăng nhập
+     * 
+     * Ghi chú: Phương thức này sẽ xóa tất cả dữ liệu phiên, không chỉ trạng thái đăng nhập
      */
     public void logoutUser() {
         editor.clear();
@@ -75,7 +110,13 @@ public class SessionManager {
 
     /**
      * Lấy vai trò của người dùng đã đăng nhập
-     * @return Vai trò của người dùng ('ADMIN', 'TEACHER', 'STUDENT') hoặc null nếu chưa đăng nhập
+     * 
+     * Cách thức hoạt động:
+     * 1. Lấy giá trị String của khóa KEY_ROLE từ SharedPreferences
+     * 2. Nếu không tìm thấy khóa này, trả về giá trị mặc định là null
+     * 3. Trả về vai trò của người dùng (ADMIN, TEACHER, STUDENT hoặc null)
+     * 
+     * @return Vai trò của người dùng ('ADMIN', 'TEACHER', 'STUDENT') hoặc null nếu chưa đăng nhập hoặc không có dữ liệu
      */
     public String getUserRole() {
         return pref.getString(KEY_ROLE, null);
@@ -83,7 +124,13 @@ public class SessionManager {
 
     /**
      * Lấy ID của người dùng đã đăng nhập
-     * @return ID của người dùng hoặc 0 nếu chưa đăng nhập
+     * 
+     * Cách thức hoạt động:
+     * 1. Lấy giá trị int của khóa KEY_USER_ID từ SharedPreferences
+     * 2. Nếu không tìm thấy khóa này, trả về giá trị mặc định là 0
+     * 3. Trả về ID người dùng đã lưu
+     * 
+     * @return ID của người dùng (số nguyên dương) hoặc 0 nếu chưa đăng nhập hoặc không có dữ liệu
      */
     public int getUserId() {
         return pref.getInt(KEY_USER_ID, 0);
@@ -91,7 +138,13 @@ public class SessionManager {
 
     /**
      * Lấy tên đăng nhập của người dùng đã đăng nhập
-     * @return Tên đăng nhập hoặc null nếu chưa đăng nhập
+     * 
+     * Cách thức hoạt động:
+     * 1. Lấy giá trị String của khóa KEY_USERNAME từ SharedPreferences
+     * 2. Nếu không tìm thấy khóa này, trả về giá trị mặc định là null
+     * 3. Trả về tên đăng nhập đã lưu
+     * 
+     * @return Tên đăng nhập (chuỗi không khoảng trắng) hoặc null nếu chưa đăng nhập hoặc không có dữ liệu
      */
     public String getUsername() {
         return pref.getString(KEY_USERNAME, null);
@@ -99,7 +152,13 @@ public class SessionManager {
 
     /**
      * Lấy họ tên đầy đủ của người dùng đã đăng nhập
-     * @return Họ tên đầy đủ hoặc null nếu chưa đăng nhập
+     * 
+     * Cách thức hoạt động:
+     * 1. Lấy giá trị String của khóa KEY_FULL_NAME từ SharedPreferences
+     * 2. Nếu không tìm thấy khóa này, trả về giá trị mặc định là null
+     * 3. Trả về họ tên đầy đủ đã lưu
+     * 
+     * @return Họ tên đầy đủ (chuỗi có thể chứa khoảng trắng) hoặc null nếu chưa đăng nhập hoặc không có dữ liệu
      */
     public String getFullName() {
         return pref.getString(KEY_FULL_NAME, null);
