@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_profile"
+        android:title="Thông tin cá nhân"
+        android:icon="@android:drawable/ic_menu_info_details"/>
+    <item
+        android:id="@+id/action_logout"
+        android:title="Đăng xuất"
+        android:icon="@android:drawable/ic_lock_power_off"/>
+</menu>

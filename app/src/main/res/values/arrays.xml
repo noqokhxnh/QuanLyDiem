@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="hoc_ky_array">
+        <item>Học kỳ 1</item>
+        <item>Học kỳ 2</item>
+    </string-array>
+    
+    <string-array name="role_filter_array">
+        <item>Tất cả</item>
+        <item>Admin</item>
+        <item>Lecturer</item>
+        <item>Student</item>
+    </string-array>
+</resources>

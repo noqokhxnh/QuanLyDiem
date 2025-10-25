@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.QLDIEM">
+        
+        <activity
+            android:name=".activities.LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activities.RegisterActivity"
+            android:parentActivityName=".activities.LoginActivity" />
+
+        <activity
+            android:name=".activities.MainActivity"
+            android:label="@string/app_name" />
+
+        <activity
+            android:name=".activities.SinhVienActivity"
+            android:parentActivityName=".activities.MainActivity" />
+        
+        <activity
+            android:name=".activities.AddEditSinhVienActivity"
+            android:parentActivityName=".activities.SinhVienActivity" />
+            
+        <activity
+            android:name=".activities.LopActivity"
+            android:parentActivityName=".activities.MainActivity" />
+            
+        <activity
+            android:name=".activities.ChuyenNganhActivity"
+            android:parentActivityName=".activities.MainActivity" />
+            
+        <activity
+            android:name=".activities.MonHocActivity"
+            android:parentActivityName=".activities.MainActivity" />
+            
+        <activity
+            android:name=".activities.DiemActivity"
+            android:parentActivityName=".activities.MainActivity" />
+            
+        <activity
+            android:name=".activities.EventActivity"
+            android:parentActivityName=".activities.MainActivity" />
+            
+        <activity
+            android:name=".activities.TaiKhoanActivity"
+            android:parentActivityName=".activities.MainActivity" />
+            
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:parentActivityName=".activities.MainActivity"
+            android:label="Thông tin cá nhân" />
+    </application>
+
+</manifest>

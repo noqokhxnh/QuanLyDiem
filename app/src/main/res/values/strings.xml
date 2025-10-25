@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">Quản Lý Sinh Viên</string>
+    
+    <!-- Login -->
+    <string name="login_title">Đăng nhập</string>
+    <string name="username">Tên đăng nhập</string>
+    <string name="password">Mật khẩu</string>
+    <string name="login">Đăng nhập</string>
+    <string name="register">Đăng ký tài khoản mới</string>
+    
+    <!-- Register -->
+    <string name="register_title">Đăng ký</string>
+    <string name="full_name">Họ và tên</string>
+    <string name="confirm_password">Xác nhận mật khẩu</string>
+    <string name="role">Vai trò</string>
+    
+    <!-- Main -->
+    <string name="welcome">Xin chào</string>
+    <string name="student_management">Quản lý sinh viên</string>
+    <string name="class_management">Quản lý lớp học</string>
+    <string name="major_management">Quản lý chuyên ngành</string>
+    <string name="subject_management">Quản lý môn học</string>
+    <string name="grade_management">Quản lý điểm</string>
+    <string name="event_calendar">Lịch sự kiện</string>
+    
+    <!-- Common -->
+    <string name="save">Lưu</string>
+    <string name="cancel">Hủy</string>
+    <string name="delete">Xóa</string>
+    <string name="edit">Sửa</string>
+    <string name="add">Thêm</string>
+    <string name="search">Tìm kiếm</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="profile">Thông tin cá nhân</string>
+    
+    <!-- Messages -->
+    <string name="success">Thành công</string>
+    <string name="error">Lỗi</string>
+    <string name="confirm_delete">Bạn có chắc muốn xóa?</string>
+</resources>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sinh viên:"
+            android:textStyle="bold"
+            android:textSize="14sp"/>
+
+        <Spinner
+            android:id="@+id/spinnerSinhVien"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Môn học:"
+            android:textStyle="bold"
+            android:textSize="14sp"/>
+
+        <Spinner
+            android:id="@+id/spinnerMonHoc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Học kỳ:"
+            android:textStyle="bold"
+            android:textSize="14sp"/>
+
+        <Spinner
+            android:id="@+id/spinnerHocKy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp"/>
+
+        <EditText
+            android:id="@+id/edtNamHoc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Năm học (VD: 2024)"
+            android:inputType="number"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Điểm chuyên cần -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📌 Điểm chuyên cần (10%)"
+            android:textStyle="bold"
+            android:textColor="#FF5722"
+            android:textSize="14sp"/>
+
+        <EditText
+            android:id="@+id/edtDiemChuyenCan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="0 - 10"
+            android:inputType="numberDecimal"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Điểm giữa kỳ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📝 Điểm giữa kỳ (30%)"
+            android:textStyle="bold"
+            android:textColor="#2196F3"
+            android:textSize="14sp"/>
+
+        <EditText
+            android:id="@+id/edtDiemGiuaKy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="0 - 10"
+            android:inputType="numberDecimal"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Điểm cuối kỳ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📚 Điểm cuối kỳ (60%)"
+            android:textStyle="bold"
+            android:textColor="#4CAF50"
+            android:textSize="14sp"/>
+
+        <EditText
+            android:id="@+id/edtDiemCuoiKy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="0 - 10"
+            android:inputType="numberDecimal"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tổng kết = CC×0.1 + GK×0.3 + CK×0.6"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:textStyle="italic"/>
+    </LinearLayout>
+</ScrollView>
