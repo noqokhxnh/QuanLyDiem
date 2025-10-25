@@ -246,7 +246,7 @@ Role: Admin
 #### 1️⃣ Clone repository
 
 ```bash
-git clone https://github.com/yourusername/QLDIEM.git
+git clone https://github.com/noqokhxnh/QuanLyDiem.git
 cd QLDIEM
 ```
 
@@ -488,7 +488,7 @@ Chúng tôi hoan nghênh mọi đóng góp!
 ```
 MIT License
 
-Copyright (c) 2024 QLDIEM
+Copyright (c) 2025 QuanLyDiem
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -508,35 +508,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
-
----
-
-## 👥 Tác giả
-
-**Android Student Management System**
-
-- 📧 Email: your.email@example.com
-- 🔗 GitHub: [@yourusername](https://github.com/yourusername)
-- 🌐 Website: [your-website.com](https://your-website.com)
-
----
-
-## 🙏 Acknowledgments
-
-- [Material Design Icons](https://material.io/resources/icons/)
-- [Android Developer Documentation](https://developer.android.com/)
-- [Stack Overflow Community](https://stackoverflow.com/)
-
----
-
-## 📞 Hỗ trợ
-
-Nếu gặp vấn đề hoặc có câu hỏi:
-
-1. 📖 Đọc [Documentation](#)
-2. 🔍 Tìm trong [Issues](https://github.com/yourusername/QLDIEM/issues)
-3. 💬 Tạo [New Issue](https://github.com/yourusername/QLDIEM/issues/new)
-4. 📧 Email trực tiếp cho tác giả
 
 ---
 
