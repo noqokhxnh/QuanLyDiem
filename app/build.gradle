@@ -1,0 +1,66 @@
+plugins {
+    alias(libs.plugins.android.application)
+}
+
+android {
+    namespace 'com.example.qld'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "com.example.qld"
+        minSdk 24
+        targetSdk 36
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        release {
+            // These are placeholder values - in a real app you would use actual keystore
+            // storeFile file('debug.keystore')  // Replace with your keystore file
+            // storePassword 'android'           // Replace with your store password
+            // keyAlias 'androiddebugkey'        // Replace with your key alias
+            // keyPassword 'android'             // Replace with your key password
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        
+        debug {
+            minifyEnabled false
+            debuggable true
+        }
+    }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    
+    // Enable view binding if needed
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.swiperefreshlayout
+    implementation 'com.android.volley:volley:1.2.1'
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
+    implementation 'com.itextpdf:itext7-core:7.2.5' // For PDF generation
+    implementation 'com.opencsv:opencsv:5.7.1' // For CSV generation
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+}

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/tv_student_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Học sinh: Nguyễn Văn A"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:id="@+id/tv_student_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mã HS: HS001"
+        android:textSize="14sp"
+        android:layout_marginBottom="2dp" />
+
+    <TextView
+        android:id="@+id/tv_class_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lớp: 10A1"
+        android:textSize="14sp"
+        android:layout_marginBottom="2dp" />
+
+    <TextView
+        android:id="@+id/tv_birth_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ngày sinh: 2005-01-01"
+        android:textSize="14sp" />
+
+</LinearLayout>
