@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Card thông tin cá nhân -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="THÔNG TIN CÁ NHÂN"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#2196F3"
+                    android:layout_marginBottom="16dp"/>
+
+                <TextView
+                    android:id="@+id/tvUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tên đăng nhập: admin"
+                    android:textSize="16sp"
+                    android:paddingVertical="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvFullName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Họ tên: Administrator"
+                    android:textSize="16sp"
+                    android:paddingVertical="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvRole"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Vai trò: Admin"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#4CAF50"
+                    android:paddingVertical="8dp"/>
+
+                <!-- Chỉ hiện khi là Student -->
+                <TextView
+                    android:id="@+id/tvEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Email: student@example.com"
+                    android:textSize="16sp"
+                    android:paddingVertical="8dp"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/tvClass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Lớp: CNTT01"
+                    android:textSize="16sp"
+                    android:paddingVertical="8dp"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/tvMajor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Chuyên ngành: CNTT"
+                    android:textSize="16sp"
+                    android:paddingVertical="8dp"
+                    android:visibility="gone"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Card bảo mật -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BẢO MẬT"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#2196F3"
+                    android:layout_marginBottom="16dp"/>
+
+                <Button
+                    android:id="@+id/btnChangePassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🔒 Đổi mật khẩu"
+                    android:textSize="16sp"
+                    android:backgroundTint="#FF9800"
+                    android:textColor="@android:color/white"
+                    android:padding="12dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Nút đăng xuất -->
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🚪 Đăng xuất"
+            android:textSize="16sp"
+            android:backgroundTint="#F44336"
+            android:textColor="@android:color/white"
+            android:padding="16dp"/>
+    </LinearLayout>
+</ScrollView>
